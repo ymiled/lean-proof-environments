@@ -79,6 +79,62 @@ The operations recurse on their **second** argument, which is why the
 left-handed statements need induction instead of being true by computation. That
 asymmetry is the entire source of the chain.
 
+## The noninterference ladder
+
+The second family, and the one carrying the headline result. A loop-free
+imperative language with a two-point security lattice, public and secret. The
+top rung is the soundness theorem: a well-typed command run from two states that
+agree on public variables produces two states that still agree, so nothing flows
+from secret to public.
+
+| depth | rung | LoC | what it says | needs |
+|---|---|---|---|---|
+| 1 | `lowEq_refl` | 1 | public agreement is reflexive | — |
+| 1 | `lowEq_symm` | 1 | public agreement is symmetric | — |
+| 1 | `lowEq_trans` | 1 | public agreement is transitive | — |
+| 1 | `conf_ite` | 3 | conditional step of confinement | — |
+| 1 | `upd_pair` | 4 | agreement survives a common update | — |
+| 1 | `assign_conf` | 5 | a secret-context assignment cannot touch a public variable | — |
+| 1 | `evalE_agree` | 6 | public expressions evaluate alike in agreeing states | — |
+| 1 | `wt_anti` | 18 | typing is antitone in the pc level | — |
+| 2 | `assign_ni` | 7 | assignment case of the top theorem | `evalE_agree` |
+| 2 | `confinement` | 11 | secret-context code leaves the public projection fixed | `lowEq_refl`, `assign_conf`, `lowEq_trans`, `conf_ite` |
+| 3 | `ite_high_ni` | 3 | secret-guard conditional case | `conf_ite`, `confinement`, `lowEq_trans`, `lowEq_symm` |
+| 4 | `noninterference` | 22 | well-typed programs leak nothing | `assign_ni`, `evalE_agree`, `ite_high_ni` |
+
+`ite_high_ni` is where the real content sits. When the branch guard is secret the
+two runs may take **different branches**, so you apply confinement to each side
+and glue the results with symmetry and transitivity of public agreement.
+
+Three design choices keep this tractable without Mathlib. Semantics is a
+**total function** rather than an inductive relation, so rungs are discharged by
+structural induction plus `simp` instead of induction over derivation trees.
+Typing is **`Bool`-valued** rather than an inductive judgment, so a hypothesis
+`wt G pc c = true` can be taken apart by `simp`. And the language is
+**loop-free**, since `while` forces termination reasoning that adds nothing to
+the noninterference argument.
+
+### Four of these rungs were added deliberately, and are why the family works
+
+The family originally had seven rungs and produced nothing: it floored at 0.00
+above depth 1, and the chain/antichain contrast was structurally impossible in
+it. Four additions fixed both problems.
+
+* `conf_ite` and `assign_ni` **extract cases from the original 37-line soundness
+  proof**, dropping the top rung to 22 lines. This alone took `noninterference`
+  from unprovable to provable for the same policy at the same budget.
+* `wt_anti` is **18 lines at depth 1**, a shallow-but-long rung.
+* `ite_high_ni` is **3 lines at depth 3**, a deep-but-short rung.
+
+Those last two exist to attack the confound. Depth and proof length were
+correlated at +0.97 in this family, meaning any decay curve could be reread as a
+length effect. Adding a long shallow rung and a short deep one dropped it to
+**+0.56**, which is what makes depth and length separable here at all.
+
+`upd_pair` and `wt_anti` are also **maximal** — nothing depends on them.
+Before they existed, `noninterference` was the only maximal rung, making the
+family a funnel (Part V explains why that forbids antichains entirely).
+
 ## The two conditions
 
 | condition | what the model receives |
