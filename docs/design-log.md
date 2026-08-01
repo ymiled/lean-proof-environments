@@ -350,3 +350,78 @@ determinism of evaluation or monotonicity of the typing judgment.
 The general lesson for anyone building one of these: **a ladder's DAG shape is
 not incidental, it determines the experiments the benchmark can support.** A
 funnel supports depth sweeps only. Identification needs a wide top.
+
+## Result 4 — noninterference, rebuilt, Sonnet 5
+
+The family was rebuilt first (see below), then swept: 24 tasks, one seed, one
+sample, one-shot, no compiler access to the policy, leak-free batching verified
+by `verify_groups` and spawned from `agentrun plan`.
+
+| depth | arm | lemmas | pass | n |
+|---|---|---|---|---|
+| 1 | compositional | 1 | 1.00 | 8 |
+| 1 | monolithic | 1 | 0.75 | 8 |
+| 2 | compositional | 1 | 0.50 | 2 |
+| 2 | monolithic | 2–5 | 0.00 | 2 |
+| 3 | compositional | 1 | 1.00 | 1 |
+| 3 | monolithic | 7 | 0.00 | 1 |
+| 4 | compositional | 1 | 1.00 | 1 |
+| 4 | monolithic | 10 | 0.00 | 1 |
+
+Totals: compositional 11/12, monolithic 6/12. Restricting to depths 2–4, where
+the two arms actually pose different tasks: **compositional 3/4, monolithic
+0/4.**
+
+### The headline: decomposition changed what was provable
+
+Before the rebuild, `confinement` and `noninterference` both failed at 0.00,
+including in the compositional arm where every ancestor was already supplied.
+After splitting the 37-line soundness proof into `assign_ni` and `ite_high_ni`
+and dropping the target to 22 lines, the *same policy* under the *same one-shot
+budget* proves the full soundness theorem.
+
+Nothing about the theorem, the language, or the model changed. Only the
+granularity of the trusted interfaces did. That is the compositional
+verification claim demonstrated on an independent corpus -- not a replication of
+the 3x constant, but of the effect the architecture rests on.
+
+### An accidental noise-floor measurement
+
+Depth-1 rungs have no ancestors, so their monolithic and compositional prompts
+are **byte-identical** (verified by `diff`). They are nonetheless answered by
+different policy instances under different labels.
+
+Compositional scored 8/8 on them; monolithic scored 6/8. `evalE_agree` and
+`wt_anti` each passed in one instance and failed in the other, on the same
+input. So run-to-run variance is roughly **2/8, or 25%**, at this sample size.
+
+Two consequences, both important:
+
+*   The depth-1 gap between the arms in the table above is **noise, not
+    signal**. Only depths 2–4 pose genuinely different tasks.
+*   Every n = 1 cell elsewhere in this repository carries that variance. A
+    single failing cell is weak evidence; the arithmetic depth-5 result and
+    these depth-3 and depth-4 results are each one draw.
+
+This should be made a deliberate feature rather than an accident: depth-1 rungs
+function as a built-in replication control, so every sweep measures its own
+noise floor for free. Any future run should report it.
+
+### Evidence bearing on depth versus volume
+
+Within the compositional arm, where each task is exactly one lemma and total
+length equals target length:
+
+    wt_anti     18 lines, depth 1  ->  proved
+    assign_ni    7 lines, depth 2  ->  failed
+
+**A longer proof succeeded while a shorter one failed.** Length does not order
+success here. This is only visible because the rebuild deliberately added a
+shallow-long rung (`wt_anti`) and a deep-short rung (`ite_high_ni`) to break the
+depth/length correlation, dropping corr(depth, LoC) from +0.97 to +0.56.
+
+Against that, the monolithic arm is consistent with a volume story: total length
+runs 13, 21, 25, 60 across depths 2–4 and every one fails. With n = 1 per cell
+and a 25% noise floor, these observations do not settle the question. They do
+show the family can now produce evidence on both sides, which it could not
+before.

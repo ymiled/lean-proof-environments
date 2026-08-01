@@ -1,0 +1,18 @@
+-- PROOF lem_fcb6
+  revert hl
+  induction e with
+  | stem n => intro _; rfl
+  | brim x => intro hl; simp only [fuse] at hl; simp only [weave]; exact h x hl
+  | seed a b ih_a ih_b =>
+      intro hl
+      simp only [fuse] at hl
+      simp only [weave]
+      have ha : fuse G a = false := by
+        cases h1 : fuse G a with
+        | false => exact h1
+        | true => simp [h1] at hl
+      have hb : fuse G b = false := by
+        cases h2 : fuse G b with
+        | false => exact h2
+        | true => simp [h2] at hl
+      rw [ih_a ha, ih_b hb]

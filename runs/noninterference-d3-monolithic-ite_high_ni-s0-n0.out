@@ -1,0 +1,76 @@
+-- PROOF lem_203f
+  simp only [hew]
+  split
+  · exact hd
+  · exact hc
+-- PROOF lem_2fc1
+  intro x hx
+  rfl
+-- PROOF lem_aa90
+  intro y hy
+  simp [graft] at hw
+  by_cases hxy : y = x
+  · rw [hxy] at hy
+    rw [hw] at hy
+    simp at hy
+  · simp only [clasp, if_neg hxy]
+-- PROOF lem_0095
+  intro x hx
+  rw [h1 x hx, h2 x hx]
+-- PROOF lem_cc32
+  intro x hx
+  exact (h x hx).symm
+-- PROOF lem_61d3
+  induction c with
+  | cusp => intro s _; exact lem_2fc1 G s
+  | root x e => intro s hw; exact lem_aa90 G s x e hw
+  | flint c d ihc ihd =>
+      intro s hw
+      have hc' : graft G true c = true := by
+        simp only [graft] at hw
+        cases h1 : graft G true c with
+        | true => exact h1
+        | false => simp [h1] at hw
+      have hd' : graft G true d = true := by
+        simp only [graft] at hw
+        cases h2 : graft G true d with
+        | true => exact h2
+        | false => simp [h2] at hw
+      show twine G s (hew (hew s c) d)
+      exact lem_0095 G s (hew s c) (hew (hew s c) d) (ihc s hc') (ihd (hew s c) hd')
+  | base e c d ihc ihd =>
+      intro s hw
+      have hc' : graft G true c = true := by
+        have hw' : graft G (true || fuse G e) c && graft G (true || fuse G e) d = true := hw
+        simp only [Bool.true_or] at hw'
+        cases h1 : graft G true c with
+        | true => exact h1
+        | false => rw [h1] at hw'; simp at hw'
+      have hd' : graft G true d = true := by
+        have hw' : graft G (true || fuse G e) c && graft G (true || fuse G e) d = true := hw
+        simp only [Bool.true_or] at hw'
+        cases h2 : graft G true d with
+        | true => exact h2
+        | false => rw [h2] at hw'; simp at hw'
+      exact lem_203f G e c d s (ihc s hc') (ihd s hd')
+-- PROOF lem_7a2b
+  have Hsc : twine G s (hew s c) := lem_61d3 G c s hc
+  have Hsd : twine G s (hew s d) := lem_61d3 G d s hd
+  have Htc : twine G t (hew t c) := lem_61d3 G c t hc
+  have Htd : twine G t (hew t d) := lem_61d3 G d t hd
+  have CC : twine G (hew s c) (hew t c) :=
+    lem_0095 G (hew s c) s (hew t c) (lem_cc32 G s (hew s c) Hsc) (lem_0095 G s t (hew t c) h Htc)
+  have CD : twine G (hew s c) (hew t d) :=
+    lem_0095 G (hew s c) s (hew t d) (lem_cc32 G s (hew s c) Hsc) (lem_0095 G s t (hew t d) h Htd)
+  have DC : twine G (hew s d) (hew t c) :=
+    lem_0095 G (hew s d) s (hew t c) (lem_cc32 G s (hew s d) Hsd) (lem_0095 G s t (hew t c) h Htc)
+  have DD : twine G (hew s d) (hew t d) :=
+    lem_0095 G (hew s d) s (hew t d) (lem_cc32 G s (hew s d) Hsd) (lem_0095 G s t (hew t d) h Htd)
+  show twine G (if weave s e = 0 then hew s d else hew s c) (if weave t e = 0 then hew t d else hew t c)
+  by_cases h1 : weave s e = 0
+  · by_cases h2 : weave t e = 0
+    · rw [if_pos h1, if_pos h2]; exact DD
+    · rw [if_pos h1, if_neg h2]; exact DC
+  · by_cases h2 : weave t e = 0
+    · rw [if_neg h1, if_pos h2]; exact CD
+    · rw [if_neg h1, if_neg h2]; exact CC
