@@ -221,6 +221,43 @@ RUNGS = (
               "    exact {conf_ite} G e c d s (ihc s hw.1) (ihd s hw.2)",
         deps=("lowEq_refl", "assign_conf", "lowEq_trans", "conf_ite"),
     ),
+    # --- intermediate rungs, extracted from the top theorem --------------
+    # The soundness proof was originally a single 37-line rung, and the family
+    # floored: a policy either cleared everything at 6 lines or nothing at all,
+    # with no observable cell in between. Splitting it into its case analyses
+    # gives graded difficulty and drops the top rung to 17 lines.
+    Rung(
+        key="assign_ni",
+        role="assignment case of noninterference",
+        binders="(G : {Ctx}) (s t : {St}) (x : Nat) (e : {Exp}) "
+                "(hw : {wt} G false (.{cassign} x e) = true) (h : {lowEq} G s t)",
+        statement="{lowEq} G ({evalC} s (.{cassign} x e)) "
+                  "({evalC} t (.{cassign} x e))",
+        proof="  intro y hy\n"
+              "  by_cases hyx : y = x\n"
+              "  · subst hyx\n"
+              "    have hlv : {lvl} G e = false := by\n"
+              "      simp [{wt}, hy] at hw; exact hw\n"
+              "    simp [{evalC}, {upd}, {evalE_agree} G s t e hlv h]\n"
+              "  · simp [{evalC}, {upd}, hyx]; exact h y hy",
+        deps=("evalE_agree",),
+    ),
+    Rung(
+        key="ite_high_ni",
+        role="secret-guard conditional case of noninterference",
+        binders="(G : {Ctx}) (e : {Exp}) (c d : {Com}) (s t : {St}) "
+                "(hc : {wt} G true c = true) (hd : {wt} G true d = true) "
+                "(h : {lowEq} G s t)",
+        statement="{lowEq} G ({evalC} s (.{cite} e c d)) "
+                  "({evalC} t (.{cite} e c d))",
+        proof="  have cs := {conf_ite} G e c d s "
+              "({confinement} G c s hc) ({confinement} G d s hd)\n"
+              "  have ct := {conf_ite} G e c d t "
+              "({confinement} G c t hc) ({confinement} G d t hd)\n"
+              "  exact {lowEq_trans} G _ _ _ "
+              "({lowEq_trans} G _ _ _ ({lowEq_symm} G _ _ cs) h) ct",
+        deps=("conf_ite", "confinement", "lowEq_trans", "lowEq_symm"),
+    ),
     Rung(
         key="noninterference",
         role="well-typed programs leak nothing from secret to public",
@@ -229,14 +266,8 @@ RUNGS = (
                   "{lowEq} G ({evalC} s c) ({evalC} t c)",
         proof="  induction c with\n"
               "  | {cskip} => intro s t _ h; exact h\n"
-              "  | {cassign} x e =>\n"
-              "    intro s t hw h y hy\n"
-              "    by_cases hyx : y = x\n"
-              "    · subst hyx\n"
-              "      have hlv : {lvl} G e = false := by\n"
-              "        simp [{wt}, hy] at hw; exact hw\n"
-              "      simp [{evalC}, {upd}, {evalE_agree} G s t e hlv h]\n"
-              "    · simp [{evalC}, {upd}, hyx]; exact h y hy\n"
+              "  | {cassign} x e => intro s t hw h; "
+              "exact {assign_ni} G s t x e hw h\n"
               "  | {cseq} c d ihc ihd =>\n"
               "    intro s t hw h\n"
               "    simp [{wt}, Bool.and_eq_true] at hw\n"
@@ -245,8 +276,7 @@ RUNGS = (
               "    intro s t hw h\n"
               "    simp [{wt}, Bool.and_eq_true] at hw\n"
               "    by_cases hlv : {lvl} G e = false\n"
-              "    · have hg : {evalE} s e = {evalE} t e := "
-              "{evalE_agree} G s t e hlv h\n"
+              "    · have hg := {evalE_agree} G s t e hlv h\n"
               "      simp [hlv] at hw\n"
               "      by_cases hz : {evalE} s e = 0\n"
               "      · simp [{evalC}, hz, ← hg]; exact ihd _ _ hw.2 h\n"
@@ -256,17 +286,8 @@ RUNGS = (
               "        | false => exact absurd hl hlv\n"
               "        | true => rfl\n"
               "      simp [hlvT] at hw\n"
-              "      have cs : {lowEq} G s ({evalC} s (.{cite} e c d)) := by\n"
-              "        by_cases hz : {evalE} s e = 0\n"
-              "        · simp [{evalC}, hz]; exact {confinement} G d s hw.2\n"
-              "        · simp [{evalC}, hz]; exact {confinement} G c s hw.1\n"
-              "      have ct : {lowEq} G t ({evalC} t (.{cite} e c d)) := by\n"
-              "        by_cases hz : {evalE} t e = 0\n"
-              "        · simp [{evalC}, hz]; exact {confinement} G d t hw.2\n"
-              "        · simp [{evalC}, hz]; exact {confinement} G c t hw.1\n"
-              "      exact {lowEq_trans} G _ _ _ "
-              "({lowEq_trans} G _ _ _ ({lowEq_symm} G _ _ cs) h) ct",
-        deps=("evalE_agree", "confinement", "lowEq_trans", "lowEq_symm"),
+              "      exact {ite_high_ni} G e c d s t hw.1 hw.2 h",
+        deps=("assign_ni", "evalE_agree", "ite_high_ni"),
     ),
 )
 
