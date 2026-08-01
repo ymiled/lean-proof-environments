@@ -208,3 +208,59 @@ Recorded because the negative result constrains the design: any future version
 of this experiment must either raise per-rung difficulty or accept that the
 chain/antichain contrast only has power against policies that fail somewhere in
 k ∈ {2, 3}.
+
+## Result 2 — depth sweep, Sonnet 5, noninterference family
+
+28 tasks, one seed, two samples, one-shot with no compiler access.
+
+| depth | arm | lemmas to prove | pass | n |
+|---|---|---|---|---|
+| 1 | compositional | 1 | 1.00 | 10 |
+| 1 | monolithic | 1 | 1.00 | 10 |
+| 2 | compositional | 1 | 0.00 | 2 |
+| 2 | monolithic | 4 | 0.00 | 2 |
+| 3 | compositional | 1 | 0.00 | 2 |
+| 3 | monolithic | 7 | 0.00 | 2 |
+
+**A cliff between depth 1 and depth 2, in both arms.** And the decisive cell is
+compositional depth 2: that task is a *single* lemma with every ancestor
+supplied, and it still fails. So the failure is the intrinsic difficulty of
+`confinement`, not depth and not volume. Above depth 1 the policy fails
+regardless of condition, so the depth sweep cannot resolve anything there.
+
+### The binding constraint is difficulty calibration
+
+Put the two results together:
+
+| family | outcome |
+|---|---|
+| `arithmetic` | every cell 1.00 -- ceiling |
+| `noninterference` | depth 1 at 1.00, everything above at 0.00 -- floor |
+
+Neither family lands in the band where a policy *sometimes* succeeds, and that
+band is the only place a decay constant can be estimated. The two families
+bracket it without hitting it.
+
+This is the real obstacle to building a verification RL environment, and it is
+not the grader, the dependency DAG, or the renaming scheme -- all of which
+worked. It is that task difficulty must be tuned to sit where the policy is
+uncertain. A task that always passes and a task that always fails both yield
+zero gradient, which is precisely the sparse-reward failure Theorem argue
+against for unit tests. Dense signal is not a property of proof assistants; it
+is a property of a task distribution matched to a policy. Proof assistants make
+dense signal *possible*, not automatic.
+
+### Contamination found in the run harness
+
+Each policy agent was given a batch of related tasks, and batches spanned both
+conditions. The compositional prompt legitimately contains full reference proofs
+of the ancestors; the monolithic prompt does not. An agent that read both copied
+ancestor proofs from the compositional prompt into its monolithic answer -- the
+d3 agent reported doing exactly this, and the d2 agent likewise re-proved the
+supporting lemmas "verbatim from the prompt".
+
+Outcomes here are unaffected, since the contaminated cells scored 0.00 anyway
+and the clean cells scored 1.00. But the design is wrong and would corrupt any
+run that landed in the informative band: **each task must be answered by an
+independent policy instance with no memory of sibling tasks.** Prompts are also
+per-condition, so a single agent must never hold both.

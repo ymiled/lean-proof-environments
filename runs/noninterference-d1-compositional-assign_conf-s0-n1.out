@@ -1,0 +1,9 @@
+-- PROOF lem_aa90
+  intro y hy
+  simp only [graft, Bool.or_true, Bool.not_true, Bool.false_or] at hw
+  simp only [clasp]
+  by_cases h : y = x
+  · subst h
+    rw [hw] at hy
+    exact absurd hy (by decide)
+  · simp [h]

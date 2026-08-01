@@ -1,0 +1,3 @@
+-- PROOF lem_cc32
+  intro x hx
+  exact (h x hx).symm

@@ -1,0 +1,46 @@
+-- PROOF lem_2fc1
+  intro x _; rfl
+
+-- PROOF lem_aa90
+  simp [graft] at hw
+  intro y hy
+  have : y ≠ x := by
+    intro h; rw [h] at hy; rw [hw] at hy; exact Bool.noConfusion hy
+  simp [clasp, this]
+
+-- PROOF lem_0095
+  intro x hx; exact (h1 x hx).trans (h2 x hx)
+
+-- PROOF lem_7ce1
+  induction c with
+  | cusp => intro s _; exact lem_2fc1 G s
+  | root x e => intro s hw; exact lem_aa90 G s x e hw
+  | flint c d ihc ihd =>
+      intro s hw
+      have hw1 : graft G true c = true := by
+        cases hc : graft G true c with
+        | false => simp [graft, hc] at hw
+        | true => exact hc
+      have hw2 : graft G true d = true := by
+        cases hd : graft G true d with
+        | false => simp [graft, hd] at hw
+        | true => exact hd
+      simp only [hew]
+      exact lem_0095 G s (hew s c) (hew (hew s c) d) (ihc s hw1) (ihd (hew s c) hw2)
+  | base e c d ihc ihd =>
+      intro s hw
+      have hw1 : graft G true c = true := by
+        cases hc : graft G true c with
+        | false => simp [graft, hc] at hw
+        | true => exact hc
+      have hw2 : graft G true d = true := by
+        cases hd : graft G true d with
+        | false => simp [graft, hd] at hw
+        | true => exact hd
+      by_cases h : weave s e = 0
+      · simp only [hew]
+        rw [if_pos h]
+        exact ihd s hw2
+      · simp only [hew]
+        rw [if_neg h]
+        exact ihc s hw1

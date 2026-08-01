@@ -1,0 +1,7 @@
+-- PROOF lem_aa90
+  intro y hy
+  by_cases hxy : y = x
+  · subst hxy
+    simp [graft] at hw
+    simp [hw] at hy
+  · simp [clasp, hxy]
