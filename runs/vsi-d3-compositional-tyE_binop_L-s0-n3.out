@@ -1,0 +1,15 @@
+-- PROOF tyE_binop_L
+  suffices H : ∀ e t', TyE G sg e t' → e = .binop a b → t' = .base .L →
+      TyE G sg a (.base .L) ∧ TyE G sg b (.base .L) by
+    exact H _ _ h rfl rfl
+  intro e t' hty
+  induction hty with
+  | evar | int | call => intro he ht; cases he
+  | binop hta htb _ _ => intro he ht; cases he; cases ht; exact ⟨hta, htb⟩
+  | sub hty hsub ih =>
+    intro he ht
+    subst ht
+    obtain ⟨a', ha', hab⟩ := sub_base_inv hsub
+    cases a' with
+    | L => exact ih he ha'
+    | H => exact absurd hab (by decide)

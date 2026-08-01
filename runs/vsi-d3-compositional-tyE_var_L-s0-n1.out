@@ -1,0 +1,30 @@
+-- PROOF tyE_var_L
+  suffices H : ∀ e ty, TyE G sg e ty → e = Exp.evar x → ty = Ty.base Lvl.L →
+      G x = Ty.tvar Lvl.L by
+    exact H _ _ h rfl rfl
+  intro e ty h
+  induction h with
+  | evar heq =>
+      intro he ht
+      injection he with hxeq
+      injection ht with hteq
+      subst hxeq
+      subst hteq
+      exact heq
+  | int =>
+      intro he ht
+      cases he
+  | binop _ _ _ _ =>
+      intro he ht
+      cases he
+  | call _ _ _ =>
+      intro he ht
+      cases he
+  | sub h1 ih1 hsub =>
+      intro he hty
+      subst he
+      subst hty
+      obtain ⟨a', hta, hab⟩ := sub_base_inv hsub
+      cases a' with
+      | L => exact ih1 rfl hta
+      | H => simp [Lvl.le] at hab

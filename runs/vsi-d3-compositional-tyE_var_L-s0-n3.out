@@ -1,0 +1,14 @@
+-- PROOF tyE_var_L
+  suffices H : ∀ e t', TyE G sg e t' → e = .evar x → t' = .base .L → G x = .tvar .L by
+    exact H _ _ h rfl rfl
+  intro e t' hty
+  induction hty with
+  | evar hx => intro he ht; cases he; cases ht; exact hx
+  | int | binop | call => intro he ht; cases he
+  | sub hty hsub ih =>
+    intro he ht
+    subst ht
+    obtain ⟨a, ha, hab⟩ := sub_base_inv hsub
+    cases a with
+    | L => exact ih he ha
+    | H => exact absurd hab (by decide)
