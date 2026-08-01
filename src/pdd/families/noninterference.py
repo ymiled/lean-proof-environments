@@ -145,6 +145,64 @@ RUNGS = (
               "    intro h; rw [h] at hy; rw [hw] at hy; exact Bool.noConfusion hy\n"
               "  simp [{upd}, this]",
     ),
+    # --- maximal rungs -------------------------------------------------
+    # Nothing depends on these, and neither depends on the other. Before they
+    # existed this family had exactly one maximal rung -- the top theorem --
+    # which made it a funnel: withheld sets must be up-closed, so withholding
+    # any lemma dragged in everything above it, and no antichain of size two
+    # could be formed at any k. The chain/antichain contrast was therefore
+    # structurally impossible here, not merely underpowered.
+    Rung(
+        key="upd_pair",
+        role="public agreement survives a common update",
+        binders="(G : {Ctx}) (s t : {St}) (x v : Nat) (h : {lowEq} G s t)",
+        statement="{lowEq} G ({upd} s x v) ({upd} t x v)",
+        proof="  intro y hy\n"
+              "  by_cases hyx : y = x\n"
+              "  · simp [{upd}, hyx]\n"
+              "  · simp [{upd}, hyx]; exact h y hy",
+    ),
+    Rung(
+        key="wt_anti",
+        role="typing is antitone in the program-counter level",
+        binders="(G : {Ctx}) (c : {Com})",
+        statement="{wt} G true c = true → {wt} G false c = true",
+        proof="  induction c with\n"
+              "  | {cskip} => intro _; rfl\n"
+              "  | {cassign} x e =>\n"
+              "    intro hw\n"
+              "    simp [{wt}] at hw\n"
+              "    simp [{wt}, hw]\n"
+              "  | {cseq} c d ihc ihd =>\n"
+              "    intro hw\n"
+              "    simp [{wt}, Bool.and_eq_true] at hw\n"
+              "    simp [{wt}, Bool.and_eq_true]\n"
+              "    exact ⟨ihc hw.1, ihd hw.2⟩\n"
+              "  | {cite} e c d ihc ihd =>\n"
+              "    intro hw\n"
+              "    simp [{wt}, Bool.and_eq_true] at hw\n"
+              "    simp [{wt}, Bool.and_eq_true]\n"
+              "    cases hl : {lvl} G e with\n"
+              "    | true => exact hw\n"
+              "    | false => exact ⟨ihc hw.1, ihd hw.2⟩",
+    ),
+    # --- intermediate rung ---------------------------------------------
+    # Isolates the conditional step of confinement. It exists to soften the
+    # family's difficulty cliff: reference proof lengths ran 1, 1, 1, 5, 6 at
+    # depth 1 and then jumped straight to 13 at `confinement` and 37 at the top
+    # theorem, so a policy either cleared everything up to 6 lines or nothing at
+    # all, and no cell in between could be observed.
+    Rung(
+        key="conf_ite",
+        role="conditional step of confinement",
+        binders="(G : {Ctx}) (e : {Exp}) (c d : {Com}) (s : {St}) "
+                "(hc : {lowEq} G s ({evalC} s c)) "
+                "(hd : {lowEq} G s ({evalC} s d))",
+        statement="{lowEq} G s ({evalC} s (.{cite} e c d))",
+        proof="  by_cases hz : {evalE} s e = 0\n"
+              "  · simp [{evalC}, hz]; exact hd\n"
+              "  · simp [{evalC}, hz]; exact hc",
+    ),
     Rung(
         key="confinement",
         role="secret-context code leaves the public projection fixed",
@@ -160,10 +218,8 @@ RUNGS = (
               "  | {cite} e c d ihc ihd =>\n"
               "    intro s hw\n"
               "    simp [{wt}, Bool.and_eq_true] at hw\n"
-              "    by_cases hg : {evalE} s e = 0\n"
-              "    · simp [{evalC}, hg]; exact ihd s hw.2\n"
-              "    · simp [{evalC}, hg]; exact ihc s hw.1",
-        deps=("lowEq_refl", "assign_conf", "lowEq_trans"),
+              "    exact {conf_ite} G e c d s (ihc s hw.1) (ihd s hw.2)",
+        deps=("lowEq_refl", "assign_conf", "lowEq_trans", "conf_ite"),
     ),
     Rung(
         key="noninterference",
