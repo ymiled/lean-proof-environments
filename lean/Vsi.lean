@@ -573,3 +573,212 @@ theorem noninterference {G : Ctx} {sg : Sig} {ft : FTable} :
       exact ihc hnc s t s' t' hst hs ht
 
 #print axioms noninterference
+
+/-- Inversion for a call at `base L`. Subsumption cannot have widened the
+    result level, since `SubTy (base H) (base L)` is impossible, so the
+    function's declared result level must already be `L`. -/
+theorem tyE_call_L {G : Ctx} {sg : Sig} {f : Nat} {a : Exp}
+    (h : TyE G sg (.call f a) (.base .L)) :
+    sg f = some (.L, .L) ∧ TyE G sg a (.base .L) := by
+  suffices H : ∀ (eb : Exp) (tl : Ty), TyE G sg eb tl →
+      eb = .call f a → tl = .base .L →
+      sg f = some (.L, .L) ∧ TyE G sg a (.base .L) from H _ _ h rfl rfl
+  intro eb tl hh
+  induction hh with
+  | evar => intro heq _; cases heq
+  | int => intro heq _; cases heq
+  | binop => intro heq _; cases heq
+  | @call f' e' t2 hsig hte =>
+    intro heq hteq
+    cases heq
+    cases hteq
+    exact ⟨hsig, hte⟩
+  | sub _ hsub ih =>
+    intro heq hteq
+    subst hteq
+    obtain ⟨c, hta, hle⟩ := sub_base_inv hsub
+    cases c with
+    | L => exact ih heq hta
+    | H => simp [Lvl.le] at hle
+
+/-- Well-formed function table: every declared signature is backed by a function
+    whose parameter and return variable carry the declared levels, and whose
+    body is well-typed. -/
+structure FTOk (G : Ctx) (sg : Sig) (ft : FTable) : Prop where
+  sig : ∀ f t1 t2, sg f = some (t1, t2) →
+    ∃ fn ty, ft f = some fn ∧ G fn.param = .tvar t1 ∧ G fn.retv = .tvar t2 ∧
+      TyC G sg fn.body ty
+
+/-- **Noninterference, full system.** Expression agreement and command
+    noninterference proved together by induction on fuel.
+
+    They must be simultaneous: a function call inside an expression runs a
+    command, and a command's assignment evaluates an expression, so neither
+    statement can be established before the other. Fuel is what breaks the
+    circularity, since at fuel `k+1` every recursive use is at fuel `k`.
+
+    Termination-insensitive: both runs are assumed to finish at the same fuel. -/
+theorem agree {G : Ctx} {sg : Sig} {ft : FTable} (hft : FTOk G sg ft) :
+    ∀ (k : Nat),
+      (∀ (e : Exp), TyE G sg e (.base .L) → ∀ (s t : St) (v w : Nat),
+          lowEq G s t → evalE ft k s e = some v → evalE ft k t e = some w → v = w)
+    ∧ (∀ (c : Com) (ty : Ty), TyC G sg c ty → ∀ (s t s' t' : St),
+          lowEq G s t → evalC ft k s c = some s' → evalC ft k t c = some t' →
+          lowEq G s' t') := by
+  intro k
+  induction k with
+  | zero =>
+    constructor
+    · intro e _ s t v w _ hv _; simp [evalE] at hv
+    · intro c ty _ s t s' t' _ hs _; simp [evalC] at hs
+  | succ m ih =>
+    constructor
+    · -- Expression agreement at fuel m+1.
+      intro e hty s t v w hst hv hw
+      cases e with
+      | int n => simp [evalE] at hv hw; omega
+      | evar x =>
+        simp [evalE] at hv hw
+        have := hst x (tyE_var_L hty)
+        omega
+      | binop a b =>
+        obtain ⟨hta, htb⟩ := tyE_binop_L hty
+        simp [evalE, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨va, hva, vb, hvb, hveq⟩ := hv
+        obtain ⟨wa, hwa, wb, hwb, hweq⟩ := hw
+        have e1 := ih.1 a hta s t va wa hst hva hwa
+        have e2 := ih.1 b htb s t vb wb hst hvb hwb
+        omega
+      | call f a =>
+        obtain ⟨hsig, hta⟩ := tyE_call_L hty
+        obtain ⟨fn, ty, hfn, hpar, hret, hbody⟩ := hft.sig f .L .L hsig
+        simp [evalE, hfn, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨va, hva, s2, hs2, hveq⟩ := hv
+        obtain ⟨wa, hwa, t2, ht2, hweq⟩ := hw
+        have hargs := ih.1 a hta s t va wa hst hva hwa
+        subst hargs
+        -- Binding the same argument value preserves public agreement.
+        have hbind : lowEq G (upd s fn.param va) (upd t fn.param va) := by
+          intro y hy
+          by_cases hyx : y = fn.param
+          · simp [upd, hyx]
+          · simp [upd, hyx]; exact hst y hy
+        have hfin := ih.2 fn.body ty hbody _ _ s2 t2 hbind hs2 ht2
+        subst hveq; subst hweq
+        exact hfin fn.retv hret
+    · -- Command noninterference at fuel m+1.
+      intro c ty hty
+      induction hty with
+      | skip =>
+        intro s t s' t' hst hs ht
+        simp [evalC] at hs ht; subst hs; subst ht; exact hst
+      | @assign x e lv hx hte =>
+        intro s t s' t' hst hs ht
+        simp [evalC, Option.bind_eq_some_iff] at hs ht
+        obtain ⟨v, hv, hs'⟩ := hs
+        obtain ⟨w, hw, ht'⟩ := ht
+        subst hs'; subst ht'
+        intro y hy
+        by_cases hyx : y = x
+        · subst hyx
+          rw [hx] at hy
+          have hlv : lv = .L := by cases lv with | L => rfl | H => simp at hy
+          subst hlv
+          have := ih.1 e hte s t v w hst hv hw
+          simp [upd, this]
+        · simp [upd, hyx]; exact hst y hy
+      | @iteHH e c d he hc hd _ _ =>
+        intro s t s' t' hst hs ht
+        have cs : lowEq G s s' := by
+          simp [evalC, Option.bind_eq_some_iff] at hs
+          obtain ⟨v, _, hbr⟩ := hs
+          by_cases hz : v = 0
+          · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) s s' hbr
+          · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) s s' hbr
+        have ct : lowEq G t t' := by
+          simp [evalC, Option.bind_eq_some_iff] at ht
+          obtain ⟨v, _, hbr⟩ := ht
+          by_cases hz : v = 0
+          · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) t t' hbr
+          · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) t t' hbr
+        exact lowEq_trans (lowEq_trans (lowEq_symm cs) hst) ct
+      | @iteL e c d a b he hc hd _ _ =>
+        intro s t s' t' hst hs ht
+        simp [evalC, Option.bind_eq_some_iff] at hs ht
+        obtain ⟨v, hv, hbs⟩ := hs
+        obtain ⟨w, hw, hbt⟩ := ht
+        have hvw := ih.1 e he s t v w hst hv hw
+        subst hvw
+        by_cases hz : v = 0
+        · simp [hz] at hbs hbt; exact ih.2 d _ hd s t s' t' hst hbs hbt
+        · simp [hz] at hbs hbt; exact ih.2 c _ hc s t s' t' hst hbs hbt
+      | @iteN e c d lv n he hc hd _ _ =>
+        intro s t s' t' hst hs ht
+        cases lv with
+        | H =>
+          have cs : lowEq G s s' := by
+            simp [evalC, Option.bind_eq_some_iff] at hs
+            obtain ⟨v, _, hbr⟩ := hs
+            by_cases hz : v = 0
+            · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) s s' hbr
+            · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) s s' hbr
+          have ct : lowEq G t t' := by
+            simp [evalC, Option.bind_eq_some_iff] at ht
+            obtain ⟨v, _, hbr⟩ := ht
+            by_cases hz : v = 0
+            · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) t t' hbr
+            · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) t t' hbr
+          exact lowEq_trans (lowEq_trans (lowEq_symm cs) hst) ct
+        | L =>
+          simp [evalC, Option.bind_eq_some_iff] at hs ht
+          obtain ⟨v, hv, hbs⟩ := hs
+          obtain ⟨w, hw, hbt⟩ := ht
+          have hvw := ih.1 e he s t v w hst hv hw
+          subst hvw
+          by_cases hz : v = 0
+          · simp [hz] at hbs hbt; exact ih.2 d _ hd s t s' t' hst hbs hbt
+          · simp [hz] at hbs hbt; exact ih.2 c _ hc s t s' t' hst hbs hbt
+      | @whHH e c he hc _ =>
+        intro s t s' t' hst hs ht
+        have cs := confinement (m+1) (.wh e c) _ (TyC.whHH he hc) (by simp [secure]) s s' hs
+        have ct := confinement (m+1) (.wh e c) _ (TyC.whHH he hc) (by simp [secure]) t t' ht
+        exact lowEq_trans (lowEq_trans (lowEq_symm cs) hst) ct
+      | @whL e c a b he hc hle _ =>
+        intro s t s' t' hst hs ht
+        simp [evalC, Option.bind_eq_some_iff] at hs ht
+        obtain ⟨v, hv, hbs⟩ := hs
+        obtain ⟨w, hw, hbt⟩ := ht
+        have hvw := ih.1 e he s t v w hst hv hw
+        subst hvw
+        by_cases hz : v = 0
+        · simp [hz] at hbs hbt; subst hbs; subst hbt; exact hst
+        · simp [hz, Option.bind_eq_some_iff] at hbs hbt
+          obtain ⟨u, hu, hls⟩ := hbs
+          obtain ⟨u', hu', hlt⟩ := hbt
+          have hmid := ih.2 c _ hc s t u u' hst hu hu'
+          exact ih.2 (.wh e c) _ (TyC.whL he hc hle) u u' s' t' hmid hls hlt
+      | @seqH c d lv hc hd _ _ =>
+        intro s t s' t' hst hs ht
+        simp [evalC, Option.bind_eq_some_iff] at hs ht
+        obtain ⟨u, hu, hds⟩ := hs
+        obtain ⟨u', hu', hdt⟩ := ht
+        exact ih.2 d _ hd u u' s' t' (ih.2 c _ hc s t u u' hst hu hu') hds hdt
+      | @seqL c d a b hc hd _ _ =>
+        intro s t s' t' hst hs ht
+        simp [evalC, Option.bind_eq_some_iff] at hs ht
+        obtain ⟨u, hu, hds⟩ := hs
+        obtain ⟨u', hu', hdt⟩ := ht
+        exact ih.2 d _ hd u u' s' t' (ih.2 c _ hc s t u u' hst hu hu') hds hdt
+      | @sub c t0 t1 hty0 hsub ihc =>
+        intro s t s' t' hst hs ht
+        exact ihc s t s' t' hst hs ht
+
+/-- The soundness theorem, in the form the original paper states it. -/
+theorem noninterference_full {G : Ctx} {sg : Sig} {ft : FTable}
+    (hft : FTOk G sg ft) {k : Nat} {c : Com} {ty : Ty}
+    (hty : TyC G sg c ty) {s t s' t' : St} (hst : lowEq G s t)
+    (hs : evalC ft k s c = some s') (ht : evalC ft k t c = some t') :
+    lowEq G s' t' :=
+  (agree hft k).2 c ty hty s t s' t' hst hs ht
+
+#print axioms noninterference_full
