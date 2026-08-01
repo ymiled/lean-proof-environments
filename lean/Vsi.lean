@@ -307,3 +307,120 @@ theorem evalE_agree_nocall {G : Ctx} {sg : Sig} {ft : FTable} {s t : St}
   | call f a _ => intro hnc; simp [noCall] at hnc
 
 #print axioms evalE_agree_nocall
+
+/-- "This type guarantees the command only writes secret variables."
+
+    `func` is `True` only because `SubTy.funcNcmd` lets any function type
+    subtype into any `ncmd`; no `TyC` rule ever produces a function type, so a
+    command can never actually carry one. -/
+def secure : Ty → Prop
+  | .cmd a _ => a = .H
+  | .ncmd a _ => a = .H
+  | .func _ _ => True
+  | _ => False
+
+/-- Security is preserved *downwards* through subtyping, because `cmd` and
+    `ncmd` are contravariant in the level that matters. -/
+theorem secure_sub {t t' : Ty} (h : SubTy t t') (hs : secure t') : secure t := by
+  induction h with
+  | refl => exact hs
+  | base => exact hs.elim
+  | @cmd a b a' b' ha _ =>
+    simp only [secure] at hs ⊢
+    subst hs; cases a <;> simp [Lvl.le] at ha ⊢
+  | @ncmd a a' n ha =>
+    simp only [secure] at hs ⊢
+    subst hs; cases a <;> simp [Lvl.le] at ha ⊢
+  | @ncmdCmd a n => simp only [secure] at hs ⊢; exact hs
+  | funcNcmd => trivial
+  | func => trivial
+  | trans _ _ ih1 ih2 => exact ih1 (ih2 hs)
+
+/-- **Confinement.** A command whose type guarantees it writes only secret
+    variables leaves the public projection of the state unchanged.
+
+    Induction is on *fuel* first and the typing derivation second. The `while`
+    case is why: at fuel `k+1` it runs the body at fuel `k` and then the loop
+    again at fuel `k`, so the induction hypothesis must range over all commands
+    at smaller fuel, which induction on the derivation alone does not give. -/
+theorem confinement {G : Ctx} {sg : Sig} {ft : FTable} :
+    ∀ (k : Nat) (c : Com) (ty : Ty), TyC G sg c ty → secure ty →
+      ∀ (s s' : St), evalC ft k s c = some s' → lowEq G s s' := by
+  intro k
+  induction k with
+  | zero => intro c ty _ _ s s' hev; simp [evalC] at hev
+  | succ m ih =>
+    intro c ty hty
+    induction hty with
+    | skip => intro _ s s' hev; simp [evalC] at hev; subst hev; exact lowEq_refl G s
+    | @assign x e t hx _ =>
+      intro hs s s' hev
+      simp only [secure] at hs; subst hs
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨v, _, hs'⟩ := hev
+      subst hs'
+      intro y hy
+      have hyx : y ≠ x := by
+        intro hcon; rw [hcon, hx] at hy; exact absurd hy (by simp)
+      simp [upd, hyx]
+    | @iteHH e c d _ _ _ ihc ihd =>
+      intro hs s s' hev
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨v, _, hbr⟩ := hev
+      by_cases hz : v = 0
+      · simp [hz] at hbr; exact ih d _ (by assumption) hs s s' hbr
+      · simp [hz] at hbr; exact ih c _ (by assumption) hs s s' hbr
+    | @iteL e c d a b _ _ _ ihc ihd =>
+      intro hs s s' hev
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨v, _, hbr⟩ := hev
+      by_cases hz : v = 0
+      · simp [hz] at hbr; exact ih d _ (by assumption) hs s s' hbr
+      · simp [hz] at hbr; exact ih c _ (by assumption) hs s s' hbr
+    | @iteN e c d t n _ _ _ ihc ihd =>
+      intro hs s s' hev
+      simp only [secure] at hs; subst hs
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨v, _, hbr⟩ := hev
+      by_cases hz : v = 0
+      · simp [hz] at hbr; exact ih d _ (by assumption) (by simp [secure]) s s' hbr
+      · simp [hz] at hbr; exact ih c _ (by assumption) (by simp [secure]) s s' hbr
+    | @whHH e c he hc _ =>
+      intro hs s s' hev
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨v, _, hbr⟩ := hev
+      by_cases hz : v = 0
+      · simp [hz] at hbr; subst hbr; exact lowEq_refl G s
+      · simp [hz, Option.bind_eq_some_iff] at hbr
+        obtain ⟨u, hu, hloop⟩ := hbr
+        -- The loop's own derivation is rebuilt, since induction on the
+        -- derivation consumed it and the recursive call needs it back.
+        exact lowEq_trans (ih c _ hc hs s u hu)
+          (ih (.wh e c) _ (TyC.whHH he hc) hs u s' hloop)
+    | @whL e c a b he hc hle _ =>
+      intro hs s s' hev
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨v, _, hbr⟩ := hev
+      by_cases hz : v = 0
+      · simp [hz] at hbr; subst hbr; exact lowEq_refl G s
+      · simp [hz, Option.bind_eq_some_iff] at hbr
+        obtain ⟨u, hu, hloop⟩ := hbr
+        exact lowEq_trans (ih c _ hc hs s u hu)
+          (ih (.wh e c) _ (TyC.whL he hc hle) hs u s' hloop)
+    | @seqH c d t _ _ ihc ihd =>
+      intro hs s s' hev
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨u, hu, hd⟩ := hev
+      exact lowEq_trans (ih c _ (by assumption) hs s u hu)
+        (ih d _ (by assumption) (by simp [secure]) u s' hd)
+    | @seqL c d a b _ _ ihc ihd =>
+      intro hs s s' hev
+      simp [evalC, Option.bind_eq_some_iff] at hev
+      obtain ⟨u, hu, hd⟩ := hev
+      exact lowEq_trans (ih c _ (by assumption) (by simp only [secure] at hs ⊢; exact hs) s u hu)
+        (ih d _ (by assumption) hs u s' hd)
+    | @sub c t t' _ hsub ihc =>
+      intro hs s s' hev
+      exact ihc (secure_sub hsub hs) s s' hev
+
+#print axioms confinement
