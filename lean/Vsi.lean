@@ -114,62 +114,62 @@ inductive SubTy : Ty → Ty → Prop where
 /-- Declared signatures for the function table: `f ↦ (τ1, τ2)`. -/
 abbrev Sig := Nat → Option (Lvl × Lvl)
 
-mutual
-  /-- Expression typing. Transcribed from `check_type`'s expression cases. -/
-  inductive TyE : Ctx → Sig → Exp → Ty → Prop where
-    | evar {G : Ctx} {sg : Sig} {x : Nat} {t : Lvl} :
-        G x = .tvar t → TyE G sg (.evar x) (.base t)
-    | int {G : Ctx} {sg : Sig} {n : Nat} :
-        TyE G sg (.int n) (.base .L)
-    | binop {G : Ctx} {sg : Sig} {a b : Exp} {t : Lvl} :
-        TyE G sg a (.base t) → TyE G sg b (.base t) →
-        TyE G sg (.binop a b) (.base t)
+/-- Expression typing. Transcribed from `check_type`'s expression cases.
+    Not mutual with `TyC`: expression typing never refers to command typing,
+    and keeping them separate is what makes `induction` usable on `TyE`. -/
+inductive TyE : Ctx → Sig → Exp → Ty → Prop where
+  | evar {G : Ctx} {sg : Sig} {x : Nat} {t : Lvl} :
+      G x = .tvar t → TyE G sg (.evar x) (.base t)
+  | int {G : Ctx} {sg : Sig} {n : Nat} :
+      TyE G sg (.int n) (.base .L)
+  | binop {G : Ctx} {sg : Sig} {a b : Exp} {t : Lvl} :
+      TyE G sg a (.base t) → TyE G sg b (.base t) →
+      TyE G sg (.binop a b) (.base t)
     -- FuncNonVoidCallDeriv restricts the parameter level to L.
-    | call {G : Ctx} {sg : Sig} {f : Nat} {e : Exp} {t2 : Lvl} :
-        sg f = some (.L, t2) → TyE G sg e (.base .L) →
-        TyE G sg (.call f e) (.base t2)
-    | sub {G : Ctx} {sg : Sig} {e : Exp} {t t' : Ty} :
-        TyE G sg e t → SubTy t t' → TyE G sg e t'
+  | call {G : Ctx} {sg : Sig} {f : Nat} {e : Exp} {t2 : Lvl} :
+      sg f = some (.L, t2) → TyE G sg e (.base .L) →
+      TyE G sg (.call f e) (.base t2)
+  | sub {G : Ctx} {sg : Sig} {e : Exp} {t t' : Ty} :
+      TyE G sg e t → SubTy t t' → TyE G sg e t'
 
-  /-- Command typing. Transcribed from the command cases of `check_type`. -/
-  inductive TyC : Ctx → Sig → Com → Ty → Prop where
-    | skip {G : Ctx} {sg : Sig} :
-        TyC G sg .skip (.ncmd .H 1)
-    | assign {G : Ctx} {sg : Sig} {x : Nat} {e : Exp} {t : Lvl} :
-        G x = .tvar t → TyE G sg e (.base t) →
-        TyC G sg (.assign x e) (.ncmd t 1)
+/-- Command typing. Transcribed from the command cases of `check_type`. -/
+inductive TyC : Ctx → Sig → Com → Ty → Prop where
+  | skip {G : Ctx} {sg : Sig} :
+      TyC G sg .skip (.ncmd .H 1)
+  | assign {G : Ctx} {sg : Sig} {x : Nat} {e : Exp} {t : Lvl} :
+      G x = .tvar t → TyE G sg e (.base t) →
+      TyC G sg (.assign x e) (.ncmd t 1)
     -- IfDeriv, Cmd(H,H): the guard may be secret.
-    | iteHH {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} :
-        TyE G sg e (.base .H) →
-        TyC G sg c (.cmd .H .H) → TyC G sg d (.cmd .H .H) →
-        TyC G sg (.ite e c d) (.cmd .H .H)
+  | iteHH {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} :
+      TyE G sg e (.base .H) →
+      TyC G sg c (.cmd .H .H) → TyC G sg d (.cmd .H .H) →
+      TyC G sg (.ite e c d) (.cmd .H .H)
     -- IfDeriv, general Cmd: the guard must be public.
-    | iteL {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} {a b : Lvl} :
-        TyE G sg e (.base .L) →
-        TyC G sg c (.cmd a b) → TyC G sg d (.cmd a b) →
-        TyC G sg (.ite e c d) (.cmd a b)
+  | iteL {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} {a b : Lvl} :
+      TyE G sg e (.base .L) →
+      TyC G sg c (.cmd a b) → TyC G sg d (.cmd a b) →
+      TyC G sg (.ite e c d) (.cmd a b)
     -- IfDeriv, Ncmd: nesting depth decreases in the branches.
-    | iteN {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} {t : Lvl} {n : Nat} :
-        TyE G sg e (.base t) →
-        TyC G sg c (.ncmd t n) → TyC G sg d (.ncmd t n) →
-        TyC G sg (.ite e c d) (.ncmd t (n + 1))
-    | whHH {G : Ctx} {sg : Sig} {e : Exp} {c : Com} :
-        TyE G sg e (.base .H) → TyC G sg c (.cmd .H .H) →
-        TyC G sg (.wh e c) (.cmd .H .H)
-    | whL {G : Ctx} {sg : Sig} {e : Exp} {c : Com} {a b : Lvl} :
-        TyE G sg e (.base .L) → TyC G sg c (.cmd a b) → a.le b = true →
-        TyC G sg (.wh e c) (.cmd a b)
+  | iteN {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} {t : Lvl} {n : Nat} :
+      TyE G sg e (.base t) →
+      TyC G sg c (.ncmd t n) → TyC G sg d (.ncmd t n) →
+      TyC G sg (.ite e c d) (.ncmd t (n + 1))
+  | whHH {G : Ctx} {sg : Sig} {e : Exp} {c : Com} :
+      TyE G sg e (.base .H) → TyC G sg c (.cmd .H .H) →
+      TyC G sg (.wh e c) (.cmd .H .H)
+  | whL {G : Ctx} {sg : Sig} {e : Exp} {c : Com} {a b : Lvl} :
+      TyE G sg e (.base .L) → TyC G sg c (.cmd a b) → a.le b = true →
+      TyC G sg (.wh e c) (.cmd a b)
     -- SeqDeriv, Cmd(τ,H).
-    | seqH {G : Ctx} {sg : Sig} {c d : Com} {t : Lvl} :
-        TyC G sg c (.cmd t .H) → TyC G sg d (.cmd .H .H) →
-        TyC G sg (.seq c d) (.cmd t .H)
+  | seqH {G : Ctx} {sg : Sig} {c d : Com} {t : Lvl} :
+      TyC G sg c (.cmd t .H) → TyC G sg d (.cmd .H .H) →
+      TyC G sg (.seq c d) (.cmd t .H)
     -- SeqDeriv, general.
-    | seqL {G : Ctx} {sg : Sig} {c d : Com} {a b : Lvl} :
-        TyC G sg c (.cmd a .L) → TyC G sg d (.cmd a b) →
-        TyC G sg (.seq c d) (.cmd a b)
-    | sub {G : Ctx} {sg : Sig} {c : Com} {t t' : Ty} :
-        TyC G sg c t → SubTy t t' → TyC G sg c t'
-end
+  | seqL {G : Ctx} {sg : Sig} {c d : Com} {a b : Lvl} :
+      TyC G sg c (.cmd a .L) → TyC G sg d (.cmd a b) →
+      TyC G sg (.seq c d) (.cmd a b)
+  | sub {G : Ctx} {sg : Sig} {c : Com} {t t' : Ty} :
+      TyC G sg c t → SubTy t t' → TyC G sg c t'
 
 /-- Public agreement: the attacker reads only variables typed `Var L`. -/
 def lowEq (G : Ctx) (s t : St) : Prop := ∀ x, G x = .tvar .L → s x = t x
@@ -213,3 +213,97 @@ theorem sub_base_inv {t : Ty} {b : Lvl} (h : SubTy t (.base b)) :
     exact ⟨a, hx, Lvl.le_trans ha ha'⟩
 
 #print axioms sub_base_inv
+
+/-- Inversion at `base L`: subsumption cannot have widened the level, because
+    `sub_base_inv` forces the source level `a` to satisfy `a.le L`, and only
+    `L` does. This is the pattern every inversion below follows. -/
+theorem tyE_var_L {G : Ctx} {sg : Sig} {x : Nat}
+    (h : TyE G sg (.evar x) (.base .L)) : G x = .tvar .L := by
+  generalize he : Exp.evar x = ex at h
+  generalize ht : Ty.base Lvl.L = tl at h
+  induction h with
+  | evar hg => cases he; cases ht; exact hg
+  | int => cases he
+  | binop => cases he
+  | call => cases he
+  | sub _ hsub ih =>
+    obtain ⟨a, hta, hle⟩ := sub_base_inv (ht ▸ hsub)
+    cases a with
+    | L => exact ih he hta.symm
+    | H => simp [Lvl.le] at hle
+
+#print axioms tyE_var_L
+
+/-- Inversion for `binop` at `base L`. The typing rule types both operands at
+    the *same* level, so a public sum has two public operands.
+
+    Stated with the index equations as explicit hypotheses rather than via
+    `generalize ... at h`. The latter also rewrites the goal, which breaks the
+    `sub` case whenever the conclusion mentions the type being inverted. -/
+theorem tyE_binop_L {G : Ctx} {sg : Sig} {a b : Exp}
+    (h : TyE G sg (.binop a b) (.base .L)) :
+    TyE G sg a (.base .L) ∧ TyE G sg b (.base .L) := by
+  suffices H : ∀ (eb : Exp) (tl : Ty), TyE G sg eb tl →
+      eb = .binop a b → tl = .base .L →
+      TyE G sg a (.base .L) ∧ TyE G sg b (.base .L) from H _ _ h rfl rfl
+  intro eb tl hh
+  induction hh with
+  | evar => intro heq _; cases heq
+  | int => intro heq _; cases heq
+  | binop ha hb => intro heq hteq; cases heq; cases hteq; exact ⟨ha, hb⟩
+  | call => intro heq _; cases heq
+  | sub _ hsub ih =>
+    intro heq hteq
+    subst hteq
+    obtain ⟨c, hta, hle⟩ := sub_base_inv hsub
+    cases c with
+    | L => exact ih heq hta
+    | H => simp [Lvl.le] at hle
+
+/-- Expressions containing no function call. The call case of agreement needs
+    the whole command-level argument, so it is separated out. -/
+def noCall : Exp → Bool
+  | .int _ => true
+  | .evar _ => true
+  | .binop a b => noCall a && noCall b
+  | .call _ _ => false
+
+/-- Public call-free expressions evaluate alike in agreeing states.
+    Termination-insensitive: both runs are assumed to have produced a value at
+    the same fuel. -/
+theorem evalE_agree_nocall {G : Ctx} {sg : Sig} {ft : FTable} {s t : St}
+    (hst : lowEq G s t) :
+    ∀ (e : Exp), noCall e = true → TyE G sg e (.base .L) →
+      ∀ (k : Nat) (v w : Nat),
+        evalE ft k s e = some v → evalE ft k t e = some w → v = w := by
+  intro e
+  induction e with
+  | int n =>
+    intro _ _ k v w hv hw
+    cases k with
+    | zero => simp [evalE] at hv
+    | succ m => simp [evalE] at hv hw; omega
+  | evar x =>
+    intro _ hty k v w hv hw
+    cases k with
+    | zero => simp [evalE] at hv
+    | succ m =>
+      simp [evalE] at hv hw
+      have := hst x (tyE_var_L hty)
+      omega
+  | binop a b iha ihb =>
+    intro hnc hty k v w hv hw
+    cases k with
+    | zero => simp [evalE] at hv
+    | succ m =>
+      simp [noCall, Bool.and_eq_true] at hnc
+      obtain ⟨hta, htb⟩ := tyE_binop_L hty
+      simp [evalE, Option.bind_eq_some_iff] at hv hw
+      obtain ⟨va, hva, vb, hvb, hveq⟩ := hv
+      obtain ⟨wa, hwa, wb, hwb, hweq⟩ := hw
+      have e1 := iha hnc.1 hta m va wa hva hwa
+      have e2 := ihb hnc.2 htb m vb wb hvb hwb
+      omega
+  | call f a _ => intro hnc; simp [noCall] at hnc
+
+#print axioms evalE_agree_nocall
