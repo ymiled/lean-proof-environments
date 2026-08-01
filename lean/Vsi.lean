@@ -424,3 +424,152 @@ theorem confinement {G : Ctx} {sg : Sig} {ft : FTable} :
       exact ihc (secure_sub hsub hs) s s' hev
 
 #print axioms confinement
+
+/-- Commands whose expressions contain no function call. -/
+def noCallC : Com → Bool
+  | .skip => true
+  | .assign _ e => noCall e
+  | .seq c d => noCallC c && noCallC d
+  | .ite e c d => noCall e && noCallC c && noCallC d
+  | .wh e c => noCall e && noCallC c
+
+/-- **Noninterference.** A well-typed command run from two states that agree on
+    public variables yields two states that still agree on public variables.
+
+    Termination-insensitive: both runs are assumed to finish at the same fuel.
+    No condition on the command's type is needed beyond being well-typed, since
+    every typing rule already enforces the discipline that makes it safe.
+
+    The secret-guard cases are where confinement is used: the two runs may take
+    different branches, or loop a different number of times, so no induction
+    hypothesis relates them. Instead each run separately leaves the public
+    projection fixed, and the two facts are glued to the assumption. -/
+theorem noninterference {G : Ctx} {sg : Sig} {ft : FTable} :
+    ∀ (k : Nat) (c : Com) (ty : Ty), TyC G sg c ty → noCallC c = true →
+      ∀ (s t s' t' : St), lowEq G s t →
+        evalC ft k s c = some s' → evalC ft k t c = some t' → lowEq G s' t' := by
+  intro k
+  induction k with
+  | zero => intro c ty _ _ s t s' t' _ hev; simp [evalC] at hev
+  | succ m ih =>
+    intro c ty hty
+    induction hty with
+    | skip =>
+      intro _ s t s' t' hst hs ht
+      simp [evalC] at hs ht; subst hs; subst ht; exact hst
+    | @assign x e lv hx hte =>
+      intro hnc s t s' t' hst hs ht
+      simp [evalC, Option.bind_eq_some_iff] at hs ht
+      obtain ⟨v, hv, hs'⟩ := hs
+      obtain ⟨w, hw, ht'⟩ := ht
+      subst hs'; subst ht'
+      intro y hy
+      by_cases hyx : y = x
+      · subst hyx
+        rw [hx] at hy
+        -- `hy` says the target is public, so typing forced the expression public.
+        have hlv : lv = .L := by
+          cases lv with
+          | L => rfl
+          | H => simp at hy
+        subst hlv
+        have := evalE_agree_nocall hst e (by simpa [noCallC] using hnc) hte m v w hv hw
+        simp [upd, this]
+      · simp [upd, hyx]; exact hst y hy
+    | @iteHH e c d he hc hd _ _ =>
+      intro hnc s t s' t' hst hs ht
+      -- Secret guard: the runs may diverge in branch, so use confinement twice.
+      have cs : lowEq G s s' := by
+        simp [evalC, Option.bind_eq_some_iff] at hs
+        obtain ⟨v, _, hbr⟩ := hs
+        by_cases hz : v = 0
+        · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) s s' hbr
+        · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) s s' hbr
+      have ct : lowEq G t t' := by
+        simp [evalC, Option.bind_eq_some_iff] at ht
+        obtain ⟨v, _, hbr⟩ := ht
+        by_cases hz : v = 0
+        · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) t t' hbr
+        · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) t t' hbr
+      exact lowEq_trans (lowEq_trans (lowEq_symm cs) hst) ct
+    | @iteL e c d a b he hc hd ihc ihd =>
+      intro hnc s t s' t' hst hs ht
+      simp [noCallC, Bool.and_eq_true] at hnc
+      simp [evalC, Option.bind_eq_some_iff] at hs ht
+      obtain ⟨v, hv, hbs⟩ := hs
+      obtain ⟨w, hw, hbt⟩ := ht
+      -- Public guard: both runs take the same branch.
+      have hvw := evalE_agree_nocall hst e hnc.1.1 he m v w hv hw
+      subst hvw
+      by_cases hz : v = 0
+      · simp [hz] at hbs hbt
+        exact ih d _ hd hnc.2 s t s' t' hst hbs hbt
+      · simp [hz] at hbs hbt
+        exact ih c _ hc hnc.1.2 s t s' t' hst hbs hbt
+    | @iteN e c d lv n he hc hd ihc ihd =>
+      intro hnc s t s' t' hst hs ht
+      simp [noCallC, Bool.and_eq_true] at hnc
+      cases lv with
+      | H =>
+        have cs : lowEq G s s' := by
+          simp [evalC, Option.bind_eq_some_iff] at hs
+          obtain ⟨v, _, hbr⟩ := hs
+          by_cases hz : v = 0
+          · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) s s' hbr
+          · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) s s' hbr
+        have ct : lowEq G t t' := by
+          simp [evalC, Option.bind_eq_some_iff] at ht
+          obtain ⟨v, _, hbr⟩ := ht
+          by_cases hz : v = 0
+          · simp [hz] at hbr; exact confinement m d _ hd (by simp [secure]) t t' hbr
+          · simp [hz] at hbr; exact confinement m c _ hc (by simp [secure]) t t' hbr
+        exact lowEq_trans (lowEq_trans (lowEq_symm cs) hst) ct
+      | L =>
+        simp [evalC, Option.bind_eq_some_iff] at hs ht
+        obtain ⟨v, hv, hbs⟩ := hs
+        obtain ⟨w, hw, hbt⟩ := ht
+        have hvw := evalE_agree_nocall hst e hnc.1.1 he m v w hv hw
+        subst hvw
+        by_cases hz : v = 0
+        · simp [hz] at hbs hbt; exact ih d _ hd hnc.2 s t s' t' hst hbs hbt
+        · simp [hz] at hbs hbt; exact ih c _ hc hnc.1.2 s t s' t' hst hbs hbt
+    | @whHH e c he hc _ =>
+      intro hnc s t s' t' hst hs ht
+      have cs := confinement (m+1) (.wh e c) _ (TyC.whHH he hc) (by simp [secure]) s s' hs
+      have ct := confinement (m+1) (.wh e c) _ (TyC.whHH he hc) (by simp [secure]) t t' ht
+      exact lowEq_trans (lowEq_trans (lowEq_symm cs) hst) ct
+    | @whL e c a b he hc hle ihc =>
+      intro hnc s t s' t' hst hs ht
+      simp [noCallC, Bool.and_eq_true] at hnc
+      simp [evalC, Option.bind_eq_some_iff] at hs ht
+      obtain ⟨v, hv, hbs⟩ := hs
+      obtain ⟨w, hw, hbt⟩ := ht
+      have hvw := evalE_agree_nocall hst e hnc.1 he m v w hv hw
+      subst hvw
+      by_cases hz : v = 0
+      · simp [hz] at hbs hbt; subst hbs; subst hbt; exact hst
+      · simp [hz, Option.bind_eq_some_iff] at hbs hbt
+        obtain ⟨u, hu, hls⟩ := hbs
+        obtain ⟨u', hu', hlt⟩ := hbt
+        have hmid := ih c _ hc hnc.2 s t u u' hst hu hu'
+        exact ih (.wh e c) _ (TyC.whL he hc hle) (by simp [noCallC, hnc.1, hnc.2])
+          u u' s' t' hmid hls hlt
+    | @seqH c d lv hc hd ihc ihd =>
+      intro hnc s t s' t' hst hs ht
+      simp [noCallC, Bool.and_eq_true] at hnc
+      simp [evalC, Option.bind_eq_some_iff] at hs ht
+      obtain ⟨u, hu, hds⟩ := hs
+      obtain ⟨u', hu', hdt⟩ := ht
+      exact ih d _ hd hnc.2 u u' s' t' (ih c _ hc hnc.1 s t u u' hst hu hu') hds hdt
+    | @seqL c d a b hc hd ihc ihd =>
+      intro hnc s t s' t' hst hs ht
+      simp [noCallC, Bool.and_eq_true] at hnc
+      simp [evalC, Option.bind_eq_some_iff] at hs ht
+      obtain ⟨u, hu, hds⟩ := hs
+      obtain ⟨u', hu', hdt⟩ := ht
+      exact ih d _ hd hnc.2 u u' s' t' (ih c _ hc hnc.1 s t u u' hst hu hu') hds hdt
+    | @sub c t0 t1 hty hsub ihc =>
+      intro hnc s t s' t' hst hs ht
+      exact ihc hnc s t s' t' hst hs ht
+
+#print axioms noninterference
