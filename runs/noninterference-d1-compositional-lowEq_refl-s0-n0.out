@@ -1,3 +1,0 @@
--- PROOF lem_2fc1
-  intro x hx
-  rfl

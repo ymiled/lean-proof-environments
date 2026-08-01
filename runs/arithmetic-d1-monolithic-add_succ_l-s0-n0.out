@@ -1,0 +1,4 @@
+-- PROOF lem_cc32
+  induction y with
+  | stem => rfl
+  | brim k ih => simp [clasp, ih]

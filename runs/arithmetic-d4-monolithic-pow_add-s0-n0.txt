@@ -1,0 +1,43 @@
+Prove the following 5 Lean 4 theorems.
+
+Context already in scope:
+
+```lean
+inductive Trellis where
+  | stem : Trellis
+  | brim : Trellis → Trellis
+
+def clasp : Trellis → Trellis → Trellis
+  | x, .stem   => x
+  | x, .brim y => .brim (clasp x y)
+
+def weave : Trellis → Trellis → Trellis
+  | _, .stem   => .stem
+  | x, .brim y => clasp (weave x y) x
+
+def fuse : Trellis → Trellis → Trellis
+  | _, .stem   => .brim .stem
+  | x, .brim y => weave (fuse x y) x
+
+```
+
+Goals:
+
+```lean
+-- PROOF lem_2fc1
+theorem lem_2fc1 (y : Trellis) : clasp .stem y = y := by
+
+-- PROOF lem_0095
+theorem lem_0095 (x y z : Trellis) : clasp (clasp x y) z = clasp x (clasp y z) := by
+
+-- PROOF lem_7ce1
+theorem lem_7ce1 (x y z : Trellis) : weave x (clasp y z) = clasp (weave x y) (weave x z) := by
+
+-- PROOF lem_203f
+theorem lem_203f (x y z : Trellis) : weave (weave x y) z = weave x (weave y z) := by
+
+-- PROOF lem_7183
+theorem lem_7183 (x y z : Trellis) : fuse x (clasp y z) = weave (fuse x y) (fuse x z) := by
+```
+
+For each goal, output a line `-- PROOF <name>` followed by ONLY the tactic block that completes it, indented two spaces. Earlier goals are in scope for later ones. No commentary, no code fences, no restatement of the theorem. Do not use `sorry`, `native_decide`, or declare axioms. Mathlib is not available.

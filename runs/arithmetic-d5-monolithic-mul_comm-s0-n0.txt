@@ -1,0 +1,52 @@
+Prove the following 8 Lean 4 theorems.
+
+Context already in scope:
+
+```lean
+inductive Trellis where
+  | stem : Trellis
+  | brim : Trellis → Trellis
+
+def clasp : Trellis → Trellis → Trellis
+  | x, .stem   => x
+  | x, .brim y => .brim (clasp x y)
+
+def weave : Trellis → Trellis → Trellis
+  | _, .stem   => .stem
+  | x, .brim y => clasp (weave x y) x
+
+def fuse : Trellis → Trellis → Trellis
+  | _, .stem   => .brim .stem
+  | x, .brim y => weave (fuse x y) x
+
+```
+
+Goals:
+
+```lean
+-- PROOF lem_fcb6
+theorem lem_fcb6 (y : Trellis) : weave .stem y = .stem := by
+
+-- PROOF lem_0095
+theorem lem_0095 (x y z : Trellis) : clasp (clasp x y) z = clasp x (clasp y z) := by
+
+-- PROOF lem_2fc1
+theorem lem_2fc1 (y : Trellis) : clasp .stem y = y := by
+
+-- PROOF lem_cc32
+theorem lem_cc32 (x y : Trellis) : clasp (.brim x) y = .brim (clasp x y) := by
+
+-- PROOF lem_aa90
+theorem lem_aa90 (x y : Trellis) : clasp x y = clasp y x := by
+
+-- PROOF lem_a681
+theorem lem_a681 (x y z : Trellis) : clasp x (clasp y z) = clasp y (clasp x z) := by
+
+-- PROOF lem_61d3
+theorem lem_61d3 (x y : Trellis) : weave (.brim x) y = clasp (weave x y) y := by
+
+-- PROOF lem_7a2b
+theorem lem_7a2b (x y : Trellis) : weave x y = weave y x := by
+```
+
+For each goal, output a line `-- PROOF <name>` followed by ONLY the tactic block that completes it, indented two spaces. Earlier goals are in scope for later ones. No commentary, no code fences, no restatement of the theorem. Do not use `sorry`, `native_decide`, or declare axioms. Mathlib is not available.

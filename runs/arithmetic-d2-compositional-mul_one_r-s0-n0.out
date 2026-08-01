@@ -1,0 +1,2 @@
+-- PROOF lem_e55c
+  simp [weave, clasp, lem_2fc1]

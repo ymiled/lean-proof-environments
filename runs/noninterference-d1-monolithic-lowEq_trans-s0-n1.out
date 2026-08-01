@@ -1,4 +1,0 @@
--- PROOF lem_0095
-  intro x hx
-  rw [h1 x hx]
-  exact h2 x hx

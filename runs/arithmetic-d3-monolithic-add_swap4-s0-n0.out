@@ -1,0 +1,18 @@
+-- PROOF lem_0095
+  induction z with
+  | stem => rfl
+  | brim k ih => simp [clasp, ih]
+-- PROOF lem_2fc1
+  induction y with
+  | stem => rfl
+  | brim k ih => simp [clasp, ih]
+-- PROOF lem_cc32
+  induction y with
+  | stem => rfl
+  | brim k ih => simp [clasp, ih]
+-- PROOF lem_aa90
+  induction y with
+  | stem => simp [clasp, lem_2fc1]
+  | brim k ih => simp [clasp, lem_cc32, ih]
+-- PROOF lem_2930
+  rw [lem_0095, lem_0095, lem_aa90 y z]
