@@ -318,3 +318,35 @@ cell, and the causal question left open.
     n = 1; the binomial confidence intervals are wide enough to contain a large
     range of decay constants.
 *   Interior rungs at depths 6–8 to extend the curve past a single cliff.
+
+## Family shape decides which experiments are possible
+
+Checked whether the chain/antichain contrast can run on `noninterference`. It
+cannot, for a structural reason worth recording.
+
+```
+maximal rungs in noninterference: 1  (the top theorem itself)
+k=2: up-closed=3  chains=3  antichains=0
+k=3: up-closed=6  chains=3  antichains=0
+```
+
+Antichains may only be drawn from maximal elements, since withheld sets must be
+up-closed. This family is a funnel -- every rung feeds into the soundness
+theorem -- so it has exactly one maximal element and therefore no antichain of
+size two or greater, at any k. That is also the mechanical reason its
+corr(depth, ancestor count) came out at exactly 1.000.
+
+| family | maximal rungs | depth sweep | chain/antichain |
+|---|---|---|---|
+| `arithmetic` | 6 | yes, curve obtained with Haiku | yes, k = 2 and 3 |
+| `noninterference` | 1 | yes, but floors above depth 1 | structurally impossible |
+
+Two independent defects, and fixing one does not fix the other: the family is
+too hard (floors) *and* wrongly shaped (funnel). Making it usable needs both
+intermediate rungs between the trivial depth-1 lemmas and `confinement`, and
+maximal rungs -- mutually independent lemmas nothing depends on, such as
+determinism of evaluation or monotonicity of the typing judgment.
+
+The general lesson for anyone building one of these: **a ladder's DAG shape is
+not incidental, it determines the experiments the benchmark can support.** A
+funnel supports depth sweeps only. Identification needs a wide top.
