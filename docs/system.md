@@ -79,6 +79,200 @@ The operations recurse on their **second** argument, which is why the
 left-handed statements need induction instead of being true by computation. That
 asymmetry is the entire source of the chain.
 
+## The noninterference theory, from first principles
+
+The second family formalises a classical result in language-based security. This
+section explains the mathematics; the next lists the rungs that build it.
+
+### The security property
+
+Split every variable into **public** and **secret**. An attacker can read the
+public variables and nothing else. The question: can running a program leak
+information from secret variables into public ones?
+
+The formal answer is stated as an indistinguishability property. Two starting
+states that the attacker cannot tell apart must produce two ending states the
+attacker cannot tell apart. If that holds, watching the public variables tells
+the attacker nothing about the secrets.
+
+$$
+s \approx_L t \;\;\wedge\;\; \vdash c \quad\Longrightarrow\quad
+\llbracket c \rrbracket s \;\approx_L\; \llbracket c \rrbracket t
+$$
+
+where $s \approx_L t$ means "$s$ and $t$ agree on all public variables" and
+$\vdash c$ means "$c$ is well-typed by the security type system."
+
+This is **noninterference**: the secret inputs do not interfere with the public
+outputs.
+
+### Why a type system, and what makes it subtle
+
+The naive rule is "never assign a secret expression to a public variable." That
+catches the **explicit flow**:
+
+```
+public_x := secret_y        -- obviously leaks
+```
+
+But it misses the **implicit flow**, which leaks through control flow rather
+than through data:
+
+```
+if secret_y = 0 then public_x := 1 else public_x := 2
+```
+
+No secret value is ever assigned to `public_x`. Yet afterwards, reading
+`public_x` tells you whether `secret_y` was zero. The leak travels through
+*which branch ran*.
+
+Handling implicit flows is the entire reason the type system carries a **program
+counter level** `pc`, and the reason the proof needs a confinement lemma.
+
+### The language
+
+Expressions and commands, both as Lean inductive types:
+
+```lean
+inductive Exp where
+  | lit  (n : Nat)          -- literal
+  | var  (x : Nat)          -- variable, identified by a number
+  | eadd (a b : Exp)        -- addition
+
+inductive Com where
+  | cskip                          -- do nothing
+  | cassign (x : Nat) (e : Exp)    -- x := e
+  | cseq    (c d : Com)            -- c ; d
+  | cite    (e : Exp) (c d : Com)  -- if e then c else d
+```
+
+Deliberately **loop-free**. Adding `while` would force termination reasoning,
+which contributes nothing to the noninterference argument and a great deal of
+work.
+
+### States, contexts, and semantics
+
+```lean
+abbrev St  := Nat → Nat     -- a state maps each variable to its value
+abbrev Ctx := Nat → Bool    -- a context labels each variable: true = secret
+```
+
+A state is a *function*, which is why updating it is function override:
+
+```lean
+def upd (s : St) (x v : Nat) : St := fun y => if y = x then v else s y
+```
+
+Evaluation is a **total function**, not an inductive relation. This is the
+single most important implementation choice in the family: it means every proof
+proceeds by structural induction plus `simp`, rather than by induction over
+derivation trees, and so stays inside a small tactic vocabulary with no Mathlib.
+
+```lean
+def evalE (s : St) : Exp → Nat
+  | .lit n    => n
+  | .var x    => s x
+  | .eadd a b => evalE s a + evalE s b
+
+def evalC (s : St) : Com → St
+  | .cskip       => s
+  | .cassign x e => upd s x (evalE s e)
+  | .cseq c d    => evalC (evalC s c) d
+  | .cite e c d  => if evalE s e = 0 then evalC s d else evalC s c
+```
+
+### The security lattice
+
+Two levels only: public and secret, ordered public $\sqsubseteq$ secret. In Lean
+they are `false` and `true`, so the lattice join is just boolean `||`.
+
+An expression is secret if *any* variable in it is secret:
+
+```lean
+def lvl (G : Ctx) : Exp → Bool
+  | .lit _    => false                   -- constants are public
+  | .var x    => G x                     -- a variable's own label
+  | .eadd a b => lvl G a || lvl G b      -- join
+```
+
+### The typing rules
+
+`wt G pc c` is `true` when command `c` is safe to run in a context whose program
+counter level is `pc`. Note it is **`Bool`-valued, not an inductive judgment** —
+the second key implementation choice, since it makes typing *computable* and
+lets `simp` take a typing hypothesis apart.
+
+```lean
+def wt (G : Ctx) (pc : Bool) : Com → Bool
+  | .cskip       => true
+  | .cassign x e => !(lvl G e || pc) || G x
+  | .cseq c d    => wt G pc c && wt G pc d
+  | .cite e c d  => wt G (pc || lvl G e) c && wt G (pc || lvl G e) d
+```
+
+Two rules carry all the content.
+
+**Assignment.** `!(lvl G e || pc) || G x` reads as an implication:
+
+$$
+(\mathrm{lvl}(e) \sqcup pc) \sqsubseteq G(x)
+$$
+
+"If the expression is secret, *or* we are executing inside a secret branch, then
+the assigned variable must be secret." The `lvl G e` half blocks explicit flows.
+The `pc` half blocks implicit ones.
+
+**Conditional.** Both branches are typed at `pc || lvl G e`, so branching on a
+secret expression **raises the program counter to secret** for the whole body.
+Combined with the assignment rule, that forbids any public assignment inside a
+secret branch, which is exactly what makes the earlier `if secret_y = 0` example
+ill-typed.
+
+### The observation relation
+
+```lean
+def lowEq (G : Ctx) (s t : St) : Prop := ∀ x, G x = false → s x = t x
+```
+
+"$s$ and $t$ agree on every public variable." This is what the attacker can see,
+and the whole theorem is stated in terms of it.
+
+### The shape of the proof
+
+The soundness proof is induction over commands. Three cases are routine, and one
+is not.
+
+*Skip* is immediate. *Assignment* needs the observation that if the target is
+public then typing forces the expression to be public, so both runs compute the
+same value. *Sequencing* chains the two induction hypotheses.
+
+The **conditional with a secret guard** is the hard case, and it is where
+`confinement` earns its place. The guard is secret, so the two runs may evaluate
+it differently and therefore **take different branches**. There is no induction
+hypothesis relating two *different* commands, so the argument cannot proceed by
+comparing the branches.
+
+Instead you argue that neither run moved the public state at all. Both branches
+are typed at $pc = \texttt{secret}$, so confinement gives
+
+$$
+s \approx_L \llbracket c \rrbracket s
+\qquad\text{and}\qquad
+t \approx_L \llbracket c \rrbracket t
+$$
+
+and then the result follows by chaining with the assumption $s \approx_L t$,
+using symmetry and transitivity:
+
+$$
+\llbracket c \rrbracket s \;\approx_L\; s \;\approx_L\; t \;\approx_L\;
+\llbracket c \rrbracket t
+$$
+
+That chain is the rung `ite_high_ni`, and it is why `lowEq_symm` and
+`lowEq_trans` exist as rungs at all: they are not decoration, they are the glue
+for this case.
+
 ## The noninterference ladder
 
 The second family, and the one carrying the headline result. A loop-free
@@ -102,9 +296,63 @@ from secret to public.
 | 3 | `ite_high_ni` | 3 | secret-guard conditional case | `conf_ite`, `confinement`, `lowEq_trans`, `lowEq_symm` |
 | 4 | `noninterference` | 22 | well-typed programs leak nothing | `assign_ni`, `evalE_agree`, `ite_high_ni` |
 
-`ite_high_ni` is where the real content sits. When the branch guard is secret the
-two runs may take **different branches**, so you apply confinement to each side
-and glue the results with symmetry and transitivity of public agreement.
+### What each rung says
+
+**`lowEq_refl`, `lowEq_symm`, `lowEq_trans`** — public agreement is an
+equivalence relation. One line each, since `lowEq` unfolds to a $\forall$ and
+the work is done by `Eq`'s own reflexivity, symmetry and transitivity. They look
+trivial and are not optional: symmetry and transitivity are precisely the glue
+in the secret-guard case.
+
+**`upd_pair`** — if $s \approx_L t$ then $s[x \mapsto v] \approx_L t[x \mapsto v]$.
+Writing the *same* value into both states preserves agreement. Proof splits on
+whether the observed variable is the updated one: if yes both sides are $v$, if
+no both sides are unchanged.
+
+**`assign_conf`** — a secret-context assignment cannot disturb the public
+projection: $s \approx_L s[x \mapsto v]$ when typing forced $G(x) = \texttt{secret}$.
+The proof extracts $G(x) = \texttt{true}$ from the typing hypothesis, so any
+public $y$ must differ from $x$, so `upd` leaves it alone.
+
+**`evalE_agree`** — a *public* expression evaluates identically in agreeing
+states: $\mathrm{lvl}(e) = \texttt{public} \wedge s \approx_L t \Rightarrow
+\llbracket e \rrbracket s = \llbracket e \rrbracket t$. Induction over the
+expression; the variable case is exactly the definition of $\approx_L$, and the
+addition case needs both subexpressions public, which is what the `||` in `lvl`
+gives.
+
+**`wt_anti`** — typing is antitone in the program counter: anything well-typed
+at $pc = \texttt{secret}$ is well-typed at $pc = \texttt{public}$. Intuitively,
+the secret context is the *more* restrictive one. This is the longest depth-1
+proof at 18 lines because it needs induction over commands with a case split on
+the guard level in the conditional case.
+
+**`conf_ite`** — if both branches individually leave the public projection
+fixed, so does the conditional. Just a case split on which branch runs. Extracted
+so that `confinement` does not have to inline it.
+
+**`confinement`** — the key auxiliary theorem: **code typed at $pc =
+\texttt{secret}$ never changes the public projection of the state.** Induction
+over commands, using `assign_conf` for assignment, `lowEq_trans` to chain the
+two halves of a sequence, and `conf_ite` for the conditional. This is what makes
+implicit flows safe.
+
+**`assign_ni`** — the assignment case of the top theorem, on its own. Splits on
+whether the observed variable is the assigned one. If it is, typing forces the
+expression public, so `evalE_agree` says both runs wrote the same value. If it
+is not, the update is invisible and the assumption carries over.
+
+**`ite_high_ni`** — the secret-guard conditional case, and where the real content
+sits. The two runs may take **different branches**, so no induction hypothesis
+applies. Instead confinement is applied to each side separately and the results
+glued with symmetry and transitivity, per the chain in the previous section.
+Three lines, because all the work has been pushed into its dependencies.
+
+**`noninterference`** — the soundness theorem. Induction over commands: skip is
+immediate, assignment defers to `assign_ni`, sequencing chains the two induction
+hypotheses, and the conditional splits on the guard level. Public guard means
+`evalE_agree` shows both runs take the *same* branch, so an induction hypothesis
+applies. Secret guard defers to `ite_high_ni`.
 
 Three design choices keep this tractable without Mathlib. Semantics is a
 **total function** rather than an inductive relation, so rungs are discharged by
