@@ -1,4 +1,4 @@
 -- PROOF lem_48f5
   induction y with
   | stem => rfl
-  | brim k ih => simp [weave, ih, clasp]
+  | brim y' ih => simp [weave, clasp, ih]

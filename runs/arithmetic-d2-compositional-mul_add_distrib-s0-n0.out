@@ -1,4 +1,4 @@
 -- PROOF lem_7ce1
   induction z with
-  | stem => simp [weave, clasp]
-  | brim k ih => simp [weave, clasp, ih, lem_0095]
+  | stem => simp [clasp, weave]
+  | brim k ih => simp [clasp, weave, ih, lem_0095]

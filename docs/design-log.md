@@ -264,3 +264,57 @@ and the clean cells scored 1.00. But the design is wrong and would corrupt any
 run that landed in the informative band: **each task must be answered by an
 independent policy instance with no memory of sibling tasks.** Prompts are also
 per-condition, so a single agent must never hold both.
+
+## Result 3 — a decay curve, arithmetic family, Haiku 4.5 and Sonnet 5
+
+The first run that landed in the informative band. Monolithic arm, one seed,
+one sample per rung, one-shot with no compiler access.
+
+| depth | lemmas to prove | Sonnet 5 | Haiku 4.5 | Haiku failures |
+|---|---|---|---|---|
+| 1 | 1 | 1.00 | 1.00 | — |
+| 2 | 2–3 | 1.00 | 0.75 | `add_comm` |
+| 3 | 3–5 | 1.00 | 0.33 | `add_left_comm`, `add_swap4` |
+| 4 | 5–6 | 1.00 | 0.00 | `mul_succ_l`, `pow_add` |
+| 5 | 8 | 0.00 | 0.00 | `mul_comm` |
+
+Compositional arm, Sonnet: **15/15 at every depth.** Flat, as compositional
+verification predicts — supplying ancestors as trusted interfaces keeps a task
+easy however deep it sits.
+
+### The number
+
+Fitting log(pass) against depth on the three non-zero Haiku points:
+
+    1.73x per depth        (R^2 = 0.93)
+
+against the ~3x reported in `lf-lean`. Zeros are dropped rather than clamped, so
+the fit uses depths 1–3 only.
+
+### The number does not identify a mechanism
+
+Refitting the identical data against *lemma count* instead of depth:
+
+    1.44x per lemma        (R^2 = 0.93)
+
+Same R^2, to three decimals. The two models are statistically
+indistinguishable here, which is the collinearity problem stated concretely
+rather than in the abstract: with corr(depth, volume) ~ 0.97 across this ladder,
+a depth sweep cannot tell whether success falls because chains compound or
+because there is simply more to write. The chain/antichain contrast was built to
+break precisely this tie, and it could not be run against a policy that ceilings
+at k ∈ {2, 3}.
+
+**So: 1.73x is a measurement, not a replication of 3x, and it should not be read
+as one.** Different corpus, different policy, different pipeline, n = 1–5 per
+cell, and the causal question left open.
+
+### What would sharpen it
+
+*   Run the chain/antichain contrast against Haiku, which is the policy that
+    actually fails in-band. This is the cheapest remaining experiment and the
+    one that speaks to the mechanism.
+*   More samples per cell. Every cell here is n ≤ 5 and the depth-5 cell is
+    n = 1; the binomial confidence intervals are wide enough to contain a large
+    range of decay constants.
+*   Interior rungs at depths 6–8 to extend the curve past a single cliff.

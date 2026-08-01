@@ -1,0 +1,8 @@
+-- PROOF lem_0095
+  induction z with
+  | stem => rfl
+  | brim z' ih => simp [clasp, ih]
+-- PROOF lem_7ce1
+  induction z with
+  | stem => rfl
+  | brim z' ih => simp [weave, clasp, lem_0095, ih]

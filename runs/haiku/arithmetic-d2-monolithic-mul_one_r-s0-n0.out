@@ -1,0 +1,6 @@
+-- PROOF lem_2fc1
+  induction y with
+  | stem => rfl
+  | brim y' ih => simp [clasp, ih]
+-- PROOF lem_e55c
+  simp [weave, lem_2fc1]

@@ -1,4 +1,4 @@
 -- PROOF lem_7183
   induction z with
   | stem => simp [fuse, weave, clasp, lem_2fc1]
-  | brim k ih => simp [fuse, ih, lem_203f]
+  | brim k ih => simp [fuse, clasp, ih, lem_203f]

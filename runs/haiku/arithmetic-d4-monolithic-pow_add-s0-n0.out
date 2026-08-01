@@ -1,0 +1,20 @@
+-- PROOF lem_2fc1
+  induction y with
+  | stem => rfl
+  | brim y' ih => simp [clasp, ih]
+-- PROOF lem_0095
+  induction z with
+  | stem => rfl
+  | brim z' ih => simp [clasp, ih]
+-- PROOF lem_7ce1
+  induction z with
+  | stem => rfl
+  | brim z' ih => simp [weave, clasp, lem_0095, ih]
+-- PROOF lem_203f
+  induction z with
+  | stem => rfl
+  | brim z' ih => simp [weave, clasp, lem_0095, lem_7ce1, ih]
+-- PROOF lem_7183
+  induction z with
+  | stem => simp [clasp, fuse]
+  | brim z' ih => simp [fuse, clasp, lem_203f, ih]
