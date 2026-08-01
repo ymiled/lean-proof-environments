@@ -1,15 +1,15 @@
 """Rendering a rung into the two experimental conditions.
 
-The model is asked for a *tactic block only*, never a whole file. The harness
+The policy is asked for a *tactic block only*, never a whole file. The harness
 supplies the `theorem ... : ... := by` header itself and splices the model's
 text underneath. This is not a convenience: it makes statement drift
 structurally impossible. A model cannot weaken the goal, restate it, or prove a
-different lemma with a matching name, because it never gets to write the
-statement. That removes the largest class of reward hacking without needing any
+different lemma under a matching name, because it never gets to write the
+statement. That removes the largest class of reward hacking without any
 statement-comparison logic at all.
 
-The remaining hacks -- `sorry`, fresh axioms, `native_decide` -- are caught by
-the grader.
+The remaining hacks -- `sorry`, fresh axioms, `native_decide` -- are the
+grader's job.
 """
 
 from __future__ import annotations
@@ -17,20 +17,37 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
-from .ladder import BY_KEY, Instance, depth_of, transitive_deps
+from .ladder import Instance
 
 
 def _binder_vars(binders: str) -> str:
-    """"(x y z : Tally)" -> "x y z". Used to `intro` under a `have`."""
-    return binders.strip().lstrip("(").split(":")[0].strip()
+    """"(G : Ctx) (s t : St) (h : P)" -> "G s t h".
+
+    Scans balanced groups rather than splitting on delimiters, because binder
+    types may themselves contain parentheses.
+    """
+    names: list[str] = []
+    depth = 0
+    start = 0
+    for i, ch in enumerate(binders):
+        if ch == "(":
+            if depth == 0:
+                start = i + 1
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+            if depth == 0:
+                group = binders[start:i]
+                names.extend(group.split(":")[0].split())
+    return " ".join(names)
 
 
 class Condition(str, Enum):
     """The two arms of the experiment.
 
     MONOLITHIC mirrors lf-lean's "prove the whole dependency tree yourself";
-    COMPOSITIONAL mirrors their trusted-interface approach, which is the setting
-    where they report the O(|P|) -> O(max_i |c_i|) context reduction.
+    COMPOSITIONAL mirrors their trusted-interface approach, the setting in which
+    they report the O(|P|) -> O(max_i |c_i|) context reduction.
     """
 
     MONOLITHIC = "monolithic"
@@ -44,8 +61,12 @@ class Task:
     condition: Condition
 
     @property
+    def family(self):
+        return self.instance.family
+
+    @property
     def depth(self) -> int:
-        return depth_of(self.key)
+        return self.family.depth_of(self.key)
 
     @property
     def theorem_name(self) -> str:
@@ -53,7 +74,7 @@ class Task:
 
     @property
     def ancestors(self) -> list[str]:
-        return transitive_deps(self.key)
+        return self.family.transitive_deps(self.key)
 
     def preamble(self) -> str:
         """Everything above the target theorem."""
@@ -85,7 +106,7 @@ class Task:
 
         Monolithic: the ancestors do not exist, so they are re-proved inline as
         `have`s in dependency order. This is what certifies that the monolithic
-        arm is solvable at every depth. Without it, a decay curve could just as
+        arm is solvable at every depth. Without it a decay curve could just as
         easily be reporting that the tasks were impossible, and the experiment
         would be measuring the benchmark rather than the model.
         """
@@ -95,22 +116,23 @@ class Task:
 
         blocks = []
         for anc in self.ancestors:
-            rung = BY_KEY[anc]
+            rung = self.family.by_key[anc]
             binders = rung.binders.format(**self.instance.names)
             stmt = rung.statement.format(**self.instance.names)
-            names = _binder_vars(binders)
             body = self.instance.reference_proof_of(anc)
             indented = "\n".join("  " + ln for ln in body.splitlines())
+            quantified = f"∀ {binders}, {stmt}" if binders else stmt
+            intro = _binder_vars(binders)
+            intro_line = f"    intro {intro}\n" if intro else ""
             blocks.append(
-                f"  have {self.instance.names[anc]} : ∀ {binders}, {stmt} := by\n"
-                f"    intro {names}\n"
-                f"{indented}"
+                f"  have {self.instance.names[anc]} : {quantified} := by\n"
+                f"{intro_line}{indented}"
             )
         blocks.append(target)
         return "\n".join(blocks)
 
     def prompt(self) -> str:
-        """What the policy sees. No hints about the lemma's mathematical role."""
+        """What the policy sees. No hint about the lemma's mathematical role."""
         avail = ""
         if self.condition is Condition.COMPOSITIONAL and self.ancestors:
             names = ", ".join(self.instance.names[k] for k in self.ancestors)
@@ -133,4 +155,4 @@ class Task:
 
 
 def all_tasks(instance: Instance, condition: Condition) -> list[Task]:
-    return [Task(instance, key, condition) for key in BY_KEY]
+    return [Task(instance, key, condition) for key in instance.family.by_key]

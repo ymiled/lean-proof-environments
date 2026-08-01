@@ -19,7 +19,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from .grader import grade
-from .ladder import BY_KEY, Instance, depth_of
+from .families import DEFAULT, FAMILIES
+from .ladder import Instance
 from .policy import AnthropicPolicy, EmptyPolicy, Policy, ReferencePolicy
 from .task import Condition, Task
 
@@ -59,15 +60,17 @@ def _one(policy: Policy, task: Task, seed: int, sample: int) -> Attempt:
 
 def sweep(
     policy: Policy,
+    family_name: str = DEFAULT,
     k: int = 1,
     seeds: int = 1,
     workers: int = 4,
 ) -> list[Attempt]:
+    family = FAMILIES[family_name]
     jobs: list[tuple[Task, int, int]] = []
     for s in range(seeds):
-        inst = Instance.sample(s)
+        inst = Instance.sample(family, s)
         for condition in Condition:
-            for key in BY_KEY:
+            for key in family.by_key:
                 task = Task(inst, key, condition)
                 jobs.extend((task, s, i) for i in range(k))
 
@@ -112,6 +115,7 @@ def _build(name: str) -> Policy:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--policy", default="reference")
+    ap.add_argument("--family", default=DEFAULT)
     ap.add_argument("--k", type=int, default=1, help="samples per task")
     ap.add_argument("--seeds", type=int, default=1, help="renamed instances")
     ap.add_argument("--workers", type=int, default=4)
@@ -119,16 +123,18 @@ def main() -> None:
 
     policy = _build(args.policy)
     started = time.time()
-    attempts = sweep(policy, k=args.k, seeds=args.seeds, workers=args.workers)
+    attempts = sweep(policy, family_name=args.family, k=args.k,
+                     seeds=args.seeds, workers=args.workers)
     elapsed = time.time() - started
 
     summary = summarize(attempts)
     RESULTS.mkdir(exist_ok=True)
-    out = RESULTS / f"{policy.name.replace('/', '_')}.json"
+    out = RESULTS / f"{args.family}-{policy.name.replace('/', '_')}.json"
     out.write_text(
         json.dumps(
             {
                 "policy": policy.name,
+                "family": args.family,
                 "k": args.k,
                 "seeds": args.seeds,
                 "elapsed_s": round(elapsed, 1),
@@ -139,8 +145,8 @@ def main() -> None:
         )
     )
 
-    depths = sorted({depth_of(k) for k in BY_KEY})
-    print(f"policy={policy.name}  k={args.k}  seeds={args.seeds}  {elapsed:.0f}s")
+    depths = FAMILIES[args.family].depths
+    print(f"family={args.family}  policy={policy.name}  k={args.k}  seeds={args.seeds}  {elapsed:.0f}s")
     print(f"{'depth':>6}  {'monolithic':>12}  {'compositional':>14}")
     for d in depths:
         m = summary.get(f"monolithic:{d}", {}).get("pass_at_k")

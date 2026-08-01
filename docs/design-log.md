@@ -131,3 +131,49 @@ detectable, removes a whole class of grader bugs, and needs no code.
   `lean file.lean`.
 - **`pass@k` pools rungs at equal depth.** With only 2–4 rungs per depth this is
   noisy; more rungs per level would tighten the fit.
+
+## Attempt 4 — noninterference family, and a refuted hypothesis
+
+Built a second family: a security type system for a loop-free imperative
+language, with the soundness theorem (noninterference) as the top rung. Seven
+rungs, depths 1–3, self-test green.
+
+Three choices made it tractable without Mathlib. Semantics is a **total
+function** rather than an inductive relation, so rungs go by structural
+induction plus `simp` instead of induction over derivation trees. Typing is
+**`Bool`-valued** rather than an inductive judgment, so `wt G pc c = true` can
+be taken apart by `simp`. And the language is **loop-free**, since `while` forces
+termination reasoning that adds nothing to the noninterference argument.
+
+**The stated motivation was wrong.** The family was built to decorrelate depth
+from proof length, on the reasoning that its rungs vary from 1 to 37 lines while
+arithmetic's are uniformly ~3. Measured correlation between depth and
+compositional reference-proof length:
+
+| family | corr(depth, refLoC) | corr(depth, ndeps) |
+|---|---|---|
+| arithmetic | **−0.13** | +0.97 |
+| noninterference | **+0.97** | **+1.00** |
+
+Exactly backwards. Arithmetic is the family where compositional proof length is
+independent of depth. In the noninterference ladder the deep rungs are deep
+*because* they do more case analysis, so depth and length grow together, and
+ancestor count tracks depth perfectly (r = 1.000).
+
+**What the measurement actually shows.** Correlation between depth and
+*monolithic* length is ~0.98 in both families and is not fixable by family
+choice: monolithic length is the sum over ancestors, so it grows with depth by
+construction. Decorrelating requires contrasting rungs of **equal depth but
+differing ancestor count**. That lever exists inside `arithmetic` — at depth 3,
+`add_left_comm` has 4 ancestors and `mul_assoc` has 2; at depth 4, 5 versus 4 —
+and does not exist here at all.
+
+So the identification strategy is a within-depth contrast on ancestor count, not
+a between-family contrast. That is a different experiment from the one
+originally planned, and a better-specified one.
+
+**What the family is still worth.** Domain diversity — whether the decay
+constant is a property of proving-at-depth or of one corpus needs more than one
+theory. And genuine difficulty at the top: the final rung is a real metatheorem
+with a 37-line proof, where depth and intrinsic difficulty are entangled in a
+way they are not in arithmetic.

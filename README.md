@@ -15,6 +15,22 @@ It was measured once, on one corpus (*Logical Foundations*), with one pipeline.
 This repository measures it again, on a different corpus, with a fully open
 grader.
 
+## Families
+
+Two theories ship, selected with `--family`:
+
+| family | rungs | depths | top rung |
+|---|---|---|---|
+| `arithmetic` | 11 | 1–5 | commutativity of multiplication |
+| `noninterference` | 7 | 1–3 | soundness of a security type system |
+
+`noninterference` is a loop-free imperative language with a two-point security
+lattice; the top rung proves that a well-typed command run from two states
+agreeing on public variables yields two states that still agree — no secret
+flows to a public observer. Semantics is a total function and typing is
+`Bool`-valued, which keeps every proof inside structural induction plus `simp`
+with no Mathlib.
+
 ## Dependency depth
 
 `depth = 1` for a lemma provable from the definitions alone; otherwise
@@ -46,7 +62,7 @@ Each rung is posed to a policy under two conditions:
 
 We measure pass@k against depth in both arms. If the 3x figure generalises,
 monolithic success should fall roughly as $3^{-d}$ while compositional stays
-near flat.
+near flat. Read the confound section below before believing any such curve.
 
 ## What is actually hard here
 
@@ -95,15 +111,17 @@ restate, or substitute the goal.
 
 ## Contamination
 
-The mathematics is Peano arithmetic, which every frontier model knows. The
-defence is renaming: type, constructors, operators and lemma names are freshly
-sampled per seed (`Warp`, `lem_a7f2`, …), so a model cannot pattern-match the
-goal onto a remembered `Nat.mul_comm` proof term.
+Both theories are textbook material every frontier model has seen. The defence
+is renaming: types, constructors, operators and lemma names are freshly sampled
+per seed (`Warp`, `lem_a7f2`, …), so a model cannot pattern-match the goal onto
+a remembered `Nat.mul_comm` proof term.
 
 This weakens the confound; it does not eliminate it. A model that knows the
-Peano development can still transfer the proof strategy, and arguably should —
-that is legitimate proving. What renaming removes is verbatim library recall.
-Results should be read with that limitation in mind.
+Peano development, or knows Volpano–Smith–Irvine, can still transfer the proof
+strategy — and arguably should, since that is legitimate proving. What renaming
+removes is verbatim library recall, not knowledge. **The renaming defence is
+itself untested**; comparing pass rates on renamed versus native `Nat`
+statements would measure it, and has not been run.
 
 ## Usage
 
@@ -111,10 +129,10 @@ Results should be read with that limitation in mind.
 curl https://elan.lean-lang.org/elan-init.sh -sSf | sh   # Lean 4 toolchain
 uv sync
 
-uv run python -m pdd.selftest                            # certify the benchmark
-uv run python -m pdd.sweep --policy reference --k 1      # oracle ceiling
-uv run python -m pdd.sweep --policy claude-opus-5 --k 8 --seeds 5
-uv run python -m pdd.plot results/claude-opus-5@T1.0.json
+uv run python -m pdd.selftest --family noninterference   # certify the benchmark
+uv run python -m pdd.sweep --policy reference --family arithmetic
+uv run python -m pdd.sweep --policy claude-opus-5 --family noninterference --k 8 --seeds 5
+uv run python -m pdd.plot results/noninterference-claude-opus-5@T1.0.json
 ```
 
 `selftest` must report 0 failures before any sweep is trusted.
@@ -138,7 +156,10 @@ That is the natural next version.
 
 ```
 src/pdd/
-  ladder.py    dependency DAG, renaming, reference proofs
+  ladder.py    Rung/Family/Instance, depth derivation, renaming
+  families/
+    arith.py            Peano development, 11 rungs, depths 1-5
+    noninterference.py  security type system, 7 rungs, depths 1-3
   task.py      monolithic / compositional rendering, prompts
   grader.py    compile + axiom audit + banned syntax
   selftest.py  benchmark certification (run this first)
@@ -150,32 +171,35 @@ docs/
   design-log.md   what was tried, what broke, and why
 ```
 
-## Future work: a second ladder family
+## A confound you should know about before reading any curve
 
-The shipped family is arithmetic. The architecture is deliberately
-theory-agnostic — `ladder.py` is the only module that encodes a theory, and
-everything downstream consumes `DEFINITIONS`, `RUNGS`, and the dependency graph
-through the same interface. Adding a family means writing one module.
+Depth is not cleanly separable from proof length in either family. Measured
+correlations with compositional reference-proof length:
 
-The natural second family is **type-system metatheory** for a small imperative
-or lambda language, where the chain is
+| family | corr(depth, refLoC) | corr(depth, ancestors) |
+|---|---|---|
+| `arithmetic` | −0.13 | +0.97 |
+| `noninterference` | +0.97 | +1.00 |
 
-```
-weakening → substitution-preserves-typing → preservation
-canonical-forms → progress
-```
+Correlation between depth and *monolithic* length is ~0.98 in both, and no
+choice of family fixes that: monolithic length is the sum over ancestors, so it
+grows with depth by construction.
 
-That family is more interesting than arithmetic for two reasons. Its depth is
-semantically load-bearing rather than incidental, and it is closer to the kind
-of proof obligation real verification work produces.
+This matters because Theorem's own post reports a difficulty cliff at "17+
+marginal LoC." In the arithmetic ladder, monolithic length crosses 17 right at
+depth 3→4 — **their length cliff predicts our curve without any depth effect at
+all.** A raw pass@k-vs-depth plot cannot distinguish the two.
 
-It also answers a question one family cannot: **is the decay constant
-domain-invariant?** Theorem's 3x was measured on *Logical Foundations*. If
-arithmetic and metatheory ladders give different constants, the figure is a
-property of a corpus rather than of proving-at-depth, which would matter for
-anyone planning around it.
+The identification strategy is therefore a **within-depth contrast on ancestor
+count**, not a depth sweep. That lever exists in `arithmetic` (at depth 3, one
+rung has 4 ancestors and another has 2; at depth 4, 5 versus 4) and not in
+`noninterference`, where ancestor count tracks depth at r = 1.000.
+
+`docs/design-log.md` records this in full, including the fact that the
+noninterference family was built expecting the opposite result.
 
 ## Status
 
-Ladder: 11 rungs, depths 1–5, arithmetic family. Self-test green in both
-conditions. Model sweeps pending.
+Two families, self-test green in both conditions. Model sweeps pending —
+no policy has been run yet, so this repository currently contains a calibrated
+instrument and no measurement.

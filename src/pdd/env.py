@@ -18,7 +18,8 @@ import random
 from dataclasses import dataclass
 
 from .grader import Result, grade
-from .ladder import BY_KEY, Instance, depth_of
+from .families import DEFAULT, FAMILIES
+from .ladder import Instance
 from .task import Condition, Task
 
 
@@ -43,20 +44,23 @@ class LadderEnv:
     def __init__(
         self,
         condition: Condition = Condition.COMPOSITIONAL,
+        family: str = DEFAULT,
         depths: tuple[int, ...] | None = None,
         seed: int = 0,
     ) -> None:
         self.condition = condition
+        self.family = FAMILIES[family]
         self.rng = random.Random(seed)
         self.keys = [
-            k for k in BY_KEY if depths is None or depth_of(k) in depths
+            k for k in self.family.by_key
+            if depths is None or self.family.depth_of(k) in depths
         ]
         self.task: Task | None = None
 
     def reset(self, seed: int | None = None) -> str:
         if seed is not None:
             self.rng.seed(seed)
-        inst = Instance.sample(self.rng.randrange(2**31))
+        inst = Instance.sample(self.family, self.rng.randrange(2**31))
         self.task = Task(inst, self.rng.choice(self.keys), self.condition)
         return self.task.prompt()
 
@@ -74,5 +78,6 @@ class LadderEnv:
                 "depth": self.task.depth,
                 "key": self.task.key,
                 "condition": self.condition.value,
+                "family": self.family.name,
             },
         )
