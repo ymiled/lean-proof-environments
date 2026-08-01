@@ -1,0 +1,247 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+
+\lstset{basicstyle=\ttfamily\small,breaklines=true,frame=none,columns=fullflexible}
+
+\title{\textbf{Measuring Proof-Success Decay with Dependency Depth}\\[2mm]
+\large A verifiable-reward environment over a machine-checked security metatheorem}
+\author{Youssef Miled}
+\date{August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A published claim holds that when proofs are produced without compositional
+structure, model success falls by ``roughly a 3x reduction in successful problem
+count for every additional dependency solved.'' That constant justifies treating
+verified dependencies as trusted interfaces rather than re-proving them. It was
+measured once, on one corpus, and has not been independently checked. We build
+an open Lean~4 environment to test it: a dependency graph of lemmas, two
+conditions differing only in whether ancestors are supplied, and a grader that
+audits which axioms a result depends on rather than whether a file compiles. We
+report three findings. First, a measured decay of $1.73\times$ per depth on an
+arithmetic ladder, which we argue \emph{cannot} be interpreted as a depth
+effect, since the same data fits $1.44\times$ per lemma at an identical $R^2$.
+Second, a clean qualitative separation between the two conditions on a
+security-type-system ladder whose soundness theorem we machine-check end to end.
+Third, and most consequential for anyone building such an environment, that the
+binding constraint is difficulty calibration rather than grading or task
+generation. We also report several negative results, including two ladder
+designs that silently measured nothing and a safeguard that was inert for the
+entire life of a family.
+\end{abstract}
+
+\section{The claim under test}
+
+Theorem's \texttt{lf-lean} reports that monolithic translation degrades
+exponentially in dependency count, at ``roughly a 3x reduction in successful
+problem count for every additional dependency solved,'' and estimates that a
+monolithic approach ``would yield less than 20\% success.'' The figure is the
+justification for compositional verification, in which already-verified
+dependencies are supplied as trusted interfaces, reducing context from
+$O(|P|)$ to $O(\max_i |c_i|)$.
+
+We test it on independent corpora with an open grader.
+
+\section{The environment}
+
+\paragraph{Ladders.} A \emph{family} is a Lean theory plus a dependency DAG of
+lemmas. Depth is derived from the graph, never declared: $\mathrm{depth}(L)=1$ if
+$L$ has no dependencies, else $1+\max$ over its dependencies. A rung is a schema
+whose identifiers are placeholders, so each seed yields a freshly renamed theory.
+
+\paragraph{Conditions.} A task is a \emph{set} of lemmas to prove; everything
+else in the family is supplied already proved. Compositional is the singleton
+$\{L\}$; monolithic is $\{L\}\cup\mathrm{ancestors}(L)$. At depth 5 that is the
+difference between three lines and eight lemmas.
+
+\paragraph{Grader.} Acceptance requires that the file compiles, that
+\texttt{\#print axioms} on every target lies within
+$\{\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}\}$, and that no
+banned syntax appears. The axiom audit is load-bearing, not decorative. During
+development a rung failed to prove; Lean reported the error but \emph{still
+declared the theorem}, and every downstream lemma citing it compiled with exit
+status 0 and no diagnostics. Only the axiom check revealed
+\texttt{sorryAx}. A grader asking ``did it compile?'' would have scored that
+entire subtree as proved.
+
+Statement drift is prevented structurally rather than detected: the harness
+writes the \texttt{theorem \ldots := by} header and the policy supplies only a
+tactic block, so a model can never weaken or restate the goal.
+
+\paragraph{Certification.} Before any sweep, \texttt{selftest} checks three
+properties per rung: solvable compositionally, solvable monolithically, and that
+each declared dependency is \emph{real}, verified by compiling the rung with its
+ancestors absent from the file entirely.
+
+\section{Families}
+
+\begin{table}[h]\centering
+\begin{tabular}{lrrl}
+\toprule
+family & rungs & depths & top rung \\
+\midrule
+\texttt{arithmetic} & 15 & 1--5 & commutativity of multiplication \\
+\texttt{noninterference} & 12 & 1--4 & soundness of a security type system \\
+\texttt{vsi} & 14 & 1--5 & soundness, with subtyping, loops, functions \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The third family is not invented for the benchmark. It is the lemma chain of a
+Lean~4 formalisation of a security type system in the Volpano--Smith--Irvine
+style, extended with a nesting-depth-indexed command type $\mathsf{Ncmd}(\tau,n)$
+and with functions. Its soundness theorem is machine-checked end to end:
+
+\begin{lstlisting}
+theorem noninterference_full (hft : FTOk G sg ft) (hty : TyC G sg c ty)
+    (hst : lowEq G s t) (hs : evalC ft k s c = some s')
+    (ht : evalC ft k t c = some t') : lowEq G s' t'
+\end{lstlisting}
+
+784 lines, no \texttt{sorryAx}, axioms within $\{\texttt{propext},
+\texttt{Quot.sound}\}$. Semantics is fuel-indexed, so the theorem is
+termination-insensitive: it relates runs that both finish. Expression agreement
+and command noninterference are proved \emph{simultaneously} by induction on
+fuel, because a call inside an expression runs a command and an assignment
+inside a command evaluates an expression, so neither can be established first.
+
+Two properties make this a better ladder than a synthetic one. The depth is the
+dependency structure the proof actually has, so it cannot be accused of having
+been shaped to produce a curve. And contamination is near zero: Peano arithmetic
+is in every training set, this system is in none.
+
+\section{Results}
+
+\paragraph{A decay constant, and why it does not identify a mechanism.}
+On \texttt{arithmetic}, monolithic pass rates for Haiku~4.5 fall
+$1.00, 0.75, 0.33, 0.00, 0.00$ across depths 1--5, while Sonnet~5 remains at
+$1.00$ until failing the depth-5 task (8 lemmas). Fitting $\log(\text{pass})$
+against depth on the non-zero points gives
+
+\[
+1.73\times \text{ per depth} \qquad (R^2 = 0.93).
+\]
+
+Refitting the \emph{identical data} against lemma count gives $1.44\times$ per
+lemma at $R^2 = 0.930$, the same to three decimals. The two models are
+statistically indistinguishable. This is the collinearity problem made concrete:
+across our ladders, $\mathrm{corr}(\text{depth},\text{monolithic length})
+\approx 0.98$. Worse, the source paper itself reports a difficulty cliff at
+``17+ marginal LoC,'' and in our arithmetic ladder monolithic length crosses 17
+exactly between depths 3 and 4. \textbf{Their own length cliff predicts our curve
+with no depth effect existing at all.} We therefore do not present $1.73\times$
+as a replication.
+
+\paragraph{Condition separation on the metatheorem ladder.}
+On \texttt{vsi}, with Sonnet~5 as a one-shot policy and no compiler access:
+
+\begin{table}[h]\centering
+\begin{tabular}{lrrrr}
+\toprule
+depth & compositional & $n$ & monolithic & $n$ \\
+\midrule
+1 & 0.83 & 6  & 0.83 & 12 \\
+2 & 0.50 & 2  & 0.00 & 4 \\
+3 & 0.75 & 12 & 0.00 & 3 \\
+4 & 0.50 & 6  & 0.00 & 2 \\
+5 & 1.00 & 3  & --   & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The compositional arm holds between 0.50 and 1.00 at every depth; the monolithic
+arm collapses to zero from depth 2 onward. The depth-5 compositional cell at
+$1.00$ is instructive rather than anomalous: \texttt{noninterference\_full} is a
+one-line application of \texttt{agree}, which the compositional condition
+supplies. Depth and difficulty come apart precisely when the interfaces are
+handed over, which is the effect compositional verification is supposed to
+produce.
+
+\paragraph{Decomposition changes what is provable.}
+On an earlier version of the \texttt{noninterference} family, both
+\texttt{confinement} and the soundness theorem failed at $0.00$ \emph{even
+compositionally}, with every ancestor supplied. After splitting the 37-line
+soundness proof into two intermediate lemmas, dropping the target to 22 lines,
+the same policy at the same one-shot budget proved it. Nothing about the theorem,
+the language, or the model changed; only the granularity of the trusted
+interfaces did.
+
+\section{Threats to validity}
+
+\paragraph{Power.} Cells range from $n=2$ to $n=12$; the intended $k\ge5$ per
+cell was not reached because an API session limit halted the sweep at 50 of 140
+tasks. No decay constant should be fitted to the \texttt{vsi} table.
+
+\paragraph{Noise floor.} Depth-1 rungs have no ancestors, so their monolithic and
+compositional prompts are \emph{byte-identical}, verified by \texttt{diff}. They
+are nonetheless answered by independent policy instances. In one sweep they
+scored 8/8 in one arm and 6/8 in the other, putting run-to-run variance near
+$25\%$. Depth-1 rungs therefore act as a built-in replication control that
+measures the noise floor for free, and any single-draw cell must be read against
+it.
+
+\paragraph{Contamination.} Renaming blocks verbatim recall of library proof terms
+but not strategy transfer, and the defence is itself untested. The \texttt{vsi}
+family largely sidesteps this by not existing in any corpus.
+
+\paragraph{Identification.} The causal question is open. A chain-versus-antichain
+contrast at matched volume was designed to settle it: compare $k$ mutually
+independent lemmas against $k$ chained ones, holding count and length fixed.
+Equal pass rates implicate volume; a gap implicates chaining. It has only been
+run against a policy that ceilings on it.
+
+\section{Negative results}
+
+These cost the most and are the least reproducible, so we record them.
+
+\textbf{Closed terms collapse depth.} A ladder stating lemmas at a concrete point
+($\texttt{op}_i\,1\,y = 1$) produced goals that were closed terms, so
+\texttt{simp} evaluated rather than reasoned about them. A depth-3 rung fell to
+\texttt{simp\_all} with nothing in scope. Rungs must quantify over the variables
+the definitions recurse on.
+
+\textbf{Uniformity destroys essential depth.} A family purpose-built so the chain
+and antichain arms would match exactly failed, because each rung was the previous
+one composed once more, so the chain was bypassable by unfolding. Matching by
+construction requires uniformity, and uniformity makes the chain decorative. The
+two requirements are contradictory; matched pairs must be searched for, not
+constructed.
+
+\textbf{A funnel admits no antichains.} Withheld sets must be up-closed, so
+antichains can only be drawn from maximal elements. A family with one maximal
+rung cannot support the identification experiment at all, regardless of size.
+
+\textbf{An inert safeguard is worse than none.} The depth check certified the
+\texttt{vsi} family green while four of its rungs declared dependencies their
+proofs never cite. It graded a monolithic task using the compositional solution,
+but there the ancestors are themselves targets, so missing blocks were filled
+with \texttt{sorry} and the audit rejected the attempt for the wrong reason. The
+check could never fire. It was found by hand-inspecting a dependency that looked
+implausible. Every check should be tested against a case it is meant to reject.
+
+\section{Conclusion}
+
+The grader worked, the dependency machinery worked, the renaming worked, the
+certifications worked once repaired. The binding constraint was none of these.
+It was \textbf{difficulty calibration}: \texttt{arithmetic} ceilings for a strong
+policy, the first \texttt{noninterference} family floored above depth 1, and only
+a weaker policy or a rebuilt ladder landed in the band where a curve exists.
+
+A task that always passes and a task that always fails both yield zero gradient.
+That is the same sparse-reward failure attributed to unit tests. Dense signal is
+therefore not a property of proof assistants; it is a property of a task
+distribution matched to a policy. Proof assistants make dense signal possible,
+not automatic, and anyone planning to scale reinforcement learning on
+verification needs a calibration story, not just a kernel.
+
+\paragraph{Artifact.} Environment, grader, three families, the machine-checked
+metatheorem, and a design log of every failure above.
+
+\end{document}
