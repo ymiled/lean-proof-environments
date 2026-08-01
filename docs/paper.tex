@@ -1,247 +1,197 @@
-\documentclass[10pt,a4paper]{article}
-\usepackage[margin=1in]{geometry}
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1.1in]{geometry}
 \usepackage{amsmath,amssymb}
-\usepackage{booktabs}
 \usepackage{listings}
 \usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
 \usepackage{microtype}
+\usepackage{parskip}
 
-\lstset{basicstyle=\ttfamily\small,breaklines=true,frame=none,columns=fullflexible}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,frame=none,columns=fullflexible,
+        xleftmargin=1em}
 
-\title{\textbf{Measuring Proof-Success Decay with Dependency Depth}\\[2mm]
-\large A verifiable-reward environment over a machine-checked security metatheorem}
+\title{\textbf{Machine-checking a security type system in Lean 4}}
 \author{Youssef Miled}
 \date{August 2026}
 
 \begin{document}
 \maketitle
 
-\begin{abstract}
-A published claim holds that when proofs are produced without compositional
-structure, model success falls by ``roughly a 3x reduction in successful problem
-count for every additional dependency solved.'' That constant justifies treating
-verified dependencies as trusted interfaces rather than re-proving them. It was
-measured once, on one corpus, and has not been independently checked. We build
-an open Lean~4 environment to test it: a dependency graph of lemmas, two
-conditions differing only in whether ancestors are supplied, and a grader that
-audits which axioms a result depends on rather than whether a file compiles. We
-report three findings. First, a measured decay of $1.73\times$ per depth on an
-arithmetic ladder, which we argue \emph{cannot} be interpreted as a depth
-effect, since the same data fits $1.44\times$ per lemma at an identical $R^2$.
-Second, a clean qualitative separation between the two conditions on a
-security-type-system ladder whose soundness theorem we machine-check end to end.
-Third, and most consequential for anyone building such an environment, that the
-binding constraint is difficulty calibration rather than grading or task
-generation. We also report several negative results, including two ladder
-designs that silently measured nothing and a safeguard that was inert for the
-entire life of a family.
-\end{abstract}
+\section*{Why}
 
-\section{The claim under test}
+As an undergrad I built a security type system for a small imperative language
+and wrote a paper proving it sound. The implementation was OCaml: an explicit
+datatype for proof trees, and a checker that decides whether a given tree really
+proves that a given program has a given type. The soundness theorem itself, that
+every well-typed program is noninterferent, was argued by hand in the paper.
 
-Theorem's \texttt{lf-lean} reports that monolithic translation degrades
-exponentially in dependency count, at ``roughly a 3x reduction in successful
-problem count for every additional dependency solved,'' and estimates that a
-monolithic approach ``would yield less than 20\% success.'' The figure is the
-justification for compositional verification, in which already-verified
-dependencies are supplied as trusted interfaces, reducing context from
-$O(|P|)$ to $O(\max_i |c_i|)$.
+That split is normal. Almost all programming-language metatheory works this way,
+and nobody thinks worse of it. But it does mean the strongest claim in the
+project rested on my own prose and my own checker, both of which I wrote. So I
+went back and machine-checked the theorem in Lean 4.
 
-We test it on independent corpora with an open grader.
+The result is 784 lines. It has no \texttt{sorry} anywhere, and
+\texttt{\#print axioms} on the final theorem reports only \texttt{propext} and
+\texttt{Quot.sound}, both of which are standard and arrive through
+\texttt{simp} and \texttt{omega}. Anyone can check that in about thirty seconds.
 
-\section{The environment}
+\section*{What the system is}
 
-\paragraph{Ladders.} A \emph{family} is a Lean theory plus a dependency DAG of
-lemmas. Depth is derived from the graph, never declared: $\mathrm{depth}(L)=1$ if
-$L$ has no dependencies, else $1+\max$ over its dependencies. A rung is a schema
-whose identifiers are placeholders, so each seed yields a freshly renamed theory.
+The language has expressions, assignment, sequencing, conditionals, while loops,
+and functions. Every variable is labelled either public or secret. The attacker
+is assumed to see the public variables and nothing else, and the question is
+whether running a program can move information from the secret side to the
+public side.
 
-\paragraph{Conditions.} A task is a \emph{set} of lemmas to prove; everything
-else in the family is supplied already proved. Compositional is the singleton
-$\{L\}$; monolithic is $\{L\}\cup\mathrm{ancestors}(L)$. At depth 5 that is the
-difference between three lines and eight lemmas.
-
-\paragraph{Grader.} Acceptance requires that the file compiles, that
-\texttt{\#print axioms} on every target lies within
-$\{\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}\}$, and that no
-banned syntax appears. The axiom audit is load-bearing, not decorative. During
-development a rung failed to prove; Lean reported the error but \emph{still
-declared the theorem}, and every downstream lemma citing it compiled with exit
-status 0 and no diagnostics. Only the axiom check revealed
-\texttt{sorryAx}. A grader asking ``did it compile?'' would have scored that
-entire subtree as proved.
-
-Statement drift is prevented structurally rather than detected: the harness
-writes the \texttt{theorem \ldots := by} header and the policy supplies only a
-tactic block, so a model can never weaken or restate the goal.
-
-\paragraph{Certification.} Before any sweep, \texttt{selftest} checks three
-properties per rung: solvable compositionally, solvable monolithically, and that
-each declared dependency is \emph{real}, verified by compiling the rung with its
-ancestors absent from the file entirely.
-
-\section{Families}
-
-\begin{table}[h]\centering
-\begin{tabular}{lrrl}
-\toprule
-family & rungs & depths & top rung \\
-\midrule
-\texttt{arithmetic} & 15 & 1--5 & commutativity of multiplication \\
-\texttt{noninterference} & 12 & 1--4 & soundness of a security type system \\
-\texttt{vsi} & 14 & 1--5 & soundness, with subtyping, loops, functions \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The third family is not invented for the benchmark. It is the lemma chain of a
-Lean~4 formalisation of a security type system in the Volpano--Smith--Irvine
-style, extended with a nesting-depth-indexed command type $\mathsf{Ncmd}(\tau,n)$
-and with functions. Its soundness theorem is machine-checked end to end:
+The obvious rule, never assign a secret expression to a public variable, catches
+the direct leak and misses the interesting one:
 
 \begin{lstlisting}
-theorem noninterference_full (hft : FTOk G sg ft) (hty : TyC G sg c ty)
-    (hst : lowEq G s t) (hs : evalC ft k s c = some s')
-    (ht : evalC ft k t c = some t') : lowEq G s' t'
+if secret_y = 0 then public_x := 1 else public_x := 2
 \end{lstlisting}
 
-784 lines, no \texttt{sorryAx}, axioms within $\{\texttt{propext},
-\texttt{Quot.sound}\}$. Semantics is fuel-indexed, so the theorem is
-termination-insensitive: it relates runs that both finish. Expression agreement
-and command noninterference are proved \emph{simultaneously} by induction on
-fuel, because a call inside an expression runs a command and an assignment
-inside a command evaluates an expression, so neither can be established first.
+No secret value is assigned to \texttt{public\_x} here. But afterwards, reading
+\texttt{public\_x} tells you whether \texttt{secret\_y} was zero. The information
+travelled through which branch ran. Handling that is the whole reason the type
+system carries a program counter level, and the reason the soundness proof needs
+a confinement lemma.
 
-Two properties make this a better ladder than a synthetic one. The depth is the
-dependency structure the proof actually has, so it cannot be accused of having
-been shaped to produce a curve. And contamination is near zero: Peano arithmetic
-is in every training set, this system is in none.
+My original system follows Volpano, Smith and Irvine, with subtyping. Command
+types carry two levels, $\mathsf{Cmd}(\tau_1,\tau_2)$, and subtyping is
+contravariant in the first. There is also a judgment
+$\mathsf{Ncmd}(\tau,n)$ carrying a nesting-depth counter, where the conditional
+rule demands its branches at $n-1$. On top of that I added function types,
+$\mathsf{Func}(\tau_1,\tau_2)$, with definitions, calls and returns, which is the
+part of the system that is mine rather than the literature's.
 
-\section{Results}
+\section*{Getting it into Lean}
 
-\paragraph{A decay constant, and why it does not identify a mechanism.}
-On \texttt{arithmetic}, monolithic pass rates for Haiku~4.5 fall
-$1.00, 0.75, 0.33, 0.00, 0.00$ across depths 1--5, while Sonnet~5 remains at
-$1.00$ until failing the depth-5 task (8 lemmas). Fitting $\log(\text{pass})$
-against depth on the non-zero points gives
+Three decisions did most of the work, and I want to be concrete about them
+because they are what made the thing finishable rather than a six-month project.
 
-\[
-1.73\times \text{ per depth} \qquad (R^2 = 0.93).
-\]
+\textbf{Semantics is a total function, not an inductive relation.} Most
+formalisations define evaluation as a relation and then reason by induction over
+derivations. I made \texttt{evalC} a function from a state and a command to a
+state. That means every proof goes by structural induction plus \texttt{simp},
+and I never had to build the derivation-induction machinery. The cost is that
+while loops do not terminate, so evaluation is indexed by fuel and returns
+\texttt{Option}. That is not a dodge, it changes the theorem: what I prove is
+termination-insensitive noninterference, relating two runs that both finish. For
+a language with loops that is the correct statement anyway.
 
-Refitting the \emph{identical data} against lemma count gives $1.44\times$ per
-lemma at $R^2 = 0.930$, the same to three decimals. The two models are
-statistically indistinguishable. This is the collinearity problem made concrete:
-across our ladders, $\mathrm{corr}(\text{depth},\text{monolithic length})
-\approx 0.98$. Worse, the source paper itself reports a difficulty cliff at
-``17+ marginal LoC,'' and in our arithmetic ladder monolithic length crosses 17
-exactly between depths 3 and 4. \textbf{Their own length cliff predicts our curve
-with no depth effect existing at all.} We therefore do not present $1.73\times$
-as a replication.
+\textbf{Typing is \texttt{Bool}-valued where it can be.} Well-typedness of a
+command against a program counter level computes. So a hypothesis
+\texttt{wt G pc c = true} can be taken apart by \texttt{simp} instead of by case
+analysis on constructors.
 
-\paragraph{Condition separation on the metatheorem ladder.}
-On \texttt{vsi}, with Sonnet~5 as a one-shot policy and no compiler access:
+\textbf{Expression typing is not mutual with command typing.} They look mutual,
+but expression typing never mentions command typing, and Lean's
+\texttt{induction} tactic refuses mutually inductive types. Splitting them was
+the difference between being able to do induction at all and not.
 
-\begin{table}[h]\centering
-\begin{tabular}{lrrrr}
-\toprule
-depth & compositional & $n$ & monolithic & $n$ \\
-\midrule
-1 & 0.83 & 6  & 0.83 & 12 \\
-2 & 0.50 & 2  & 0.00 & 4 \\
-3 & 0.75 & 12 & 0.00 & 3 \\
-4 & 0.50 & 6  & 0.00 & 2 \\
-5 & 1.00 & 3  & --   & 0 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\section*{The two things that were actually hard}
 
-The compositional arm holds between 0.50 and 1.00 at every depth; the monolithic
-arm collapses to zero from depth 2 onward. The depth-5 compositional cell at
-$1.00$ is instructive rather than anomalous: \texttt{noninterference\_full} is a
-one-line application of \texttt{agree}, which the compositional condition
-supplies. Depth and difficulty come apart precisely when the interfaces are
-handed over, which is the effect compositional verification is supposed to
-produce.
+\textbf{Subsumption makes inversion painful.} Because the typing relation has a
+subsumption rule, a derivation can end in \texttt{sub} at any point. Every
+inversion lemma therefore has an open case where you know nothing about how the
+type was reached. The lemma that unlocks this says that only a base type can
+subtype into a base type, and the levels are ordered:
 
-\paragraph{Decomposition changes what is provable.}
-On an earlier version of the \texttt{noninterference} family, both
-\texttt{confinement} and the soundness theorem failed at $0.00$ \emph{even
-compositionally}, with every ancestor supplied. After splitting the 37-line
-soundness proof into two intermediate lemmas, dropping the target to 22 lines,
-the same policy at the same one-shot budget proved it. Nothing about the theorem,
-the language, or the model changed; only the granularity of the trusted
-interfaces did.
+\begin{lstlisting}
+theorem sub_base_inv (h : SubTy t (.base b)) :
+    exists a, t = .base a /\ a.le b = true
+\end{lstlisting}
 
-\section{Threats to validity}
+It goes by induction over the subtyping relation, including its transitivity
+constructor, and once it exists the rest of the inversions are mechanical. There
+is also a proof-engineering trap here that cost me an hour: the natural move is
+\texttt{generalize h : X = y at hyp}, but that rewrites the goal as well as the
+hypothesis, which silently breaks the subsumption case whenever the conclusion
+mentions the type being inverted. Stating the index equations as explicit
+hypotheses instead works everywhere.
 
-\paragraph{Power.} Cells range from $n=2$ to $n=12$; the intended $k\ge5$ per
-cell was not reached because an API session limit halted the sweep at 50 of 140
-tasks. No decay constant should be fitted to the \texttt{vsi} table.
+\textbf{Expressions and commands have to be proved together.} A function call
+sits inside an expression and runs a command. An assignment sits inside a command
+and evaluates an expression. So neither statement can be established before the
+other. What breaks the circularity is fuel: at fuel $k+1$ every recursive use is
+at fuel $k$, so the two halves can be proved simultaneously by induction on fuel.
 
-\paragraph{Noise floor.} Depth-1 rungs have no ancestors, so their monolithic and
-compositional prompts are \emph{byte-identical}, verified by \texttt{diff}. They
-are nonetheless answered by independent policy instances. In one sweep they
-scored 8/8 in one arm and 6/8 in the other, putting run-to-run variance near
-$25\%$. Depth-1 rungs therefore act as a built-in replication control that
-measures the noise floor for free, and any single-draw cell must be read against
-it.
+\begin{lstlisting}
+theorem agree (hft : FTOk G sg ft) : forall k,
+   (forall e, TyE G sg e (.base .L) -> ... -> v = w)
+/\ (forall c ty, TyC G sg c ty -> ... -> lowEq G s' t')
+\end{lstlisting}
 
-\paragraph{Contamination.} Renaming blocks verbatim recall of library proof terms
-but not strategy transfer, and the defence is itself untested. The \texttt{vsi}
-family largely sidesteps this by not existing in any corpus.
+The call case then works by noticing that binding the same argument value into
+both states preserves public agreement, applying the command half to the function
+body, and reading the return variable at its declared public level. That last
+step needs the restriction from my original OCaml rules, where a function call is
+only well-typed when its parameter level is public.
 
-\paragraph{Identification.} The causal question is open. A chain-versus-antichain
-contrast at matched volume was designed to settle it: compare $k$ mutually
-independent lemmas against $k$ chained ones, holding count and length fixed.
-Equal pass rates implicate volume; a gap implicates chaining. It has only been
-run against a policy that ceilings on it.
+The other case worth mentioning is the conditional with a secret guard. There the
+two runs may take different branches, so there is no induction hypothesis
+relating them. Instead you show separately that neither run moved the public part
+of the state, using confinement, and then chain:
+$c(s) \approx_L s \approx_L t \approx_L c(t)$. That chain is why reflexivity,
+symmetry and transitivity of public agreement exist as lemmas at all. They look
+like boilerplate and they are load-bearing.
 
-\section{Negative results}
+\section*{What is new here and what is not}
 
-These cost the most and are the least reproducible, so we record them.
+The mathematics is textbook. Volpano-Smith-Irvine noninterference is a known
+result and I am not claiming otherwise. What is mine is the function extension,
+which does not appear in the published rules, and the formalisation, which as far
+as I know does not exist for this particular combination of subtyping, loops and
+functions.
 
-\textbf{Closed terms collapse depth.} A ladder stating lemmas at a concrete point
-($\texttt{op}_i\,1\,y = 1$) produced goals that were closed terms, so
-\texttt{simp} evaluated rather than reasoned about them. A depth-3 rung fell to
-\texttt{simp\_all} with nothing in scope. Rungs must quantify over the variables
-the definitions recurse on.
+The honest summary is that this is engineering, not a new theorem. Its value is
+that a hand argument about a system with subtyping and a nesting counter and
+function calls is exactly the kind of argument that quietly hides a case, and now
+it does not.
 
-\textbf{Uniformity destroys essential depth.} A family purpose-built so the chain
-and antichain arms would match exactly failed, because each rung was the previous
-one composed once more, so the chain was bypassable by unfolding. Matching by
-construction requires uniformity, and uniformity makes the chain decorative. The
-two requirements are contradictory; matched pairs must be searched for, not
-constructed.
+\section*{A second use for the proof}
 
-\textbf{A funnel admits no antichains.} Withheld sets must be up-closed, so
-antichains can only be drawn from maximal elements. A family with one maximal
-rung cannot support the identification experiment at all, regardless of size.
+Once the proof existed I noticed its lemma chain is a dependency graph with real
+depths, from the lattice lemmas at the bottom to soundness at the top, and that
+this makes it a decent test set for how well models prove things at depth. So I
+built a small environment around it: pose each lemma either with its dependencies
+already supplied or with them withheld, grade with the Lean kernel, and audit
+\texttt{\#print axioms} rather than trusting that the file compiled.
 
-\textbf{An inert safeguard is worse than none.} The depth check certified the
-\texttt{vsi} family green while four of its rungs declared dependencies their
-proofs never cite. It graded a monolithic task using the compositional solution,
-but there the ancestors are themselves targets, so missing blocks were filled
-with \texttt{sorry} and the audit rejected the attempt for the wrong reason. The
-check could never fire. It was found by hand-inspecting a dependency that looked
-implausible. Every check should be tested against a case it is meant to reject.
+That audit is not paranoia. While building this, a lemma failed to prove, Lean
+reported the error, and the theorem was still declared. Everything downstream that
+cited it compiled with exit status 0 and no complaints. Only the axiom check
+showed \texttt{sorryAx}. A grader that asks whether the file compiled would have
+scored that whole subtree as proved.
 
-\section{Conclusion}
+Running one frontier model over the ladder one-shot, with dependencies supplied
+it proves between half and all of the lemmas at every depth; with them withheld it
+drops to zero from depth two upward. I am not going to make more of that than it
+deserves. The sample sizes are between two and twelve per cell, an API limit cut
+the sweep off part way, and on a separate arithmetic ladder I found that a decay
+curve fitted against depth and the same curve fitted against sheer number of
+lemmas are statistically indistinguishable, which means this kind of measurement
+cannot by itself tell you that depth is what matters.
 
-The grader worked, the dependency machinery worked, the renaming worked, the
-certifications worked once repaired. The binding constraint was none of these.
-It was \textbf{difficulty calibration}: \texttt{arithmetic} ceilings for a strong
-policy, the first \texttt{noninterference} family floored above depth 1, and only
-a weaker policy or a rebuilt ladder landed in the band where a curve exists.
+\section*{Limitations}
 
-A task that always passes and a task that always fails both yield zero gradient.
-That is the same sparse-reward failure attributed to unit tests. Dense signal is
-therefore not a property of proof assistants; it is a property of a task
-distribution matched to a policy. Proof assistants make dense signal possible,
-not automatic, and anyone planning to scale reinforcement learning on
-verification needs a calibration story, not just a kernel.
+The theorem is termination-insensitive, which is forced by fuel and is standard
+for languages with loops, but it does mean a program that diverges on secret data
+is out of scope.
 
-\paragraph{Artifact.} Environment, grader, three families, the machine-checked
-metatheorem, and a design log of every failure above.
+The formalisation covers the type system I designed, not every rule in the OCaml
+checker. The subtyping relation and the command and function types are there. The
+nesting counter is present in the types and the rules but the metatheorem does not
+say anything specific about it.
+
+And the benchmark half is underpowered. It is a working environment with real
+graders and honest negative results, not a study.
+
+\section*{Artifact}
+
+\texttt{lean/Vsi.lean} is the formalisation. \texttt{lean/README.md} says what is
+proved and what is not. \texttt{docs/design-log.md} records the things that went
+wrong on the way, including two ladder designs that turned out to measure nothing
+and a self-check that was inert for the entire life of one family, which I only
+found because a dependency looked implausible on inspection.
 
 \end{document}
