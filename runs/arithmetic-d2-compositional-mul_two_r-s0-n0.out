@@ -1,2 +1,0 @@
--- PROOF lem_2eb3
-  simp [weave, clasp, lem_2fc1]

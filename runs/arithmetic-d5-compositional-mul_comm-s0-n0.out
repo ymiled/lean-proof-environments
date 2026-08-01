@@ -1,4 +1,0 @@
--- PROOF lem_7a2b
-  induction y with
-  | stem => simp [weave, lem_fcb6]
-  | brim k ih => simp [weave, ih, lem_61d3]

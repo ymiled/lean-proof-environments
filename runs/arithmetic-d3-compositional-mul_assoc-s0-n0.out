@@ -1,4 +1,0 @@
--- PROOF lem_203f
-  induction z with
-  | stem => rfl
-  | brim k ih => simp [weave, ih, lem_7ce1]

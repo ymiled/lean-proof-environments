@@ -19,10 +19,16 @@ grader.
 
 Two theories ship, selected with `--family`:
 
-| family | rungs | depths | top rung |
-|---|---|---|---|
-| `arithmetic` | 11 | 1–5 | commutativity of multiplication |
-| `noninterference` | 7 | 1–3 | soundness of a security type system |
+| family | rungs | depths | maximal rungs | top rung |
+|---|---|---|---|---|
+| `arithmetic` | 15 | 1–5 | 6 | commutativity of multiplication |
+| `noninterference` | 12 | 1–4 | 3 | soundness of a security type system |
+
+The `maximal rungs` column is not decoration. Withheld sets must be up-closed,
+so antichains can only be drawn from rungs nothing depends on. A family with one
+maximal rung is a *funnel*: it supports depth sweeps but the chain/antichain
+contrast is structurally impossible in it. Both families were extended
+specifically to widen their tops.
 
 `noninterference` is a loop-free imperative language with a two-point security
 lattice; the top rung proves that a well-typed command run from two states
@@ -178,8 +184,13 @@ correlations with compositional reference-proof length:
 
 | family | corr(depth, refLoC) | corr(depth, ancestors) |
 |---|---|---|
-| `arithmetic` | −0.13 | +0.97 |
-| `noninterference` | +0.97 | +1.00 |
+| `arithmetic` | −0.08 | +0.96 |
+| `noninterference` | +0.56 | +1.00 |
+
+`noninterference` began at +0.97 and was rebuilt down to +0.56 by adding rungs
+that deliberately break the pattern: `wt_anti` is an 18-line proof at depth 1,
+`ite_high_ni` a 3-line proof at depth 3. A shallow-long rung and a deep-short
+rung are what make depth and length separable at all.
 
 Correlation between depth and *monolithic* length is ~0.98 in both, and no
 choice of family fixes that: monolithic length is the sum over ancestors, so it

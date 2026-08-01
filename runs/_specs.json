@@ -1,423 +1,334 @@
 [
   {
-    "task_id": "arithmetic-d1-monolithic-add_zero_l-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-monolithic-lowEq_refl-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "monolithic",
     "k": 1,
     "targets": [
-      "add_zero_l"
+      "lowEq_refl"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
+    "reference_loc": 1
   },
   {
-    "task_id": "arithmetic-d1-compositional-add_zero_l-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-compositional-lowEq_refl-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "compositional",
     "k": 1,
     "targets": [
-      "add_zero_l"
+      "lowEq_refl"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
+    "reference_loc": 1
   },
   {
-    "task_id": "arithmetic-d1-monolithic-add_succ_l-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-monolithic-lowEq_symm-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "monolithic",
     "k": 1,
     "targets": [
-      "add_succ_l"
+      "lowEq_symm"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
+    "reference_loc": 1
   },
   {
-    "task_id": "arithmetic-d1-compositional-add_succ_l-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-compositional-lowEq_symm-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "compositional",
     "k": 1,
     "targets": [
-      "add_succ_l"
+      "lowEq_symm"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
+    "reference_loc": 1
   },
   {
-    "task_id": "arithmetic-d1-monolithic-add_assoc-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-monolithic-lowEq_trans-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "monolithic",
     "k": 1,
     "targets": [
-      "add_assoc"
+      "lowEq_trans"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
+    "reference_loc": 1
   },
   {
-    "task_id": "arithmetic-d1-compositional-add_assoc-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-compositional-lowEq_trans-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "compositional",
     "k": 1,
     "targets": [
-      "add_assoc"
+      "lowEq_trans"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
+    "reference_loc": 1
   },
   {
-    "task_id": "arithmetic-d1-monolithic-mul_zero_l-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-monolithic-evalE_agree-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "monolithic",
     "k": 1,
     "targets": [
-      "mul_zero_l"
+      "evalE_agree"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d1-compositional-mul_zero_l-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 1,
-    "targets": [
-      "mul_zero_l"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d2-monolithic-add_comm-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 2,
-    "targets": [
-      "add_zero_l",
-      "add_succ_l",
-      "add_comm"
-    ],
-    "residual_depth": 2,
-    "reference_loc": 9
-  },
-  {
-    "task_id": "arithmetic-d2-compositional-add_comm-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 2,
-    "targets": [
-      "add_comm"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d2-monolithic-mul_add_distrib-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 2,
-    "targets": [
-      "add_assoc",
-      "mul_add_distrib"
-    ],
-    "residual_depth": 2,
     "reference_loc": 6
   },
   {
-    "task_id": "arithmetic-d2-compositional-mul_add_distrib-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d1-compositional-evalE_agree-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "evalE_agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-assign_conf-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "assign_conf"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 5
+  },
+  {
+    "task_id": "noninterference-d1-compositional-assign_conf-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "assign_conf"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 5
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-upd_pair-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "upd_pair"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 4
+  },
+  {
+    "task_id": "noninterference-d1-compositional-upd_pair-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "upd_pair"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 4
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-wt_anti-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "wt_anti"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 18
+  },
+  {
+    "task_id": "noninterference-d1-compositional-wt_anti-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "wt_anti"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 18
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-conf_ite-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "conf_ite"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 3
+  },
+  {
+    "task_id": "noninterference-d1-compositional-conf_ite-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "conf_ite"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 3
+  },
+  {
+    "task_id": "noninterference-d2-monolithic-confinement-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "assign_conf",
+      "lowEq_trans",
+      "conf_ite",
+      "confinement"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 21
+  },
+  {
+    "task_id": "noninterference-d2-compositional-confinement-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "compositional",
     "k": 2,
     "targets": [
-      "mul_add_distrib"
+      "confinement"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
+    "reference_loc": 11
   },
   {
-    "task_id": "arithmetic-d3-monolithic-add_left_comm-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d2-monolithic-assign_ni-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "monolithic",
-    "k": 3,
+    "k": 2,
     "targets": [
-      "add_assoc",
-      "add_zero_l",
-      "add_succ_l",
-      "add_comm",
-      "add_left_comm"
+      "evalE_agree",
+      "assign_ni"
     ],
-    "residual_depth": 3,
+    "residual_depth": 2,
     "reference_loc": 13
   },
   {
-    "task_id": "arithmetic-d3-compositional-add_left_comm-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d2-compositional-assign_ni-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "compositional",
-    "k": 3,
+    "k": 2,
     "targets": [
-      "add_left_comm"
+      "assign_ni"
     ],
     "residual_depth": 1,
-    "reference_loc": 1
+    "reference_loc": 7
   },
   {
-    "task_id": "arithmetic-d3-monolithic-mul_assoc-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d3-monolithic-ite_high_ni-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "monolithic",
     "k": 3,
     "targets": [
-      "add_assoc",
-      "mul_add_distrib",
-      "mul_assoc"
+      "conf_ite",
+      "lowEq_refl",
+      "assign_conf",
+      "lowEq_trans",
+      "confinement",
+      "lowEq_symm",
+      "ite_high_ni"
     ],
     "residual_depth": 3,
-    "reference_loc": 9
+    "reference_loc": 25
   },
   {
-    "task_id": "arithmetic-d3-compositional-mul_assoc-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d3-compositional-ite_high_ni-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "compositional",
     "k": 3,
     "targets": [
-      "mul_assoc"
+      "ite_high_ni"
     ],
     "residual_depth": 1,
     "reference_loc": 3
   },
   {
-    "task_id": "arithmetic-d4-monolithic-mul_succ_l-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d4-monolithic-noninterference-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "monolithic",
     "k": 4,
     "targets": [
-      "add_assoc",
-      "add_zero_l",
-      "add_succ_l",
-      "add_comm",
-      "add_left_comm",
-      "mul_succ_l"
+      "evalE_agree",
+      "assign_ni",
+      "conf_ite",
+      "lowEq_refl",
+      "assign_conf",
+      "lowEq_trans",
+      "confinement",
+      "lowEq_symm",
+      "ite_high_ni",
+      "noninterference"
     ],
     "residual_depth": 4,
-    "reference_loc": 16
+    "reference_loc": 60
   },
   {
-    "task_id": "arithmetic-d4-compositional-mul_succ_l-s0-n0",
-    "family": "arithmetic",
+    "task_id": "noninterference-d4-compositional-noninterference-s0-n0",
+    "family": "noninterference",
     "seed": 0,
     "sample": 0,
     "arm": "compositional",
     "k": 4,
     "targets": [
-      "mul_succ_l"
+      "noninterference"
     ],
     "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d4-monolithic-pow_add-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 4,
-    "targets": [
-      "add_zero_l",
-      "add_assoc",
-      "mul_add_distrib",
-      "mul_assoc",
-      "pow_add"
-    ],
-    "residual_depth": 4,
-    "reference_loc": 15
-  },
-  {
-    "task_id": "arithmetic-d4-compositional-pow_add-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 4,
-    "targets": [
-      "pow_add"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d5-monolithic-mul_comm-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 5,
-    "targets": [
-      "mul_zero_l",
-      "add_assoc",
-      "add_zero_l",
-      "add_succ_l",
-      "add_comm",
-      "add_left_comm",
-      "mul_succ_l",
-      "mul_comm"
-    ],
-    "residual_depth": 5,
     "reference_loc": 22
-  },
-  {
-    "task_id": "arithmetic-d5-compositional-mul_comm-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 5,
-    "targets": [
-      "mul_comm"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d1-monolithic-one_mul_l-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 1,
-    "targets": [
-      "one_mul_l"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d1-compositional-one_mul_l-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 1,
-    "targets": [
-      "one_mul_l"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 3
-  },
-  {
-    "task_id": "arithmetic-d2-monolithic-mul_one_r-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 2,
-    "targets": [
-      "add_zero_l",
-      "mul_one_r"
-    ],
-    "residual_depth": 2,
-    "reference_loc": 4
-  },
-  {
-    "task_id": "arithmetic-d2-compositional-mul_one_r-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 2,
-    "targets": [
-      "mul_one_r"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 1
-  },
-  {
-    "task_id": "arithmetic-d2-monolithic-mul_two_r-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 2,
-    "targets": [
-      "add_zero_l",
-      "mul_two_r"
-    ],
-    "residual_depth": 2,
-    "reference_loc": 4
-  },
-  {
-    "task_id": "arithmetic-d2-compositional-mul_two_r-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 2,
-    "targets": [
-      "mul_two_r"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 1
-  },
-  {
-    "task_id": "arithmetic-d3-monolithic-add_swap4-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "monolithic",
-    "k": 3,
-    "targets": [
-      "add_assoc",
-      "add_zero_l",
-      "add_succ_l",
-      "add_comm",
-      "add_swap4"
-    ],
-    "residual_depth": 3,
-    "reference_loc": 13
-  },
-  {
-    "task_id": "arithmetic-d3-compositional-add_swap4-s0-n0",
-    "family": "arithmetic",
-    "seed": 0,
-    "sample": 0,
-    "arm": "compositional",
-    "k": 3,
-    "targets": [
-      "add_swap4"
-    ],
-    "residual_depth": 1,
-    "reference_loc": 1
   }
 ]

@@ -1,2 +1,0 @@
--- PROOF lem_a681
-  rw [← lem_0095, lem_aa90 x y, lem_0095]

@@ -1,44 +1,36 @@
 {
   "monolithic": [
-    "arithmetic-d1-monolithic-add_zero_l-s0-n0",
-    "arithmetic-d1-monolithic-add_succ_l-s0-n0",
-    "arithmetic-d1-monolithic-add_assoc-s0-n0",
-    "arithmetic-d1-monolithic-mul_zero_l-s0-n0",
-    "arithmetic-d2-monolithic-add_comm-s0-n0",
-    "arithmetic-d2-monolithic-mul_add_distrib-s0-n0",
-    "arithmetic-d3-monolithic-add_left_comm-s0-n0",
-    "arithmetic-d3-monolithic-mul_assoc-s0-n0",
-    "arithmetic-d4-monolithic-mul_succ_l-s0-n0",
-    "arithmetic-d4-monolithic-pow_add-s0-n0",
-    "arithmetic-d5-monolithic-mul_comm-s0-n0",
-    "arithmetic-d1-monolithic-one_mul_l-s0-n0",
-    "arithmetic-d2-monolithic-mul_one_r-s0-n0",
-    "arithmetic-d2-monolithic-mul_two_r-s0-n0",
-    "arithmetic-d3-monolithic-add_swap4-s0-n0"
+    "noninterference-d1-monolithic-lowEq_refl-s0-n0",
+    "noninterference-d1-monolithic-lowEq_symm-s0-n0",
+    "noninterference-d1-monolithic-lowEq_trans-s0-n0",
+    "noninterference-d1-monolithic-evalE_agree-s0-n0",
+    "noninterference-d1-monolithic-assign_conf-s0-n0",
+    "noninterference-d1-monolithic-upd_pair-s0-n0",
+    "noninterference-d1-monolithic-wt_anti-s0-n0",
+    "noninterference-d1-monolithic-conf_ite-s0-n0",
+    "noninterference-d2-monolithic-confinement-s0-n0",
+    "noninterference-d2-monolithic-assign_ni-s0-n0",
+    "noninterference-d3-monolithic-ite_high_ni-s0-n0",
+    "noninterference-d4-monolithic-noninterference-s0-n0"
   ],
   "compositional-d1": [
-    "arithmetic-d1-compositional-add_zero_l-s0-n0",
-    "arithmetic-d1-compositional-add_succ_l-s0-n0",
-    "arithmetic-d1-compositional-add_assoc-s0-n0",
-    "arithmetic-d1-compositional-mul_zero_l-s0-n0",
-    "arithmetic-d1-compositional-one_mul_l-s0-n0"
+    "noninterference-d1-compositional-lowEq_refl-s0-n0",
+    "noninterference-d1-compositional-lowEq_symm-s0-n0",
+    "noninterference-d1-compositional-lowEq_trans-s0-n0",
+    "noninterference-d1-compositional-evalE_agree-s0-n0",
+    "noninterference-d1-compositional-assign_conf-s0-n0",
+    "noninterference-d1-compositional-upd_pair-s0-n0",
+    "noninterference-d1-compositional-wt_anti-s0-n0",
+    "noninterference-d1-compositional-conf_ite-s0-n0"
   ],
   "compositional-d2": [
-    "arithmetic-d2-compositional-add_comm-s0-n0",
-    "arithmetic-d2-compositional-mul_add_distrib-s0-n0",
-    "arithmetic-d2-compositional-mul_one_r-s0-n0",
-    "arithmetic-d2-compositional-mul_two_r-s0-n0"
+    "noninterference-d2-compositional-confinement-s0-n0",
+    "noninterference-d2-compositional-assign_ni-s0-n0"
   ],
   "compositional-d3": [
-    "arithmetic-d3-compositional-add_left_comm-s0-n0",
-    "arithmetic-d3-compositional-mul_assoc-s0-n0",
-    "arithmetic-d3-compositional-add_swap4-s0-n0"
+    "noninterference-d3-compositional-ite_high_ni-s0-n0"
   ],
   "compositional-d4": [
-    "arithmetic-d4-compositional-mul_succ_l-s0-n0",
-    "arithmetic-d4-compositional-pow_add-s0-n0"
-  ],
-  "compositional-d5": [
-    "arithmetic-d5-compositional-mul_comm-s0-n0"
+    "noninterference-d4-compositional-noninterference-s0-n0"
   ]
 }

@@ -158,7 +158,8 @@ def verify_groups(pairs: list[tuple[Spec, Task]]) -> list[str]:
 def cmd_export(args) -> None:
     RUNS.mkdir(exist_ok=True)
     for f in RUNS.glob("*"):
-        f.unlink()
+        if f.is_file():
+            f.unlink()
     builder = build_depth if args.mode == "depth" else build
     pairs = builder(args.family, args.seeds, args.samples)
 

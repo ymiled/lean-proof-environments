@@ -1,6 +1,0 @@
--- PROOF lem_61d3
-  induction y with
-  | stem => rfl
-  | brim k ih =>
-    simp only [weave, ih, clasp]
-    rw [lem_0095, lem_0095, lem_aa90 k x]
