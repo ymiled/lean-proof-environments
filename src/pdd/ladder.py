@@ -44,6 +44,7 @@ class Rung:
     statement: str
     proof: str
     deps: tuple[str, ...] = ()
+    raw: str = ""
 
 
 @dataclass(frozen=True)
@@ -110,6 +111,9 @@ class Instance:
 
     @classmethod
     def sample(cls, family: Family, seed: int) -> "Instance":
+        if family.name == "vsi":
+            return cls(family=family, seed=seed,
+                       names={r.key: r.key for r in family.rungs})
         rng = random.Random(seed)
         pools = {k: list(v) for k, v in POOLS.items()}
         for v in pools.values():
@@ -133,10 +137,14 @@ class Instance:
 
     @cached_property
     def definitions(self) -> str:
+        if self.family.name == "vsi":
+            return self.family.definitions
         return self.family.definitions.format(**self.names)
 
     def statement_of(self, key: str) -> str:
         r = self.family.by_key[key]
+        if r.raw:
+            return r.raw.split(":= by", 1)[0].rstrip()
         binders = r.binders.format(**self.names)
         space = " " if binders else ""
         return (
@@ -145,9 +153,14 @@ class Instance:
         )
 
     def reference_proof_of(self, key: str) -> str:
-        return self.family.by_key[key].proof.format(**self.names)
+        r = self.family.by_key[key]
+        if r.raw:
+            return r.raw.split(":= by", 1)[1].lstrip().rstrip()
+        return r.proof.format(**self.names)
 
     def render_rung(self, key: str) -> str:
+        if self.family.by_key[key].raw:
+            return self.family.by_key[key].raw
         return f"{self.statement_of(key)} := by\n{self.reference_proof_of(key)}"
 
     def render_reference(self, key: str) -> str:
