@@ -1,0 +1,151 @@
+-- PROOF agree
+  intro k
+  induction k with
+  | zero =>
+    constructor
+    · intro e _ s t v w _ hv _
+      simp [evalE] at hv
+    · intro c ty _ s t s' t' _ hv _
+      simp [evalC] at hv
+  | succ m ih =>
+    obtain ⟨ihe, ihc⟩ := ih
+    constructor
+    · intro e
+      induction e with
+      | int n =>
+        intro _ s u v w _ hv hw
+        simp [evalE] at hv hw
+        omega
+      | evar x =>
+        intro hty s u v w hst hv hw
+        have hx := tyE_var_L hty
+        simp [evalE] at hv hw
+        have hsu := hst x hx
+        omega
+      | binop a b iha ihb =>
+        intro hty s u v w hst hv hw
+        obtain ⟨ha, hb⟩ := tyE_binop_L hty
+        simp [evalE, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨va, hva, vb, hvb, hv⟩ := hv
+        obtain ⟨wa, hwa, wb, hwb, hw⟩ := hw
+        have eva := iha ha s u va wa hst hva hwa
+        have evb := ihb hb s u vb wb hst hvb hwb
+        omega
+      | call f a iha =>
+        intro hty s u v w hst hv hw
+        obtain ⟨hsig, ha⟩ := tyE_call_L hty
+        simp [evalE, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨fn, hftfn, va, hva, s1, hs1, hv⟩ := hv
+        obtain ⟨fn2, hftfn2, wa, hwa, u1, hu1, hw⟩ := hw
+        have hfneq : fn = fn2 := by injection (hftfn.symm.trans hftfn2)
+        rw [← hfneq] at hu1 hw
+        obtain ⟨fn0, ty0, hftf0, hgparam, hgretv, htyc0⟩ := hft.sig f .L .L hsig
+        have hfn0 : fn0 = fn := by injection (hftf0.symm.trans hftfn)
+        rw [hfn0] at hgparam hgretv htyc0
+        have eva : va = wa := iha ha s u va wa hst hva hwa
+        have hst1 : lowEq G (upd s fn.param va) (upd u fn.param wa) := by
+          intro y hy
+          by_cases hxy : y = fn.param
+          · subst hxy; simp [upd]; exact eva
+          · simp [upd, hxy]; exact hst y hy
+        have hres : lowEq G s1 u1 :=
+          ihc fn.body ty0 htyc0 (upd s fn.param va) (upd u fn.param wa) s1 u1 hst1 hs1 hu1
+        have hveq := hres fn.retv hgretv
+        omega
+    · intro c ty hty
+      induction hty with
+      | skip =>
+        intro s u s' u' hst hv hw
+        simp [evalC] at hv hw
+        subst hv; subst hw
+        exact hst
+      | @assign x e tl hx hte =>
+        intro s u s' u' hst hv hw
+        simp [evalC, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨v, hv1, hv2⟩ := hv
+        obtain ⟨w, hw1, hw2⟩ := hw
+        subst hv2; subst hw2
+        have hvw : v = w := ihe e hte s u v w hst hv1 hw1
+        intro y hy
+        by_cases hxy : y = x
+        · subst hxy; simp [upd]; exact hvw
+        · simp [upd, hxy]; exact hst y hy
+      | @iteHH e c d he hc hd ihc1 ihc2 =>
+        intro s u s' u' hst hv hw
+        have hss' : lowEq G s s' :=
+          confinement _ (.ite e c d) (.cmd .H .H) (TyC.iteHH he hc hd) (by simp [secure]) s s' hv
+        have huu' : lowEq G u u' :=
+          confinement _ (.ite e c d) (.cmd .H .H) (TyC.iteHH he hc hd) (by simp [secure]) u u' hw
+        exact lowEq_trans (lowEq_trans (lowEq_symm hss') hst) huu'
+      | @iteL e c d a b he hc hd ihc1 ihc2 =>
+        intro s u s' u' hst hv hw
+        simp [evalC, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨v, hv1, hv2⟩ := hv
+        obtain ⟨w, hw1, hw2⟩ := hw
+        have hvw : v = w := ihe e he s u v w hst hv1 hw1
+        subst hvw
+        by_cases hz : v = 0
+        · simp [hz] at hv2 hw2
+          exact ihc d (.cmd a b) hd s u s' u' hst hv2 hw2
+        · simp [hz] at hv2 hw2
+          exact ihc c (.cmd a b) hc s u s' u' hst hv2 hw2
+      | @iteN e c d tl n he hc hd ihc1 ihc2 =>
+        intro s u s' u' hst hv hw
+        cases tl with
+        | L =>
+          simp [evalC, Option.bind_eq_some_iff] at hv hw
+          obtain ⟨v, hv1, hv2⟩ := hv
+          obtain ⟨w, hw1, hw2⟩ := hw
+          have hvw : v = w := ihe e he s u v w hst hv1 hw1
+          subst hvw
+          by_cases hz : v = 0
+          · simp [hz] at hv2 hw2
+            exact ihc d (.ncmd .L n) hd s u s' u' hst hv2 hw2
+          · simp [hz] at hv2 hw2
+            exact ihc c (.ncmd .L n) hc s u s' u' hst hv2 hw2
+        | H =>
+          have hss' : lowEq G s s' :=
+            confinement _ (.ite e c d) (.ncmd .H (n+1)) (TyC.iteN he hc hd) (by simp [secure]) s s' hv
+          have huu' : lowEq G u u' :=
+            confinement _ (.ite e c d) (.ncmd .H (n+1)) (TyC.iteN he hc hd) (by simp [secure]) u u' hw
+          exact lowEq_trans (lowEq_trans (lowEq_symm hss') hst) huu'
+      | @whHH e c he hc ihc1 =>
+        intro s u s' u' hst hv hw
+        have hss' : lowEq G s s' :=
+          confinement _ (.wh e c) (.cmd .H .H) (TyC.whHH he hc) (by simp [secure]) s s' hv
+        have huu' : lowEq G u u' :=
+          confinement _ (.wh e c) (.cmd .H .H) (TyC.whHH he hc) (by simp [secure]) u u' hw
+        exact lowEq_trans (lowEq_trans (lowEq_symm hss') hst) huu'
+      | @whL e c a b he hc hle ihc1 =>
+        intro s u s' u' hst hv hw
+        simp [evalC, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨v, hv1, hv2⟩ := hv
+        obtain ⟨w, hw1, hw2⟩ := hw
+        have hvw : v = w := ihe e he s u v w hst hv1 hw1
+        subst hvw
+        by_cases hz : v = 0
+        · simp [hz] at hv2 hw2
+          subst hv2; subst hw2
+          exact hst
+        · simp [hz] at hv2 hw2
+          obtain ⟨s1, hs1, hloopS⟩ := hv2
+          obtain ⟨u1, hu1, hloopU⟩ := hw2
+          have hst1 : lowEq G s1 u1 := ihc c (.cmd a b) hc s u s1 u1 hst hs1 hu1
+          exact ihc (.wh e c) (.cmd a b) (TyC.whL he hc hle) s1 u1 s' u' hst1 hloopS hloopU
+      | @seqH c d tl hc hd ihc1 ihc2 =>
+        intro s u s' u' hst hv hw
+        simp [evalC, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨s1, hs1, hv⟩ := hv
+        obtain ⟨u1, hu1, hw⟩ := hw
+        have hst1 : lowEq G s1 u1 := ihc c (.cmd tl .H) hc s u s1 u1 hst hs1 hu1
+        exact ihc d (.cmd .H .H) hd s1 u1 s' u' hst1 hv hw
+      | @seqL c d a b hc hd ihc1 ihc2 =>
+        intro s u s' u' hst hv hw
+        simp [evalC, Option.bind_eq_some_iff] at hv hw
+        obtain ⟨s1, hs1, hv⟩ := hv
+        obtain ⟨u1, hu1, hw⟩ := hw
+        have hst1 : lowEq G s1 u1 := ihc c (.cmd a .L) hc s u s1 u1 hst hs1 hu1
+        exact ihc d (.cmd a b) hd s1 u1 s' u' hst1 hv hw
+      | @sub c tl tl' hc hsub ihc1 =>
+        intro s u s' u' hst hv hw
+        exact ihc1 s u s' u' hst hv hw

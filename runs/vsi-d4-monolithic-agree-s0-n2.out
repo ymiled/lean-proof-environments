@@ -1,0 +1,477 @@
+-- PROOF lowEq_symm
+  intro x hx; exact (h x hx).symm
+-- PROOF lowEq_trans
+  intro x hx; exact (h1 x hx).trans (h2 x hx)
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+-- PROOF lowEq_refl
+  intro x hx; rfl
+-- PROOF secure_sub
+  induction h with
+  | refl t => exact hs
+  | base hle => exact hs
+  | cmd hle1 hle2 =>
+      simp only [secure] at hs ⊢
+      subst hs
+      rename_i a _ _ _
+      cases a with
+      | L => simp [Lvl.le] at hle1
+      | H => rfl
+  | ncmd hle =>
+      simp only [secure] at hs ⊢
+      subst hs
+      rename_i a _ _
+      cases a with
+      | L => simp [Lvl.le] at hle
+      | H => rfl
+  | ncmdCmd => exact hs
+  | funcNcmd => simp [secure]
+  | func hle1 hle2 => simp [secure]
+  | trans h1 h2 ih1 ih2 => exact ih1 (ih2 hs)
+-- PROOF sub_base_inv
+  have key : ∀ {t z : Ty}, SubTy t z → ∀ bb, z = .base bb →
+      ∃ a, t = .base a ∧ a.le bb = true := by
+    intro t z h
+    induction h with
+    | refl u => intro bb hbb; exact ⟨bb, hbb, Lvl.le_refl bb⟩
+    | base hle => intro bb hbb; subst hbb; exact ⟨_, rfl, hle⟩
+    | cmd _ _ => intro bb hbb; cases hbb
+    | ncmd _ => intro bb hbb; cases hbb
+    | ncmdCmd => intro bb hbb; cases hbb
+    | funcNcmd => intro bb hbb; cases hbb
+    | func _ _ => intro bb hbb; cases hbb
+    | trans h1 h2 ih1 ih2 =>
+        intro bb hbb
+        obtain ⟨a, hya, hab⟩ := ih2 bb hbb
+        obtain ⟨a', hxa', hab'⟩ := ih1 a hya
+        exact ⟨a', hxa', Lvl.le_trans hab' hab⟩
+  exact key h b rfl
+-- PROOF confinement
+  induction k with
+  | zero =>
+      intro c ty hty hs s s' he
+      simp [evalC] at he
+  | succ k IH =>
+      intro c ty hty hs s s' he
+      induction hty with
+      | skip =>
+          simp only [evalC] at he
+          cases he
+          exact lowEq_refl G s
+      | assign hGx hTy =>
+          simp only [evalC] at he
+          cases hev : evalE ft k s _ with
+          | none => rw [hev] at he; simp at he
+          | some v =>
+              rw [hev] at he
+              simp at he
+              subst he
+              intro y hy
+              simp only [upd]
+              by_cases hxy : y = _
+              · exfalso
+                subst hxy
+                simp only [secure] at hs
+                rw [hGx, hs] at hy
+                exact absurd hy (by decide)
+              · simp [hxy]
+      | iteHH hE hC1 hC2 =>
+          simp only [evalC] at he
+          cases hev : evalE ft k s e with
+          | none => rw [hev] at he; simp at he
+          | some v =>
+              rw [hev] at he
+              by_cases hv0 : v = 0
+              · rw [if_pos hv0] at he
+                exact IH _ _ hC2 hs s s' he
+              · rw [if_neg hv0] at he
+                exact IH _ _ hC1 hs s s' he
+      | iteL hE hC1 hC2 =>
+          simp only [evalC] at he
+          cases hev : evalE ft k s e with
+          | none => rw [hev] at he; simp at he
+          | some v =>
+              rw [hev] at he
+              by_cases hv0 : v = 0
+              · rw [if_pos hv0] at he
+                exact IH _ _ hC2 hs s s' he
+              · rw [if_neg hv0] at he
+                exact IH _ _ hC1 hs s s' he
+      | iteN hE hC1 hC2 =>
+          simp only [evalC] at he
+          cases hev : evalE ft k s e with
+          | none => rw [hev] at he; simp at he
+          | some v =>
+              rw [hev] at he
+              by_cases hv0 : v = 0
+              · rw [if_pos hv0] at he
+                exact IH _ _ hC2 hs s s' he
+              · rw [if_neg hv0] at he
+                exact IH _ _ hC1 hs s s' he
+      | whHH hE hC =>
+          simp only [evalC] at he
+          cases hev : evalE ft k s e with
+          | none => rw [hev] at he; simp at he
+          | some v =>
+              rw [hev] at he
+              by_cases hv0 : v = 0
+              · rw [if_pos hv0] at he
+                cases he
+                exact lowEq_refl G s
+              · rw [if_neg hv0] at he
+                cases hev2 : evalC ft k s c with
+                | none => rw [hev2] at he; simp at he
+                | some sm =>
+                    rw [hev2] at he
+                    simp at he
+                    have h1 := IH _ _ hC hs s sm hev2
+                    have h2 := IH _ _ (TyC.whHH hE hC) hs sm s' he
+                    exact lowEq_trans h1 h2
+      | whL hE hC hle =>
+          simp only [evalC] at he
+          cases hev : evalE ft k s e with
+          | none => rw [hev] at he; simp at he
+          | some v =>
+              rw [hev] at he
+              by_cases hv0 : v = 0
+              · rw [if_pos hv0] at he
+                cases he
+                exact lowEq_refl G s
+              · rw [if_neg hv0] at he
+                cases hev2 : evalC ft k s c with
+                | none => rw [hev2] at he; simp at he
+                | some sm =>
+                    rw [hev2] at he
+                    simp at he
+                    have h1 := IH _ _ hC hs s sm hev2
+                    have h2 := IH _ _ (TyC.whL hE hC hle) hs sm s' he
+                    exact lowEq_trans h1 h2
+      | seqH hC1 hC2 =>
+          simp only [evalC] at he
+          cases hev : evalC ft k s c with
+          | none => rw [hev] at he; simp at he
+          | some sm =>
+              rw [hev] at he
+              simp at he
+              have h1 := IH _ _ hC1 hs s sm hev
+              have h2 := IH _ _ hC2 rfl sm s' he
+              exact lowEq_trans h1 h2
+      | seqL hC1 hC2 =>
+          simp only [evalC] at he
+          cases hev : evalC ft k s c with
+          | none => rw [hev] at he; simp at he
+          | some sm =>
+              rw [hev] at he
+              simp at he
+              have h1 := IH _ _ hC1 hs s sm hev
+              have h2 := IH _ _ hC2 hs sm s' he
+              exact lowEq_trans h1 h2
+      | sub hC hsub ih =>
+          exact ih (secure_sub hsub hs) s s' he
+-- PROOF tyE_var_L
+  have key : ∀ {t : Ty}, TyE G sg (.evar x) t → ∀ bb, t = .base bb →
+      ∃ a, G x = .tvar a ∧ a.le bb = true := by
+    intro t h
+    induction h with
+    | evar hGx => intro bb hbb; cases hbb; exact ⟨bb, hGx, Lvl.le_refl bb⟩
+    | sub h1 hsub ih =>
+        intro bb hbb
+        subst hbb
+        obtain ⟨a, ht0, hab⟩ := sub_base_inv hsub
+        obtain ⟨a', hGa', hab'⟩ := ih a ht0
+        exact ⟨a', hGa', Lvl.le_trans hab' hab⟩
+  obtain ⟨a, hGa, hab⟩ := key h .L rfl
+  cases a with
+  | L => exact hGa
+  | H => simp [Lvl.le] at hab
+-- PROOF tyE_binop_L
+  have key : ∀ {t : Ty}, TyE G sg (.binop a b) t → ∀ bb, t = .base bb →
+      ∃ lv, lv.le bb = true ∧ TyE G sg a (.base lv) ∧ TyE G sg b (.base lv) := by
+    intro t h
+    induction h with
+    | binop h1 h2 => intro bb hbb; cases hbb; exact ⟨bb, Lvl.le_refl bb, h1, h2⟩
+    | sub h1 hsub ih =>
+        intro bb hbb
+        subst hbb
+        obtain ⟨lv0, ht0, hle⟩ := sub_base_inv hsub
+        obtain ⟨lv, hlvle, hA, hB⟩ := ih lv0 ht0
+        exact ⟨lv, Lvl.le_trans hlvle hle, hA, hB⟩
+  obtain ⟨lv, hlvle, hA, hB⟩ := key h .L rfl
+  cases lv with
+  | L => exact ⟨hA, hB⟩
+  | H => simp [Lvl.le] at hlvle
+-- PROOF tyE_call_L
+  have key : ∀ {t : Ty}, TyE G sg (.call f a) t → ∀ bb, t = .base bb →
+      ∃ t2, t2.le bb = true ∧ sg f = some (.L, t2) ∧ TyE G sg a (.base .L) := by
+    intro t h
+    induction h with
+    | call hsg hA => intro bb hbb; cases hbb; exact ⟨bb, Lvl.le_refl bb, hsg, hA⟩
+    | sub h1 hsub ih =>
+        intro bb hbb
+        subst hbb
+        obtain ⟨t20, ht0, hle⟩ := sub_base_inv hsub
+        obtain ⟨t2, ht2le, hsg, hA⟩ := ih t20 ht0
+        exact ⟨t2, Lvl.le_trans ht2le hle, hsg, hA⟩
+  obtain ⟨t2, ht2le, hsg, hA⟩ := key h .L rfl
+  cases t2 with
+  | L => exact ⟨hsg, hA⟩
+  | H => simp [Lvl.le] at ht2le
+-- PROOF agree
+  intro k
+  induction k with
+  | zero =>
+      refine ⟨?_, ?_⟩
+      · intro e hty s t v w hst hv hw
+        simp [evalE] at hv
+      · intro c ty hty s t s' t' hst hv hw
+        simp [evalC] at hv
+  | succ k IH =>
+      obtain ⟨IHe, IHc⟩ := IH
+      refine ⟨?_, ?_⟩
+      · intro e
+        induction e with
+        | int n =>
+            intro _ s t v w hst hv hw
+            simp [evalE] at hv hw
+            subst hv; subst hw; rfl
+        | evar x =>
+            intro hty s t v w hst hv hw
+            simp [evalE] at hv hw
+            subst hv; subst hw
+            exact hst x (tyE_var_L hty)
+        | binop a b iha ihb =>
+            intro hty s t v w hst hv hw
+            obtain ⟨hA, hB⟩ := tyE_binop_L hty
+            simp only [evalE] at hv hw
+            cases hva : evalE ft k s a with
+            | none => rw [hva] at hv; simp at hv
+            | some va =>
+              cases hvb : evalE ft k s b with
+              | none => rw [hva, hvb] at hv; simp at hv
+              | some vb =>
+                rw [hva, hvb] at hv; simp at hv
+                cases hwa : evalE ft k t a with
+                | none => rw [hwa] at hw; simp at hw
+                | some wa =>
+                  cases hwb : evalE ft k t b with
+                  | none => rw [hwa, hwb] at hw; simp at hw
+                  | some wb =>
+                    rw [hwa, hwb] at hw; simp at hw
+                    have eA := IHe a hA s t va wa hst hva hwa
+                    have eB := IHe b hB s t vb wb hst hvb hwb
+                    subst hv; subst hw
+                    rw [eA, eB]
+        | call f a iha =>
+            intro hty s t v w hst hv hw
+            obtain ⟨hsig, hA⟩ := tyE_call_L hty
+            simp only [evalE] at hv hw
+            cases hfn : ft f with
+            | none => rw [hfn] at hv; simp at hv
+            | some fn =>
+                rw [hfn] at hv hw
+                cases hva : evalE ft k s a with
+                | none => rw [hva] at hv; simp at hv
+                | some va =>
+                  cases hwa : evalE ft k t a with
+                  | none => rw [hwa] at hw; simp at hw
+                  | some wa =>
+                    rw [hva] at hv; simp at hv
+                    rw [hwa] at hw; simp at hw
+                    have eA := IHe a hA s t va wa hst hva hwa
+                    subst eA
+                    cases hsb : evalC ft k (upd s fn.param va) fn.body with
+                    | none => rw [hsb] at hv; simp at hv
+                    | some sb =>
+                      cases htb : evalC ft k (upd t fn.param va) fn.body with
+                      | none => rw [htb] at hw; simp at hw
+                      | some tb =>
+                        rw [hsb] at hv; simp at hv
+                        rw [htb] at hw; simp at hw
+                        obtain ⟨fn2, ty2, hftf, hGparam, hGretv, hbody⟩ :=
+                          hft.sig f .L .L hsig
+                        rw [hfn] at hftf
+                        cases hftf
+                        have hlow : lowEq G (upd s fn.param va) (upd t fn.param va) := by
+                          intro y hy
+                          simp only [upd]
+                          by_cases hxy : y = fn.param
+                          · simp [hxy]
+                          · simp [hxy]; exact hst y hy
+                        have hres := IHc fn.body ty2 hbody _ _ _ _ hlow hsb htb
+                        subst hv; subst hw
+                        exact hres fn.retv hGretv
+      · intro c ty hty s t s' t' hst hv hw
+        induction hty with
+        | skip =>
+            simp [evalC] at hv hw
+            subst hv; subst hw; exact hst
+        | assign hGx hTy =>
+            rename_i lv
+            simp only [evalC] at hv hw
+            cases hva : evalE ft k s e with
+            | none => rw [hva] at hv; simp at hv
+            | some va =>
+              cases hwa : evalE ft k t e with
+              | none => rw [hwa] at hw; simp at hw
+              | some wa =>
+                rw [hva] at hv; simp at hv
+                rw [hwa] at hw; simp at hw
+                have heq := IHe e hTy s t va wa hst hva hwa
+                subst hv; subst hw
+                intro y hy
+                simp only [upd]
+                by_cases hxy : y = x
+                · simp [hxy, heq]
+                · simp [hxy]; exact hst y hy
+        | iteHH hE hC1 hC2 =>
+            have hcs : lowEq G s s' := by
+              simp only [evalC] at hv
+              cases hva : evalE ft k s e with
+              | none => rw [hva] at hv; simp at hv
+              | some va =>
+                rw [hva] at hv
+                by_cases hv0 : va = 0
+                · rw [if_pos hv0] at hv
+                  exact confinement k d (.cmd .H .H) hC2 rfl s s' hv
+                · rw [if_neg hv0] at hv
+                  exact confinement k c (.cmd .H .H) hC1 rfl s s' hv
+            have hct : lowEq G t t' := by
+              simp only [evalC] at hw
+              cases hwa : evalE ft k t e with
+              | none => rw [hwa] at hw; simp at hw
+              | some wa =>
+                rw [hwa] at hw
+                by_cases hw0 : wa = 0
+                · rw [if_pos hw0] at hw
+                  exact confinement k d (.cmd .H .H) hC2 rfl t t' hw
+                · rw [if_neg hw0] at hw
+                  exact confinement k c (.cmd .H .H) hC1 rfl t t' hw
+            exact lowEq_trans (lowEq_trans (lowEq_symm hcs) hst) hct
+        | iteL hE hC1 hC2 =>
+            simp only [evalC] at hv hw
+            cases hva : evalE ft k s e with
+            | none => rw [hva] at hv; simp at hv
+            | some va =>
+              cases hwa : evalE ft k t e with
+              | none => rw [hwa] at hw; simp at hw
+              | some wa =>
+                have heq := IHe e hE s t va wa hst hva hwa
+                subst heq
+                rw [hva] at hv
+                rw [hwa] at hw
+                by_cases hv0 : va = 0
+                · rw [if_pos hv0] at hv
+                  rw [if_pos hv0] at hw
+                  exact IHc d _ hC2 s t s' t' hst hv hw
+                · rw [if_neg hv0] at hv
+                  rw [if_neg hv0] at hw
+                  exact IHc c _ hC1 s t s' t' hst hv hw
+        | iteN hE hC1 hC2 =>
+            rename_i lv
+            cases lv with
+            | L =>
+                simp only [evalC] at hv hw
+                cases hva : evalE ft k s e with
+                | none => rw [hva] at hv; simp at hv
+                | some va =>
+                  cases hwa : evalE ft k t e with
+                  | none => rw [hwa] at hw; simp at hw
+                  | some wa =>
+                    have heq := IHe e hE s t va wa hst hva hwa
+                    subst heq
+                    rw [hva] at hv
+                    rw [hwa] at hw
+                    by_cases hv0 : va = 0
+                    · rw [if_pos hv0] at hv
+                      rw [if_pos hv0] at hw
+                      exact IHc d _ hC2 s t s' t' hst hv hw
+                    · rw [if_neg hv0] at hv
+                      rw [if_neg hv0] at hw
+                      exact IHc c _ hC1 s t s' t' hst hv hw
+            | H =>
+                have hcs : lowEq G s s' := by
+                  simp only [evalC] at hv
+                  cases hva : evalE ft k s e with
+                  | none => rw [hva] at hv; simp at hv
+                  | some va =>
+                    rw [hva] at hv
+                    by_cases hv0 : va = 0
+                    · rw [if_pos hv0] at hv
+                      exact confinement k d _ hC2 rfl s s' hv
+                    · rw [if_neg hv0] at hv
+                      exact confinement k c _ hC1 rfl s s' hv
+                have hct : lowEq G t t' := by
+                  simp only [evalC] at hw
+                  cases hwa : evalE ft k t e with
+                  | none => rw [hwa] at hw; simp at hw
+                  | some wa =>
+                    rw [hwa] at hw
+                    by_cases hw0 : wa = 0
+                    · rw [if_pos hw0] at hw
+                      exact confinement k d _ hC2 rfl t t' hw
+                    · rw [if_neg hw0] at hw
+                      exact confinement k c _ hC1 rfl t t' hw
+                exact lowEq_trans (lowEq_trans (lowEq_symm hcs) hst) hct
+        | whHH hE hC =>
+            have hcs : lowEq G s s' :=
+              confinement k _ (.cmd .H .H) (TyC.whHH hE hC) rfl s s' hv
+            have hct : lowEq G t t' :=
+              confinement k _ (.cmd .H .H) (TyC.whHH hE hC) rfl t t' hw
+            exact lowEq_trans (lowEq_trans (lowEq_symm hcs) hst) hct
+        | whL hE hC hle =>
+            simp only [evalC] at hv hw
+            cases hva : evalE ft k s e with
+            | none => rw [hva] at hv; simp at hv
+            | some va =>
+              cases hwa : evalE ft k t e with
+              | none => rw [hwa] at hw; simp at hw
+              | some wa =>
+                have heq := IHe e hE s t va wa hst hva hwa
+                subst heq
+                rw [hva] at hv
+                rw [hwa] at hw
+                by_cases hv0 : va = 0
+                · rw [if_pos hv0] at hv
+                  rw [if_pos hv0] at hw
+                  subst hv; subst hw
+                  exact hst
+                · rw [if_neg hv0] at hv
+                  rw [if_neg hv0] at hw
+                  cases hv1 : evalC ft k s c with
+                  | none => rw [hv1] at hv; simp at hv
+                  | some sm =>
+                    cases hw1 : evalC ft k t c with
+                    | none => rw [hw1] at hw; simp at hw
+                    | some tm =>
+                      rw [hv1] at hv; simp at hv
+                      rw [hw1] at hw; simp at hw
+                      have hm := IHc c _ hC s t sm tm hst hv1 hw1
+                      exact IHc (Com.wh e c) _ (TyC.whL hE hC hle) sm tm s' t' hm hv hw
+        | seqH hC1 hC2 =>
+            simp only [evalC] at hv hw
+            cases hv1 : evalC ft k s c with
+            | none => rw [hv1] at hv; simp at hv
+            | some sm =>
+              cases hw1 : evalC ft k t c with
+              | none => rw [hw1] at hw; simp at hw
+              | some tm =>
+                rw [hv1] at hv; simp at hv
+                rw [hw1] at hw; simp at hw
+                have hm := IHc c _ hC1 s t sm tm hst hv1 hw1
+                exact IHc d _ hC2 sm tm s' t' hm hv hw
+        | seqL hC1 hC2 =>
+            simp only [evalC] at hv hw
+            cases hv1 : evalC ft k s c with
+            | none => rw [hv1] at hv; simp at hv
+            | some sm =>
+              cases hw1 : evalC ft k t c with
+              | none => rw [hw1] at hw; simp at hw
+              | some tm =>
+                rw [hv1] at hv; simp at hv
+                rw [hw1] at hw; simp at hw
+                have hm := IHc c _ hC1 s t sm tm hst hv1 hw1
+                exact IHc d _ hC2 sm tm s' t' hm hv hw
+        | sub hC hsub ih =>
+            exact ih s t s' t' hst hv hw

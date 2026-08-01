@@ -1,0 +1,18 @@
+-- PROOF sub_base_inv
+  have H : ∀ {x y : Ty}, SubTy x y → ∀ (c : Lvl), y = Ty.base c →
+      ∃ a, x = Ty.base a ∧ a.le c = true := by
+    intro x y hxy
+    induction hxy with
+    | refl z => intro c heq; exact ⟨c, heq, Lvl.le_refl c⟩
+    | base hab => intro c heq; injection heq with heq'; subst heq'; exact ⟨_, rfl, hab⟩
+    | cmd _ _ => intro c heq; cases heq
+    | ncmd _ => intro c heq; cases heq
+    | ncmdCmd => intro c heq; cases heq
+    | funcNcmd => intro c heq; cases heq
+    | func _ _ => intro c heq; cases heq
+    | trans hxy hyz ih1 ih2 =>
+        intro c heq
+        obtain ⟨a', ha'eq, ha'le⟩ := ih2 c heq
+        obtain ⟨a, haeq, hale⟩ := ih1 a' ha'eq
+        exact ⟨a, haeq, Lvl.le_trans hale ha'le⟩
+  exact H h b rfl

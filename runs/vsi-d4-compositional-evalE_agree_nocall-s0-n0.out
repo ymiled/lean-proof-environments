@@ -1,0 +1,36 @@
+-- PROOF evalE_agree_nocall
+  intro e
+  induction e with
+  | int n =>
+      intro _ _ k v w hv hw
+      cases k with
+      | zero => simp [evalE] at hv
+      | succ k' =>
+          simp [evalE] at hv hw
+          omega
+  | evar x =>
+      intro _ hty k v w hv hw
+      have hx : G x = .tvar .L := tyE_var_L hty
+      cases k with
+      | zero => simp [evalE] at hv
+      | succ k' =>
+          simp [evalE] at hv hw
+          have heq := hst x hx
+          omega
+  | binop a b iha ihb =>
+      intro hnc hty k v w hv hw
+      simp [noCall] at hnc
+      obtain ⟨hnca, hncb⟩ := hnc
+      obtain ⟨hta, htb⟩ := tyE_binop_L hty
+      cases k with
+      | zero => simp [evalE] at hv
+      | succ k' =>
+          simp [evalE, Option.bind_eq_some_iff] at hv hw
+          obtain ⟨va, hva, vb, hvb, hv'⟩ := hv
+          obtain ⟨wa, hwa, wb, hwb, hw'⟩ := hw
+          have eA := iha hnca hta k' va wa hva hwa
+          have eB := ihb hncb htb k' vb wb hvb hwb
+          omega
+  | call f a iha =>
+      intro hnc hty k v w hv hw
+      simp [noCall] at hnc

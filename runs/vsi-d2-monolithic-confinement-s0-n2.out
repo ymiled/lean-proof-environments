@@ -145,4 +145,4 @@
               have h2 := IH _ _ hC2 hs sm s' he
               exact lowEq_trans h1 h2
       | sub hC hsub ih =>
-          exact ih (secure_sub hsub hs)
+          exact ih (secure_sub hsub hs) s s' he
