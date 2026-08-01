@@ -759,8 +759,9 @@ depths 2–4, all failing. With $n=1$ and 25% noise, unsettled.
 * **Episodes are single-step.** One attempt, one whole proof, one binary reward.
   A per-tactic version with intermediate proof states as observations needs a
   persistent Lean server rather than one-shot compilation.
-* **Scale.** Two small theories, 27 rungs total. `lf-lean` operates on 1,276
-  statements. This is a demonstration of method, not a competing system.
+* **Scale.** The benchmark now has three theories and 41 rungs total. `lf-lean`
+  operates on 1,276 statements. This is a demonstration of method, not a
+  competing system.
 
 # The finding worth keeping
 
@@ -779,3 +780,82 @@ signal is **not a property of proof assistants**. It is a property of a task
 distribution matched to a policy. Proof assistants make dense signal possible,
 not automatic, and anyone planning to scale RL on verification needs a
 calibration story rather than a kernel.
+
+\newpage
+
+# Part IX: The full Vsi port
+
+The benchmark's simplified noninterference family is not the security system
+from the original OCaml repository. To close that gap, `lean/Vsi.lean` ports the
+original system with its lattice, subtyping, nesting counters, while loops, and
+function extension.
+
+The final call extension adds three load-bearing pieces:
+
+* `tyE_call_L` inverts a public call and forces both the declared argument and
+  result levels to be public.
+* `FTOk` states that every declared function signature is backed by a function
+  table entry with matching parameter and return labels and a typed body.
+* `agree` proves expression agreement and command noninterference together by
+  induction on fuel. This is necessary because expressions can call commands,
+  while commands evaluate expressions.
+
+The final theorem is `noninterference_full`. Lean 4.32.2 compiles it, and its
+`#print axioms` report is:
+
+```
+'noninterference_full' depends on axioms: [propext, Quot.sound]
+```
+
+There is no `sorryAx`. The result is termination-insensitive: both executions
+are assumed to finish at the supplied fuel.
+
+## Vsi benchmark family
+
+The new `vsi` family extracts the actual declarations and reference proof blocks
+from `lean/Vsi.lean` into 14 rungs over depths 1 through 6. Its dependency graph
+includes the inversion lemmas, `secure_sub`, confinement, call-free expression
+agreement, the combined `agree` theorem, and `noninterference_full`.
+
+The family certification passed all three checks:
+
+```
+uv run python -m pdd.selftest --family vsi
+family=vsi  14 rungs  depths 1..6  0 failure(s)
+```
+
+That certifies compositional solvability, monolithic solvability, and that each
+declared dependency is required by the citing proof.
+
+## Five-sample export
+
+The requested export produced 420 prompts, with five samples per rung and three
+seeds. `verify_groups` accepted seven isolated groups:
+
+| group | prompts |
+|---|---:|
+| compositional depth 1 | 30 |
+| compositional depth 2 | 30 |
+| compositional depth 3 | 45 |
+| compositional depth 4 | 60 |
+| compositional depth 5 | 30 |
+| compositional depth 6 | 15 |
+| monolithic | 210 |
+
+The plan was generated without merging groups. No policy subagent interface was
+available in this run, so no `.out` responses were submitted. The report
+therefore records every cell as `missing`, not as a model failure:
+
+| depth | compositional | monolithic |
+|---:|---:|---:|
+| 1 | 0.00 (30 missing) | 0.00 (30 missing) |
+| 2 | 0.00 (30 missing) | 0.00 (30 missing) |
+| 3 | 0.00 (45 missing) | 0.00 (45 missing) |
+| 4 | 0.00 (60 missing) | 0.00 (60 missing) |
+| 5 | 0.00 (30 missing) | 0.00 (30 missing) |
+| 6 | 0.00 (15 missing) | 0.00 (15 missing) |
+
+These zeros must not be interpreted as pass rates. They are an empty policy
+run, and no decay estimate can be inferred from them. A real sweep still needs
+one independent policy instance per printed group, with no merging across
+compositional depths.
