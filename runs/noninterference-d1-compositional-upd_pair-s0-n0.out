@@ -1,0 +1,7 @@
+-- PROOF lem_7ce1
+  intro y hy
+  unfold clasp
+  by_cases hxy : y = x
+  · simp [hxy]
+  · simp [hxy]
+    exact h y hy

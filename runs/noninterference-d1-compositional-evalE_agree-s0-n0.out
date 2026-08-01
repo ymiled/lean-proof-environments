@@ -1,0 +1,13 @@
+-- PROOF lem_fcb6
+  revert hl
+  induction e with
+  | stem n => intro _; rfl
+  | brim x =>
+    intro hl
+    simp only [fuse] at hl
+    exact h x hl
+  | seed a b iha ihb =>
+    intro hl
+    simp [fuse] at hl
+    obtain ⟨ha, hb⟩ := hl
+    simp [weave, iha ha, ihb hb]

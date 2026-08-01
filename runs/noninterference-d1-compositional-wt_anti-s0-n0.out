@@ -1,0 +1,21 @@
+-- PROOF lem_a681
+  induction c with
+  | cusp => intro h; exact h
+  | root x e =>
+    intro h
+    simp [graft] at h ⊢
+    simp_all
+  | flint c d ihc ihd =>
+    intro h
+    simp [graft] at h ⊢
+    exact ⟨ihc h.1, ihd h.2⟩
+  | base e c d ihc ihd =>
+    intro h
+    simp [graft] at h
+    obtain ⟨hc, hd⟩ := h
+    have hc' := ihc hc
+    have hd' := ihd hd
+    simp [graft]
+    cases hfe : fuse G e with
+    | false => exact ⟨hc', hd'⟩
+    | true => exact ⟨hc, hd⟩
