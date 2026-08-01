@@ -18,7 +18,7 @@ import argparse
 import sys
 
 from .families import DEFAULT, FAMILIES
-from .grader import grade
+from .grader import grade, grade_source
 from .ladder import Instance
 from .task import Condition, Task
 
@@ -50,8 +50,17 @@ def run(family_name: str = DEFAULT, seed: int = 0, verbose: bool = True) -> int:
                 print(f"       ^ MONOLITHIC UNSOLVABLE: {mres.verdict.value} "
                       f":: {mres.detail}")
 
+        # Depth check. Compile the rung with its ancestors absent from the file
+        # entirely. Grading a monolithic *task* cannot do this: there the
+        # ancestors are themselves targets, so any missing block is filled with
+        # `sorry` and the axiom audit rejects it for the wrong reason, which
+        # makes the check silently vacuous for every multi-target rung.
         if family.by_key[key].deps:
-            cheat = grade(mono, comp.reference_solution())
+            solo = (
+                f"{inst.definitions}\n\n{inst.render_rung(key)}\n\n"
+                f"#print axioms {inst.names[key]}\n"
+            )
+            cheat = grade_source(solo, [inst.names[key]])
             if cheat.ok:
                 failures += 1
                 if verbose:

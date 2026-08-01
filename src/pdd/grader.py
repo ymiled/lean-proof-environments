@@ -143,3 +143,40 @@ def grade(
         )
 
     return Result(Verdict.PROVED, axioms=axioms)
+
+
+def grade_source(source: str, theorem_names: list[str],
+                 timeout: float = 120.0) -> Result:
+    """Grade a complete Lean file directly, outside the `Task` machinery.
+
+    Needed by the depth check in `selftest`: to show a declared dependency is
+    real, a rung has to be compiled with its ancestors *absent from the file
+    entirely*, which no `Task` rendering produces.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "Solo.lean"
+        path.write_text(source)
+        try:
+            proc = subprocess.run(
+                [_lean_binary(), str(path)],
+                capture_output=True, text=True, timeout=timeout,
+            )
+        except subprocess.TimeoutExpired:
+            return Result(Verdict.TIMEOUT, detail=f"exceeded {timeout}s")
+
+    output = proc.stdout + proc.stderr
+    if proc.returncode != 0 or "error:" in output:
+        first = next((ln for ln in output.splitlines() if "error:" in ln),
+                     output[:200])
+        return Result(Verdict.COMPILE_ERROR, detail=first.strip())
+
+    reports = _AXIOM_LINE.findall(output)
+    clean = len(_NO_AXIOMS.findall(output))
+    if len(reports) + clean < len(theorem_names):
+        return Result(Verdict.BAD_AXIOMS, detail="missing axiom reports")
+    axioms = frozenset(a.strip() for r in reports for a in r.split(",") if a.strip())
+    extra = axioms - ALLOWED_AXIOMS
+    if extra:
+        return Result(Verdict.BAD_AXIOMS, axioms=axioms,
+                      detail=f"disallowed: {sorted(extra)}")
+    return Result(Verdict.PROVED, axioms=axioms)

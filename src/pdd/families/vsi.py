@@ -8,6 +8,8 @@ this family because the source itself is the object being benchmarked.
 
 from __future__ import annotations
 
+import re
+
 from pathlib import Path
 
 from ..ladder import Family, Rung
@@ -48,25 +50,34 @@ def _raw(name: str) -> str:
     return raw
 
 
-_deps = {
-    "lowEq_refl": (),
-    "lowEq_symm": ("lowEq_refl",),
-    "lowEq_trans": ("lowEq_refl", "lowEq_symm"),
-    "Lvl.le_refl": (),
-    "Lvl.le_trans": ("Lvl.le_refl",),
-    "sub_base_inv": ("Lvl.le_refl", "Lvl.le_trans"),
-    "tyE_var_L": ("sub_base_inv",),
-    "tyE_binop_L": ("sub_base_inv",),
-    "evalE_agree_nocall": ("lowEq_refl", "tyE_var_L", "tyE_binop_L"),
-    "secure_sub": ("Lvl.le_refl", "Lvl.le_trans"),
-    "confinement": ("lowEq_refl", "lowEq_trans", "secure_sub"),
-    "tyE_call_L": ("sub_base_inv",),
-    "agree": (
-        "lowEq_refl", "lowEq_symm", "lowEq_trans", "tyE_var_L",
-        "tyE_binop_L", "tyE_call_L", "confinement", "secure_sub",
-    ),
-    "noninterference_full": ("agree",),
-}
+_NAMES = (
+    "lowEq_refl", "lowEq_symm", "lowEq_trans", "Lvl.le_refl", "Lvl.le_trans",
+    "sub_base_inv", "tyE_var_L", "tyE_binop_L", "evalE_agree_nocall",
+    "secure_sub", "confinement", "tyE_call_L", "agree", "noninterference_full",
+)
+
+
+def _deps_of(name: str) -> tuple[str, ...]:
+    """Dependencies read off the proof text rather than declared by hand.
+
+    An earlier version of this module listed them manually and drifted: four
+    rungs claimed dependencies their proofs never cite, which inflated their
+    depths and made every depth-indexed measurement from this family
+    meaningless. `selftest` did not catch it because its depth check was
+    vacuous for multi-target rungs. Deriving the graph from the source removes
+    the possibility of that drift entirely.
+
+    The lookbehind stops `agree` from matching inside `evalE_agree_nocall`.
+    """
+    proof = _raw(name).split(":= by", 1)[1]
+    return tuple(
+        n for n in _NAMES
+        if n != name and re.search(r"(?<![\w.])" + re.escape(n) + r"\b", proof)
+    )
+
+
+_deps = {n: _deps_of(n) for n in _NAMES}
+
 
 RUNGS = tuple(
     Rung(
