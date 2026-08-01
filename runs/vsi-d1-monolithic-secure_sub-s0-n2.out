@@ -1,0 +1,22 @@
+-- PROOF secure_sub
+  induction h with
+  | refl t => exact hs
+  | base hle => exact hs
+  | cmd hle1 hle2 =>
+      simp only [secure] at hs ⊢
+      subst hs
+      rename_i a _ _ _
+      cases a with
+      | L => simp [Lvl.le] at hle1
+      | H => rfl
+  | ncmd hle =>
+      simp only [secure] at hs ⊢
+      subst hs
+      rename_i a _ _
+      cases a with
+      | L => simp [Lvl.le] at hle
+      | H => rfl
+  | ncmdCmd => exact hs
+  | funcNcmd => simp [secure]
+  | func hle1 hle2 => simp [secure]
+  | trans h1 h2 ih1 ih2 => exact ih1 (ih2 hs)

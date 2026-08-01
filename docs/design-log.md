@@ -425,3 +425,63 @@ runs 13, 21, 25, 60 across depths 2–4 and every one fails. With n = 1 per cell
 and a 25% noise floor, these observations do not settle the question. They do
 show the family can now produce evidence on both sides, which it could not
 before.
+
+## The vsi family, and a fabricated dependency graph
+
+The third family is not a theory invented for the benchmark. It is the lemma
+chain of `lean/Vsi.lean`, a Lean 4 formalisation of a security type system with
+subtyping, `while` loops, and a function extension, whose soundness theorem is
+machine-checked end to end. Fourteen rungs, depths 1 to 5, every rung a real
+step in a real metatheorem.
+
+Two properties make it a better ladder than either synthetic family:
+
+*   **The depth is not designed.** It is the dependency structure the proof
+    actually has, so nobody can object that the ladder was shaped to produce a
+    curve.
+*   **Contamination is near zero.** Peano arithmetic is in every training set.
+    This system, with its `Ncmd(τ, n)` nesting counter and its function
+    extension, exists in none.
+
+### The graph was fabricated, and the check that should have caught it was vacuous
+
+The first version of `families/vsi.py` listed dependencies in a hand-written
+dict. Four of them were wrong. `lowEq_symm` declared a dependency on
+`lowEq_refl` while its entire proof is
+
+```lean
+intro x hx; exact (h x hx).symm
+```
+
+Compiling that rung with `lowEq_refl` absent from the file succeeds cleanly:
+`'lowEq_symm' does not depend on any axioms`. `lowEq_trans`, `Lvl.le_trans` and
+`secure_sub` were the same. Depths were inflated from a true 1–5 to a reported
+1–6, and every depth-indexed number from the family would have been an artifact.
+
+`selftest` reported **0 failures** throughout. Its depth check graded a
+*monolithic task* using the compositional solution — but in a monolithic task
+the ancestors are themselves targets, so the missing blocks were filled with
+`sorry`, the axiom audit rejected the attempt for the wrong reason, `cheat.ok`
+was always `False`, and no violation could ever fire. Every monolithic vsi task
+has that shape, so the check was not weak, it was **inert**.
+
+The fix is `grade_source`, which compiles a complete Lean file outside the
+`Task` machinery, letting the check render a rung with its ancestors absent from
+the file entirely. That is the only rendering that actually tests the claim.
+With it in place the four fabricated dependencies are caught immediately, and
+`arithmetic` and `noninterference` both still pass.
+
+`vsi.py` now derives its graph from the proof text rather than from a dict, so
+the drift cannot recur.
+
+### What this cost, and the general lesson
+
+A safeguard that cannot fail is worse than no safeguard, because it is trusted.
+This one had been reported green for the entire life of the family. It was only
+found by hand-checking a dependency that looked implausible on inspection —
+`lowEq_symm` is a one-line proof and could not plausibly need a lemma.
+
+The general form: **every check should be tested against a case it is supposed
+to reject.** The three certifications in `selftest` were written against ladders
+that had already failed in specific ways, which is why the other two work. This
+one was never run against a family it should have rejected until now.

@@ -1,0 +1,22 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+-- PROOF sub_base_inv
+  have key : ∀ {t z : Ty}, SubTy t z → ∀ bb, z = .base bb →
+      ∃ a, t = .base a ∧ a.le bb = true := by
+    intro t z h
+    induction h with
+    | refl u => intro bb hbb; exact ⟨bb, hbb, Lvl.le_refl bb⟩
+    | base hle => intro bb hbb; subst hbb; exact ⟨_, rfl, hle⟩
+    | cmd _ _ => intro bb hbb; cases hbb
+    | ncmd _ => intro bb hbb; cases hbb
+    | ncmdCmd => intro bb hbb; cases hbb
+    | funcNcmd => intro bb hbb; cases hbb
+    | func _ _ => intro bb hbb; cases hbb
+    | trans h1 h2 ih1 ih2 =>
+        intro bb hbb
+        obtain ⟨a, hya, hab⟩ := ih2 bb hbb
+        obtain ⟨a', hxa', hab'⟩ := ih1 a hya
+        exact ⟨a', hxa', Lvl.le_trans hab' hab⟩
+  exact key h b rfl

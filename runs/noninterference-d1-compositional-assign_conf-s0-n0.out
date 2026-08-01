@@ -1,7 +1,0 @@
--- PROOF lem_aa90
-  intro y hy
-  simp only [graft, Bool.or_true, Bool.not_true, Bool.false_or] at hw
-  by_cases hxy : y = x
-  · subst hxy
-    simp_all
-  · simp [clasp, hxy]

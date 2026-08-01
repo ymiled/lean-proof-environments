@@ -1,0 +1,25 @@
+-- PROOF tyE_binop_L
+  suffices H : ∀ e t, TyE G sg e t → e = Exp.binop a b → t = Ty.base Lvl.L →
+      TyE G sg a (Ty.base Lvl.L) ∧ TyE G sg b (Ty.base Lvl.L) by
+    exact H _ _ h rfl rfl
+  intro e t h
+  induction h with
+  | evar _ => intro he ht; cases he
+  | int => intro he ht; cases he
+  | binop h1 h2 _ _ =>
+      intro he ht
+      injection he with hea heb
+      injection ht with htt
+      subst hea
+      subst heb
+      subst htt
+      exact ⟨h1, h2⟩
+  | call _ _ _ => intro he ht; cases he
+  | sub h hsub ih =>
+      intro he ht
+      subst ht
+      obtain ⟨aa, hta, hale⟩ := sub_base_inv hsub
+      subst hta
+      cases aa with
+      | L => exact ih he rfl
+      | H => simp [Lvl.le] at hale

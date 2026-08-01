@@ -1,8 +1,0 @@
--- PROOF lem_aa90
-  intro y hy
-  simp [graft] at hw
-  by_cases hxy : y = x
-  · rw [hxy] at hy
-    rw [hw] at hy
-    simp at hy
-  · simp only [clasp, if_neg hxy]

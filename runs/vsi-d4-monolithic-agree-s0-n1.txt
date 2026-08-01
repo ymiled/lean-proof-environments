@@ -1,0 +1,284 @@
+Prove the following 12 Lean 4 theorems.
+
+Context already in scope:
+
+```lean
+/- Port of ymiled/type-system-for-noninterference to Lean 4.
+   Volpano-Smith-Irvine security types with subtyping, while loops, and the
+   function extension. Phase 1: syntax, semantics, subtyping. -/
+
+inductive Lvl where
+  | L : Lvl
+  | H : Lvl
+  deriving DecidableEq, Repr
+
+/-- `less_or_eq` from type_checker.ml: `_, H -> true`, reflexive otherwise. -/
+def Lvl.le : Lvl → Lvl → Bool
+  | _, .H => true
+  | .L, .L => true
+  | .H, .L => false
+
+/-- Join. Used for expression levels. -/
+def Lvl.join : Lvl → Lvl → Lvl
+  | .H, _ => .H
+  | _, .H => .H
+  | .L, .L => .L
+
+inductive Ty where
+  | base (t : Lvl)              -- T τ
+  | tvar (t : Lvl)              -- Var τ
+  | cmd  (t1 t2 : Lvl)          -- Cmd(τ1, τ2)
+  | ncmd (t : Lvl) (n : Nat)    -- Ncmd(τ, n)
+  | func (t1 t2 : Lvl)          -- Func(τ1, τ2)
+  deriving DecidableEq, Repr
+
+inductive Exp where
+  | int   (n : Nat)
+  | evar  (x : Nat)
+  | binop (a b : Exp)
+  | call  (f : Nat) (a : Exp)
+  deriving Repr
+
+inductive Com where
+  | skip   : Com
+  | assign (x : Nat) (e : Exp)
+  | seq    (c d : Com)
+  | ite    (e : Exp) (c d : Com)
+  | wh     (e : Exp) (c : Com)
+  deriving Repr
+
+/-- A function, in the shape `FuncDef` insists on: body is `c ; return y`. -/
+structure Fn where
+  param : Nat
+  body  : Com
+  retv  : Nat
+  t1    : Lvl
+  t2    : Lvl
+
+abbrev St := Nat → Nat
+abbrev Ctx := Nat → Ty
+abbrev FTable := Nat → Option Fn
+
+def upd (s : St) (x v : Nat) : St := fun y => if y = x then v else s y
+
+-- Fuel-indexed semantics. `while` makes evaluation partial, so the theorem
+-- this supports is termination-insensitive: it relates runs that both finish.
+mutual
+  def evalE (ft : FTable) : Nat → St → Exp → Option Nat
+    | 0, _, _ => none
+    | _+1, _, .int n => some n
+    | _+1, s, .evar x => some (s x)
+    | k+1, s, .binop a b => do
+        let va ← evalE ft k s a
+        let vb ← evalE ft k s b
+        some (va + vb)
+    | k+1, s, .call f a => do
+        let fn ← ft f
+        let va ← evalE ft k s a
+        let s' ← evalC ft k (upd s fn.param va) fn.body
+        some (s' fn.retv)
+
+  def evalC (ft : FTable) : Nat → St → Com → Option St
+    | 0, _, _ => none
+    | _+1, s, .skip => some s
+    | k+1, s, .assign x e => do
+        let v ← evalE ft k s e
+        some (upd s x v)
+    | k+1, s, .seq c d => do
+        let s' ← evalC ft k s c
+        evalC ft k s' d
+    | k+1, s, .ite e c d => do
+        let v ← evalE ft k s e
+        if v = 0 then evalC ft k s d else evalC ft k s c
+    | k+1, s, .wh e c => do
+        let v ← evalE ft k s e
+        if v = 0 then some s
+        else do
+          let s' ← evalC ft k s c
+          evalC ft k s' (.wh e c)
+end
+
+/-- Subtyping, transcribed from `check_sub_rules`. `cmd` is contravariant in its
+    first component and covariant in its second. -/
+inductive SubTy : Ty → Ty → Prop where
+  | refl  (t : Ty) : SubTy t t
+  | base  {a b : Lvl} : a.le b = true → SubTy (.base a) (.base b)
+  | cmd   {a b a' b' : Lvl} :
+      a'.le a = true → b.le b' = true → SubTy (.cmd a b) (.cmd a' b')
+  | ncmd  {a a' : Lvl} {n : Nat} :
+      a'.le a = true → SubTy (.ncmd a n) (.ncmd a' n)
+  | ncmdCmd {a : Lvl} {n : Nat} : SubTy (.ncmd a n) (.cmd a .L)
+  | funcNcmd {a b c : Lvl} {n : Nat} : SubTy (.func a b) (.ncmd c n)
+  | func  {a b a' b' : Lvl} :
+      a'.le a = true → b.le b' = true → SubTy (.func a b) (.func a' b')
+  | trans {x y z : Ty} : SubTy x y → SubTy y z → SubTy x z
+
+#print axioms evalE
+#print axioms evalC
+
+/-- Declared signatures for the function table: `f ↦ (τ1, τ2)`. -/
+abbrev Sig := Nat → Option (Lvl × Lvl)
+
+/-- Expression typing. Transcribed from `check_type`'s expression cases.
+    Not mutual with `TyC`: expression typing never refers to command typing,
+    and keeping them separate is what makes `induction` usable on `TyE`. -/
+inductive TyE : Ctx → Sig → Exp → Ty → Prop where
+  | evar {G : Ctx} {sg : Sig} {x : Nat} {t : Lvl} :
+      G x = .tvar t → TyE G sg (.evar x) (.base t)
+  | int {G : Ctx} {sg : Sig} {n : Nat} :
+      TyE G sg (.int n) (.base .L)
+  | binop {G : Ctx} {sg : Sig} {a b : Exp} {t : Lvl} :
+      TyE G sg a (.base t) → TyE G sg b (.base t) →
+      TyE G sg (.binop a b) (.base t)
+    -- FuncNonVoidCallDeriv restricts the parameter level to L.
+  | call {G : Ctx} {sg : Sig} {f : Nat} {e : Exp} {t2 : Lvl} :
+      sg f = some (.L, t2) → TyE G sg e (.base .L) →
+      TyE G sg (.call f e) (.base t2)
+  | sub {G : Ctx} {sg : Sig} {e : Exp} {t t' : Ty} :
+      TyE G sg e t → SubTy t t' → TyE G sg e t'
+
+/-- Command typing. Transcribed from the command cases of `check_type`. -/
+inductive TyC : Ctx → Sig → Com → Ty → Prop where
+  | skip {G : Ctx} {sg : Sig} :
+      TyC G sg .skip (.ncmd .H 1)
+  | assign {G : Ctx} {sg : Sig} {x : Nat} {e : Exp} {t : Lvl} :
+      G x = .tvar t → TyE G sg e (.base t) →
+      TyC G sg (.assign x e) (.ncmd t 1)
+    -- IfDeriv, Cmd(H,H): the guard may be secret.
+  | iteHH {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} :
+      TyE G sg e (.base .H) →
+      TyC G sg c (.cmd .H .H) → TyC G sg d (.cmd .H .H) →
+      TyC G sg (.ite e c d) (.cmd .H .H)
+    -- IfDeriv, general Cmd: the guard must be public.
+  | iteL {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} {a b : Lvl} :
+      TyE G sg e (.base .L) →
+      TyC G sg c (.cmd a b) → TyC G sg d (.cmd a b) →
+      TyC G sg (.ite e c d) (.cmd a b)
+    -- IfDeriv, Ncmd: nesting depth decreases in the branches.
+  | iteN {G : Ctx} {sg : Sig} {e : Exp} {c d : Com} {t : Lvl} {n : Nat} :
+      TyE G sg e (.base t) →
+      TyC G sg c (.ncmd t n) → TyC G sg d (.ncmd t n) →
+      TyC G sg (.ite e c d) (.ncmd t (n + 1))
+  | whHH {G : Ctx} {sg : Sig} {e : Exp} {c : Com} :
+      TyE G sg e (.base .H) → TyC G sg c (.cmd .H .H) →
+      TyC G sg (.wh e c) (.cmd .H .H)
+  | whL {G : Ctx} {sg : Sig} {e : Exp} {c : Com} {a b : Lvl} :
+      TyE G sg e (.base .L) → TyC G sg c (.cmd a b) → a.le b = true →
+      TyC G sg (.wh e c) (.cmd a b)
+    -- SeqDeriv, Cmd(τ,H).
+  | seqH {G : Ctx} {sg : Sig} {c d : Com} {t : Lvl} :
+      TyC G sg c (.cmd t .H) → TyC G sg d (.cmd .H .H) →
+      TyC G sg (.seq c d) (.cmd t .H)
+    -- SeqDeriv, general.
+  | seqL {G : Ctx} {sg : Sig} {c d : Com} {a b : Lvl} :
+      TyC G sg c (.cmd a .L) → TyC G sg d (.cmd a b) →
+      TyC G sg (.seq c d) (.cmd a b)
+  | sub {G : Ctx} {sg : Sig} {c : Com} {t t' : Ty} :
+      TyC G sg c t → SubTy t t' → TyC G sg c t'
+
+/-- Public agreement: the attacker reads only variables typed `Var L`. -/
+def lowEq (G : Ctx) (s t : St) : Prop := ∀ x, G x = .tvar .L → s x = t x
+
+
+
+def secure : Ty → Prop
+  | .cmd a _ => a = .H
+  | .ncmd a _ => a = .H
+  | .func _ _ => True
+  | _ => False
+
+/-- Security is preserved *downwards* through subtyping, because `cmd` and
+    `ncmd` are contravariant in the level that matters. -/
+
+
+def noCall : Exp → Bool
+  | .int _ => true
+  | .evar _ => true
+  | .binop a b => noCall a && noCall b
+  | .call _ _ => false
+
+
+
+def noCallC : Com → Bool
+  | .skip => true
+  | .assign _ e => noCall e
+  | .seq c d => noCallC c && noCallC d
+  | .ite e c d => noCall e && noCallC c && noCallC d
+  | .wh e c => noCall e && noCallC c
+
+
+
+structure FTOk (G : Ctx) (sg : Sig) (ft : FTable) : Prop where
+  sig : ∀ f t1 t2, sg f = some (t1, t2) →
+    ∃ fn ty, ft f = some fn ∧ G fn.param = .tvar t1 ∧ G fn.retv = .tvar t2 ∧
+      TyC G sg fn.body ty
+
+/-- **Noninterference, full system.** Expression agreement and command
+    noninterference proved together by induction on fuel.
+
+    They must be simultaneous: a function call inside an expression runs a
+    command, and a command's assignment evaluates an expression, so neither
+    statement can be established before the other. Fuel is what breaks the
+    circularity, since at fuel `k+1` every recursive use is at fuel `k`.
+
+    Termination-insensitive: both runs are assumed to finish at the same fuel. -/
+
+```
+
+Goals:
+
+```lean
+-- PROOF lowEq_symm
+theorem lowEq_symm {G : Ctx} {s t : St} (h : lowEq G s t) : lowEq G t s := by
+
+-- PROOF lowEq_trans
+theorem lowEq_trans {G : Ctx} {s t u : St}
+    (h1 : lowEq G s t) (h2 : lowEq G t u) : lowEq G s u := by
+
+-- PROOF Lvl.le_refl
+theorem Lvl.le_refl (a : Lvl) : a.le a = true := by
+
+-- PROOF Lvl.le_trans
+theorem Lvl.le_trans {a b c : Lvl} (h1 : a.le b = true) (h2 : b.le c = true) :
+    a.le c = true := by
+
+-- PROOF lowEq_refl
+theorem lowEq_refl (G : Ctx) (s : St) : lowEq G s s := by
+
+-- PROOF secure_sub
+theorem secure_sub {t t' : Ty} (h : SubTy t t') (hs : secure t') : secure t := by
+
+-- PROOF sub_base_inv
+theorem sub_base_inv {t : Ty} {b : Lvl} (h : SubTy t (.base b)) :
+    ∃ a, t = .base a ∧ a.le b = true := by
+
+-- PROOF confinement
+theorem confinement {G : Ctx} {sg : Sig} {ft : FTable} :
+    ∀ (k : Nat) (c : Com) (ty : Ty), TyC G sg c ty → secure ty →
+      ∀ (s s' : St), evalC ft k s c = some s' → lowEq G s s' := by
+
+-- PROOF tyE_var_L
+theorem tyE_var_L {G : Ctx} {sg : Sig} {x : Nat}
+    (h : TyE G sg (.evar x) (.base .L)) : G x = .tvar .L := by
+
+-- PROOF tyE_binop_L
+theorem tyE_binop_L {G : Ctx} {sg : Sig} {a b : Exp}
+    (h : TyE G sg (.binop a b) (.base .L)) :
+    TyE G sg a (.base .L) ∧ TyE G sg b (.base .L) := by
+
+-- PROOF tyE_call_L
+theorem tyE_call_L {G : Ctx} {sg : Sig} {f : Nat} {a : Exp}
+    (h : TyE G sg (.call f a) (.base .L)) :
+    sg f = some (.L, .L) ∧ TyE G sg a (.base .L) := by
+
+-- PROOF agree
+theorem agree {G : Ctx} {sg : Sig} {ft : FTable} (hft : FTOk G sg ft) :
+    ∀ (k : Nat),
+      (∀ (e : Exp), TyE G sg e (.base .L) → ∀ (s t : St) (v w : Nat),
+          lowEq G s t → evalE ft k s e = some v → evalE ft k t e = some w → v = w)
+    ∧ (∀ (c : Com) (ty : Ty), TyC G sg c ty → ∀ (s t s' t' : St),
+          lowEq G s t → evalC ft k s c = some s' → evalC ft k t c = some t' →
+          lowEq G s' t') := by
+```
+
+For each goal, output a line `-- PROOF <name>` followed by ONLY the tactic block that completes it, indented two spaces. Earlier goals are in scope for later ones. No commentary, no code fences, no restatement of the theorem. Do not use `sorry`, `native_decide`, or declare axioms. Mathlib is not available.

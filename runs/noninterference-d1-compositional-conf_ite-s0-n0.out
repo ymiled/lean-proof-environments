@@ -1,5 +1,0 @@
--- PROOF lem_203f
-  simp only [hew]
-  split
-  · exact hd
-  · exact hc

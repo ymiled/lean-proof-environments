@@ -1,0 +1,26 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+-- PROOF sub_base_inv
+  have key : ∀ {u v : Ty}, SubTy u v → ∀ c : Lvl, v = .base c →
+      ∃ a, u = .base a ∧ a.le c = true := by
+    intro u v h
+    induction h with
+    | refl t0 => intro c hc; exact ⟨c, hc, Lvl.le_refl c⟩
+    | base a0 b0 hab =>
+        intro c hc
+        injection hc with hcc
+        subst hcc
+        exact ⟨a0, rfl, hab⟩
+    | cmd _ _ _ _ _ _ => intro c hc; exact Ty.noConfusion hc
+    | ncmd _ _ _ _ => intro c hc; exact Ty.noConfusion hc
+    | ncmdCmd _ _ => intro c hc; exact Ty.noConfusion hc
+    | funcNcmd _ _ _ _ => intro c hc; exact Ty.noConfusion hc
+    | func _ _ _ _ _ _ => intro c hc; exact Ty.noConfusion hc
+    | trans _ _ _ _ _ ih1 ih2 =>
+        intro c hc
+        obtain ⟨a2, hy, hale⟩ := ih2 c hc
+        obtain ⟨a1, hx, hale1⟩ := ih1 a2 hy
+        exact ⟨a1, hx, Lvl.le_trans hale1 hale⟩
+  exact key h b rfl

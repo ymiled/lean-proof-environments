@@ -1,3 +1,0 @@
--- PROOF lem_0095
-  intro x hx
-  exact (h1 x hx).trans (h2 x hx)

@@ -1,6 +1,0 @@
--- PROOF lem_7ce1
-  intro y hy
-  by_cases hxy : y = x
-  · simp only [clasp, if_pos hxy]
-  · simp only [clasp, if_neg hxy]
-    exact h y hy
