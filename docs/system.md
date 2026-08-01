@@ -97,7 +97,7 @@ the attacker nothing about the secrets.
 
 $$
 s \approx_L t \;\;\wedge\;\; \vdash c \quad\Longrightarrow\quad
-\llbracket c \rrbracket s \;\approx_L\; \llbracket c \rrbracket t
+\mathsf{run}(c, s) \;\approx_L\; \mathsf{run}(c, t)
 $$
 
 where $s \approx_L t$ means "$s$ and $t$ agree on all public variables" and
@@ -256,17 +256,17 @@ Instead you argue that neither run moved the public state at all. Both branches
 are typed at $pc = \texttt{secret}$, so confinement gives
 
 $$
-s \approx_L \llbracket c \rrbracket s
+s \approx_L \mathsf{run}(c, s)
 \qquad\text{and}\qquad
-t \approx_L \llbracket c \rrbracket t
+t \approx_L \mathsf{run}(c, t)
 $$
 
 and then the result follows by chaining with the assumption $s \approx_L t$,
 using symmetry and transitivity:
 
 $$
-\llbracket c \rrbracket s \;\approx_L\; s \;\approx_L\; t \;\approx_L\;
-\llbracket c \rrbracket t
+\mathsf{run}(c, s) \;\approx_L\; s \;\approx_L\; t \;\approx_L\;
+\mathsf{run}(c, t)
 $$
 
 That chain is the rung `ite_high_ni`, and it is why `lowEq_symm` and
@@ -316,7 +316,7 @@ public $y$ must differ from $x$, so `upd` leaves it alone.
 
 **`evalE_agree`** — a *public* expression evaluates identically in agreeing
 states: $\mathrm{lvl}(e) = \texttt{public} \wedge s \approx_L t \Rightarrow
-\llbracket e \rrbracket s = \llbracket e \rrbracket t$. Induction over the
+\mathsf{run}(e, s) = \mathsf{run}(e, t)$. Induction over the
 expression; the variable case is exactly the definition of $\approx_L$, and the
 addition case needs both subexpressions public, which is what the `||` in `lvl`
 gives.
