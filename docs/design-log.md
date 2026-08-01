@@ -177,3 +177,34 @@ constant is a property of proving-at-depth or of one corpus needs more than one
 theory. And genuine difficulty at the top: the final rung is a real metatheorem
 with a 37-line proof, where depth and intrinsic difficulty are entangled in a
 way they are not in arithmetic.
+
+## Result 1 — chain versus antichain, Sonnet 5, arithmetic family
+
+First measurement taken. 24 tasks, 3 renamed instances, 2 samples each, one-shot
+with no compiler access to the policy.
+
+| k | arm | residual depth | reference LoC | pass |
+|---|---|---|---|---|
+| 2 | antichain | 1 | 6 | 1.00 |
+| 2 | chain | 2 | 6 | 1.00 |
+| 3 | antichain | 1 | 9 | 1.00 |
+| 3 | chain | 3 | 9 | 1.00 |
+
+**Ceiling effect. The contrast is uninformative at this difficulty.** Both arms
+saturate, so the design cannot discriminate chaining from volume here — not
+because the hypothesis is wrong, but because the policy is not stressed.
+
+The grader was checked rather than assumed: on the same tasks, a garbage block
+(`rfl` everywhere) returns `compile_error` and the reference returns `proved`.
+So 1.00 reflects the policy, not a permissive grader.
+
+**Structural cap on the design.** In this family, up-closed *chains* run out at
+k = 3, while up-closed antichains reach k = 6. A chain of 4 would need four
+totally-ordered rungs whose dependents are all inside the withheld set, and the
+DAG does not admit one. So the contrast cannot be pushed to larger k by adding
+seeds or samples; it needs either a deeper family or a weaker policy.
+
+Recorded because the negative result constrains the design: any future version
+of this experiment must either raise per-rung difficulty or accept that the
+chain/antichain contrast only has power against policies that fail somewhere in
+k ∈ {2, 3}.

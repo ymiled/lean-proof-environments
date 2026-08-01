@@ -12,7 +12,7 @@ import os
 import re
 from typing import Protocol
 
-from .task import Task
+from .task import Task, parse_blocks
 
 _FENCE = re.compile(r"```(?:lean)?\s*\n(.*?)```", re.DOTALL)
 
@@ -20,8 +20,8 @@ _FENCE = re.compile(r"```(?:lean)?\s*\n(.*?)```", re.DOTALL)
 class Policy(Protocol):
     name: str
 
-    def act(self, task: Task) -> str:
-        """Return a candidate tactic block."""
+    def act(self, task: Task) -> "dict[str, str]":
+        """Return one tactic block per target."""
         ...
 
 
@@ -52,7 +52,7 @@ class ReferencePolicy:
 
     name = "reference"
 
-    def act(self, task: Task) -> str:
+    def act(self, task: Task) -> "dict[str, str]":
         return task.reference_solution()
 
 
@@ -64,8 +64,8 @@ class EmptyPolicy:
 
     name = "empty"
 
-    def act(self, task: Task) -> str:
-        return "  rfl"
+    def act(self, task: Task) -> "dict[str, str]":
+        return {k: "  rfl" for k in task.targets}
 
 
 class AnthropicPolicy:
@@ -89,7 +89,7 @@ class AnthropicPolicy:
         self.max_tokens = max_tokens
         self.name = f"{model}@T{temperature}"
 
-    def act(self, task: Task) -> str:
+    def act(self, task: Task) -> "dict[str, str]":
         msg = self._client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
@@ -97,4 +97,4 @@ class AnthropicPolicy:
             messages=[{"role": "user", "content": task.prompt()}],
         )
         text = "".join(b.text for b in msg.content if b.type == "text")
-        return _strip_fences(text)
+        return parse_blocks(_strip_fences(text), task)

@@ -61,7 +61,7 @@ class LadderEnv:
         if seed is not None:
             self.rng.seed(seed)
         inst = Instance.sample(self.family, self.rng.randrange(2**31))
-        self.task = Task(inst, self.rng.choice(self.keys), self.condition)
+        self.task = Task.single(inst, self.rng.choice(self.keys), self.condition)
         return self.task.prompt()
 
     def step(self, tactic_block: str) -> Step:

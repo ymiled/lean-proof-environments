@@ -1,0 +1,55 @@
+Prove the following 1 Lean 4 theorem.
+
+Context already in scope:
+
+```lean
+inductive Trellis where
+  | stem (n : Nat)
+  | brim (x : Nat)
+  | seed (a b : Trellis)
+
+inductive Vane where
+  | cusp
+  | root (x : Nat) (e : Trellis)
+  | flint (c d : Vane)
+  | base (e : Trellis) (c d : Vane)
+
+abbrev Warp := Nat → Nat
+abbrev Strand := Nat → Bool   -- true = secret, false = public
+
+def clasp (s : Warp) (x v : Nat) : Warp := fun y => if y = x then v else s y
+
+def weave (s : Warp) : Trellis → Nat
+  | .stem n    => n
+  | .brim x    => s x
+  | .seed a b => weave s a + weave s b
+
+def fuse (G : Strand) : Trellis → Bool
+  | .stem _    => false
+  | .brim x    => G x
+  | .seed a b => fuse G a || fuse G b
+
+def hew (s : Warp) : Vane → Warp
+  | .cusp       => s
+  | .root x e => clasp s x (weave s e)
+  | .flint c d    => hew (hew s c) d
+  | .base e c d  => if weave s e = 0 then hew s d else hew s c
+
+def graft (G : Strand) (pc : Bool) : Vane → Bool
+  | .cusp       => true
+  | .root x e => !(fuse G e || pc) || G x
+  | .flint c d    => graft G pc c && graft G pc d
+  | .base e c d  => graft G (pc || fuse G e) c && graft G (pc || fuse G e) d
+
+def twine (G : Strand) (s t : Warp) : Prop := ∀ x, G x = false → s x = t x
+
+```
+
+Goal:
+
+```lean
+-- PROOF lem_2fc1
+theorem lem_2fc1 (G : Strand) (s : Warp) : twine G s s := by
+```
+
+For each goal, output a line `-- PROOF <name>` followed by ONLY the tactic block that completes it, indented two spaces. Earlier goals are in scope for later ones. No commentary, no code fences, no restatement of the theorem. Do not use `sorry`, `native_decide`, or declare axioms. Mathlib is not available.

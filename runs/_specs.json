@@ -1,0 +1,384 @@
+[
+  {
+    "task_id": "noninterference-d1-monolithic-lowEq_refl-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-lowEq_refl-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-compositional-lowEq_refl-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-compositional-lowEq_refl-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-lowEq_symm-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-lowEq_symm-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-compositional-lowEq_symm-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-compositional-lowEq_symm-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-lowEq_trans-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-lowEq_trans-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-compositional-lowEq_trans-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-compositional-lowEq_trans-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-evalE_agree-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "evalE_agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-evalE_agree-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "evalE_agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6
+  },
+  {
+    "task_id": "noninterference-d1-compositional-evalE_agree-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "evalE_agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6
+  },
+  {
+    "task_id": "noninterference-d1-compositional-evalE_agree-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "evalE_agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-assign_conf-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "assign_conf"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 5
+  },
+  {
+    "task_id": "noninterference-d1-monolithic-assign_conf-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "assign_conf"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 5
+  },
+  {
+    "task_id": "noninterference-d1-compositional-assign_conf-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "assign_conf"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 5
+  },
+  {
+    "task_id": "noninterference-d1-compositional-assign_conf-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "assign_conf"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 5
+  },
+  {
+    "task_id": "noninterference-d2-monolithic-confinement-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "assign_conf",
+      "lowEq_trans",
+      "confinement"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 20
+  },
+  {
+    "task_id": "noninterference-d2-monolithic-confinement-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "assign_conf",
+      "lowEq_trans",
+      "confinement"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 20
+  },
+  {
+    "task_id": "noninterference-d2-compositional-confinement-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13
+  },
+  {
+    "task_id": "noninterference-d2-compositional-confinement-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13
+  },
+  {
+    "task_id": "noninterference-d3-monolithic-noninterference-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "evalE_agree",
+      "lowEq_refl",
+      "assign_conf",
+      "lowEq_trans",
+      "confinement",
+      "lowEq_symm",
+      "noninterference"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 64
+  },
+  {
+    "task_id": "noninterference-d3-monolithic-noninterference-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "evalE_agree",
+      "lowEq_refl",
+      "assign_conf",
+      "lowEq_trans",
+      "confinement",
+      "lowEq_symm",
+      "noninterference"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 64
+  },
+  {
+    "task_id": "noninterference-d3-compositional-noninterference-s0-n0",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "noninterference"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 37
+  },
+  {
+    "task_id": "noninterference-d3-compositional-noninterference-s0-n1",
+    "family": "noninterference",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "noninterference"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 37
+  }
+]

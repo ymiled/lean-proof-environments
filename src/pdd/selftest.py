@@ -31,7 +31,7 @@ def run(family_name: str = DEFAULT, seed: int = 0, verbose: bool = True) -> int:
     ordered = sorted(family.by_key, key=family.depth_of)
     for key in ordered:
         depth = family.depth_of(key)
-        comp = Task(inst, key, Condition.COMPOSITIONAL)
+        comp = Task.single(inst, key, Condition.COMPOSITIONAL)
         res = grade(comp, comp.reference_solution())
         if not res.ok:
             failures += 1
@@ -42,7 +42,7 @@ def run(family_name: str = DEFAULT, seed: int = 0, verbose: bool = True) -> int:
                 + (f" :: {res.detail}" if res.detail else "")
             )
 
-        mono = Task(inst, key, Condition.MONOLITHIC)
+        mono = Task.single(inst, key, Condition.MONOLITHIC)
         mres = grade(mono, mono.reference_solution())
         if not mres.ok:
             failures += 1

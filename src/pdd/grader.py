@@ -78,14 +78,24 @@ def _lean_binary() -> str:
     return str(candidate) if candidate.exists() else "lean"
 
 
-def grade(task: Task, tactic_block: str, timeout: float = 60.0) -> Result:
-    """Check one candidate proof against one task."""
-    lowered = tactic_block.lower()
-    for token in BANNED:
-        if token in lowered:
-            return Result(Verdict.BANNED_SYNTAX, detail=f"contains {token!r}")
+def grade(
+    task: Task, blocks: "dict[str, str] | str", timeout: float = 120.0
+) -> Result:
+    """Check candidate proofs against a task.
 
-    source = task.assemble(tactic_block)
+    A multi-target task is graded all-or-nothing: every target must compile and
+    every target must pass the axiom audit. That matches the quantity under
+    test, which is a count of *problems solved*, and it prevents a policy from
+    scoring by proving only the easy members of a set.
+    """
+    texts = [blocks] if isinstance(blocks, str) else list(blocks.values())
+    for text in texts:
+        lowered = text.lower()
+        for token in BANNED:
+            if token in lowered:
+                return Result(Verdict.BANNED_SYNTAX, detail=f"contains {token!r}")
+
+    source = task.assemble(blocks)
 
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "Candidate.lean"
@@ -110,16 +120,20 @@ def grade(task: Task, tactic_block: str, timeout: float = 60.0) -> Result:
         )
         return Result(Verdict.COMPILE_ERROR, detail=first.strip())
 
-    if _NO_AXIOMS.search(output):
-        return Result(Verdict.PROVED, axioms=frozenset())
-
-    match = _AXIOM_LINE.search(output)
-    if match is None:
+    # One `#print axioms` line per target. Every one must clear the bar: a
+    # `sorryAx` anywhere in the set means the set was not proved.
+    reports = _AXIOM_LINE.findall(output)
+    clean = len(_NO_AXIOMS.findall(output))
+    expected = len(task.theorem_names)
+    if len(reports) + clean < expected:
         return Result(
-            Verdict.BAD_AXIOMS, detail="no `#print axioms` output found"
+            Verdict.BAD_AXIOMS,
+            detail=f"expected {expected} axiom reports, saw {len(reports) + clean}",
         )
 
-    axioms = frozenset(a.strip() for a in match.group(1).split(",") if a.strip())
+    axioms = frozenset(
+        a.strip() for r in reports for a in r.split(",") if a.strip()
+    )
     extra = axioms - ALLOWED_AXIOMS
     if extra:
         return Result(

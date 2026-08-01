@@ -138,6 +138,50 @@ RUNGS = (
               "  | {succ} k ih => simp [{op2}, {mul_succ_l}, ih]",
         deps=("mul_zero_l", "mul_succ_l"),
     ),
+    # --- maximal rungs -------------------------------------------------
+    # Nothing depends on these, and none depends on another, so together with
+    # `mul_comm` and `pow_add` they form a six-element antichain.
+    #
+    # They exist because of a structural fact discovered while building the
+    # chain/antichain contrast: a withheld set must be up-closed (a supplied
+    # lemma cites its own dependencies, so withholding a lemma forces
+    # withholding everything above it). Antichains can therefore only be drawn
+    # from *maximal* elements. Before these rungs the family had exactly two,
+    # which capped matched contrasts at k = 2 and left the design with a single
+    # comparison and no dose-response curve.
+    Rung(
+        key="one_mul_l",
+        role="left unit for op2",
+        binders="(y : {T})",
+        statement="{op2} (.{succ} .{zero}) y = y",
+        proof="  induction y with\n"
+              "  | {zero} => rfl\n"
+              "  | {succ} k ih => simp [{op2}, ih, {op1}]",
+    ),
+    Rung(
+        key="mul_one_r",
+        role="right unit for op2",
+        binders="(x : {T})",
+        statement="{op2} x (.{succ} .{zero}) = x",
+        proof="  simp [{op2}, {add_zero_l}]",
+        deps=("add_zero_l",),
+    ),
+    Rung(
+        key="mul_two_r",
+        role="op2 by two is self-op1",
+        binders="(x : {T})",
+        statement="{op2} x (.{succ} (.{succ} .{zero})) = {op1} x x",
+        proof="  simp [{op2}, {add_zero_l}]",
+        deps=("add_zero_l",),
+    ),
+    Rung(
+        key="add_swap4",
+        role="op1 swaps its outer operands",
+        binders="(x y z : {T})",
+        statement="{op1} ({op1} x y) z = {op1} ({op1} x z) y",
+        proof="  rw [{add_assoc}, {add_comm} y z, ← {add_assoc}]",
+        deps=("add_assoc", "add_comm"),
+    ),
 )
 
 ARITHMETIC = Family(

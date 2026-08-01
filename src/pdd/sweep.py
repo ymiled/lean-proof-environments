@@ -50,7 +50,7 @@ def _one(policy: Policy, task: Task, seed: int, sample: int) -> Attempt:
         seed=seed,
         key=task.key,
         depth=task.depth,
-        condition=task.condition.value,
+        condition=task.label,
         sample=sample,
         verdict=verdict,
         detail=detail,
@@ -71,7 +71,7 @@ def sweep(
         inst = Instance.sample(family, s)
         for condition in Condition:
             for key in family.by_key:
-                task = Task(inst, key, condition)
+                task = Task.single(inst, key, condition)
                 jobs.extend((task, s, i) for i in range(k))
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
