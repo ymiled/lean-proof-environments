@@ -1,0 +1,290 @@
+{
+  "policy": "empty",
+  "k": 1,
+  "seeds": 1,
+  "elapsed_s": 9.1,
+  "summary": {
+    "compositional:1": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 4,
+      "n_samples": 4
+    },
+    "compositional:2": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "compositional:3": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "compositional:4": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "compositional:5": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 1,
+      "n_samples": 1
+    },
+    "monolithic:1": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 4,
+      "n_samples": 4
+    },
+    "monolithic:2": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "monolithic:3": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "monolithic:4": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "monolithic:5": {
+      "pass_at_k": 0.0,
+      "per_sample": 0.0,
+      "n_tasks": 1,
+      "n_samples": 1
+    }
+  },
+  "attempts": [
+    {
+      "seed": 0,
+      "key": "add_zero_l",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp6tyzcj6l/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_succ_l",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpqj_alr42/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_assoc",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpshr2dn2v/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_zero_l",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpvag82771/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_comm",
+      "depth": 2,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpt0axsr5v/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_add_distrib",
+      "depth": 2,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp_d47hip5/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_left_comm",
+      "depth": 3,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp12vte3ul/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_assoc",
+      "depth": 3,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmplaqunsqr/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_succ_l",
+      "depth": 4,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpfch061hq/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "pow_add",
+      "depth": 4,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpqpzot1wa/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_comm",
+      "depth": 5,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpfn407fia/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_zero_l",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpmghovdxc/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_succ_l",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp0huu5fra/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_assoc",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp33h7rxv6/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_zero_l",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp8e1s1v7r/Candidate.lean:19:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_comm",
+      "depth": 2,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpi9sndpau/Candidate.lean:29:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_add_distrib",
+      "depth": 2,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpr7dvzgbz/Candidate.lean:24:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "add_left_comm",
+      "depth": 3,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpo74emjhh/Candidate.lean:39:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_assoc",
+      "depth": 3,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp8s1xpo8l/Candidate.lean:29:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_succ_l",
+      "depth": 4,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmpw_it_mfl/Candidate.lean:42:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "pow_add",
+      "depth": 4,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp0xit87_1/Candidate.lean:39:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    },
+    {
+      "seed": 0,
+      "key": "mul_comm",
+      "depth": 5,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "compile_error",
+      "detail": "/var/folders/x4/mbttzdxn0gn1xfs7v2r6kf5h0000gn/T/tmp_nfsl9h8/Candidate.lean:52:2: error: Tactic `rfl` failed: The left-hand side",
+      "ok": false
+    }
+  ]
+}

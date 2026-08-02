@@ -1,0 +1,422 @@
+[
+  {
+    "task_id": "arithmetic-k2-chain-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "chain",
+    "k": 2,
+    "targets": [
+      "mul_zero_l",
+      "mul_comm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-chain-s0-n1",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 1,
+    "arm": "chain",
+    "k": 2,
+    "targets": [
+      "mul_zero_l",
+      "mul_comm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-antichain-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "antichain",
+    "k": 2,
+    "targets": [
+      "pow_add",
+      "mul_comm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-antichain-s0-n1",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 1,
+    "arm": "antichain",
+    "k": 2,
+    "targets": [
+      "pow_add",
+      "mul_comm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-chain-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "chain",
+    "k": 3,
+    "targets": [
+      "mul_add_distrib",
+      "mul_assoc",
+      "pow_add"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-chain-s0-n1",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 1,
+    "arm": "chain",
+    "k": 3,
+    "targets": [
+      "mul_add_distrib",
+      "mul_assoc",
+      "pow_add"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-antichain-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "antichain",
+    "k": 3,
+    "targets": [
+      "pow_add",
+      "mul_comm",
+      "one_mul_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-antichain-s0-n1",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 1,
+    "arm": "antichain",
+    "k": 3,
+    "targets": [
+      "pow_add",
+      "mul_comm",
+      "one_mul_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-chain-s1-n0",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 0,
+    "arm": "chain",
+    "k": 2,
+    "targets": [
+      "mul_zero_l",
+      "mul_comm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-chain-s1-n1",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 1,
+    "arm": "chain",
+    "k": 2,
+    "targets": [
+      "mul_zero_l",
+      "mul_comm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-antichain-s1-n0",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 0,
+    "arm": "antichain",
+    "k": 2,
+    "targets": [
+      "pow_add",
+      "mul_comm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-antichain-s1-n1",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 1,
+    "arm": "antichain",
+    "k": 2,
+    "targets": [
+      "pow_add",
+      "mul_comm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-chain-s1-n0",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 0,
+    "arm": "chain",
+    "k": 3,
+    "targets": [
+      "mul_add_distrib",
+      "mul_assoc",
+      "pow_add"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-chain-s1-n1",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 1,
+    "arm": "chain",
+    "k": 3,
+    "targets": [
+      "mul_add_distrib",
+      "mul_assoc",
+      "pow_add"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-antichain-s1-n0",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 0,
+    "arm": "antichain",
+    "k": 3,
+    "targets": [
+      "pow_add",
+      "mul_comm",
+      "one_mul_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-antichain-s1-n1",
+    "family": "arithmetic",
+    "seed": 1,
+    "sample": 1,
+    "arm": "antichain",
+    "k": 3,
+    "targets": [
+      "pow_add",
+      "mul_comm",
+      "one_mul_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-chain-s2-n0",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 0,
+    "arm": "chain",
+    "k": 2,
+    "targets": [
+      "mul_zero_l",
+      "mul_comm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-chain-s2-n1",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 1,
+    "arm": "chain",
+    "k": 2,
+    "targets": [
+      "mul_zero_l",
+      "mul_comm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-antichain-s2-n0",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 0,
+    "arm": "antichain",
+    "k": 2,
+    "targets": [
+      "pow_add",
+      "mul_comm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k2-antichain-s2-n1",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 1,
+    "arm": "antichain",
+    "k": 2,
+    "targets": [
+      "pow_add",
+      "mul_comm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-chain-s2-n0",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 0,
+    "arm": "chain",
+    "k": 3,
+    "targets": [
+      "mul_add_distrib",
+      "mul_assoc",
+      "pow_add"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-chain-s2-n1",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 1,
+    "arm": "chain",
+    "k": 3,
+    "targets": [
+      "mul_add_distrib",
+      "mul_assoc",
+      "pow_add"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-antichain-s2-n0",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 0,
+    "arm": "antichain",
+    "k": 3,
+    "targets": [
+      "pow_add",
+      "mul_comm",
+      "one_mul_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "task_id": "arithmetic-k3-antichain-s2-n1",
+    "family": "arithmetic",
+    "seed": 2,
+    "sample": 1,
+    "arm": "antichain",
+    "k": 3,
+    "targets": [
+      "pow_add",
+      "mul_comm",
+      "one_mul_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true,
+    "detail": ""
+  }
+]

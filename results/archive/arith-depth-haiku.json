@@ -1,0 +1,258 @@
+[
+  {
+    "task_id": "arithmetic-d1-monolithic-add_zero_l-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "add_zero_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 3,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d1-monolithic-add_succ_l-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "add_succ_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 3,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d1-monolithic-add_assoc-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "add_assoc"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 3,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d1-monolithic-mul_zero_l-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "mul_zero_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 3,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d2-monolithic-add_comm-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "add_zero_l",
+      "add_succ_l",
+      "add_comm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 9,
+    "verdict": "compile_error",
+    "ok": false
+  },
+  {
+    "task_id": "arithmetic-d2-monolithic-mul_add_distrib-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "add_assoc",
+      "mul_add_distrib"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 6,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d3-monolithic-add_left_comm-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "add_assoc",
+      "add_zero_l",
+      "add_succ_l",
+      "add_comm",
+      "add_left_comm"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 13,
+    "verdict": "compile_error",
+    "ok": false
+  },
+  {
+    "task_id": "arithmetic-d3-monolithic-mul_assoc-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "add_assoc",
+      "mul_add_distrib",
+      "mul_assoc"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 9,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d4-monolithic-mul_succ_l-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "add_assoc",
+      "add_zero_l",
+      "add_succ_l",
+      "add_comm",
+      "add_left_comm",
+      "mul_succ_l"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 16,
+    "verdict": "compile_error",
+    "ok": false
+  },
+  {
+    "task_id": "arithmetic-d4-monolithic-pow_add-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "add_zero_l",
+      "add_assoc",
+      "mul_add_distrib",
+      "mul_assoc",
+      "pow_add"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 15,
+    "verdict": "compile_error",
+    "ok": false
+  },
+  {
+    "task_id": "arithmetic-d5-monolithic-mul_comm-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "mul_zero_l",
+      "add_assoc",
+      "add_zero_l",
+      "add_succ_l",
+      "add_comm",
+      "add_left_comm",
+      "mul_succ_l",
+      "mul_comm"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 22,
+    "verdict": "compile_error",
+    "ok": false
+  },
+  {
+    "task_id": "arithmetic-d1-monolithic-one_mul_l-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "one_mul_l"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 3,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d2-monolithic-mul_one_r-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "add_zero_l",
+      "mul_one_r"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 4,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d2-monolithic-mul_two_r-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "add_zero_l",
+      "mul_two_r"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 4,
+    "verdict": "proved",
+    "ok": true
+  },
+  {
+    "task_id": "arithmetic-d3-monolithic-add_swap4-s0-n0",
+    "family": "arithmetic",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "add_assoc",
+      "add_zero_l",
+      "add_succ_l",
+      "add_comm",
+      "add_swap4"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 13,
+    "verdict": "compile_error",
+    "ok": false
+  }
+]

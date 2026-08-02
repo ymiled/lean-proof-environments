@@ -7,7 +7,7 @@ Adding a theory is therefore one new module and no edits anywhere else.
 
 Two invariants the rest of the package relies on:
 
-1.  **Goals stay open in the recursion variable.** An early arithmetic ladder
+1.  **Goals stay open in the recursion variable.** An early ladder
     stated its lemmas at a concrete point (`op_i one y = one`). Every such goal
     is a closed term, so `simp` does not reason about it, it evaluates it -- a
     depth-3 rung fell to `simp_all` with nothing in scope. Rungs must quantify

@@ -17,18 +17,24 @@ grader.
 
 ## Families
 
-Two theories ship, selected with `--family`:
+The benchmark covers information-flow security only. Two theories ship,
+selected with `--family`:
 
-| family | rungs | depths | maximal rungs | top rung |
+| family | rungs | depths | maximal rungs | role |
 |---|---|---|---|---|
-| `arithmetic` | 15 | 1–5 | 6 | commutativity of multiplication |
-| `noninterference` | 12 | 1–4 | 3 | soundness of a security type system |
+| `vsi` | 14 | 1–5 | 2 | **evidence source.** Lemma chain of a 784-line machine-checked Volpano-Smith-Irvine development with subtyping, `while` loops and functions. Absent from public corpora. |
+| `noninterference` | 12 | 1–4 | 3 | **synthetic control.** Toy IFC theory supporting per-seed renaming, which the real corpus cannot. Isolates the contamination variable. |
+
+A Peano-arithmetic family was removed: it measured general proving ability
+rather than IFC verification, and it is heavily represented in training data,
+which is the confound this corpus exists to avoid. Its results are quarantined
+in `results/archive/`.
 
 The `maximal rungs` column is not decoration. Withheld sets must be up-closed,
 so antichains can only be drawn from rungs nothing depends on. A family with one
 maximal rung is a *funnel*: it supports depth sweeps but the chain/antichain
-contrast is structurally impossible in it. Both families were extended
-specifically to widen their tops.
+contrast is structurally impossible in it. `noninterference` originally had one
+and was extended specifically to widen its top.
 
 `noninterference` is a loop-free imperative language with a two-point security
 lattice; the top rung proves that a well-typed command run from two states
@@ -40,22 +46,25 @@ with no Mathlib.
 ## Dependency depth
 
 `depth = 1` for a lemma provable from the definitions alone; otherwise
-`1 + max(depth of its dependencies)`. The shipped ladder runs 1 to 5. Writing
-`op1` as `+` and `op2` as `*` (both are randomly renamed per instance):
+`1 + max(depth of its dependencies)`. Depth is derived from the graph, never
+declared. The `vsi` ladder:
 
-| depth | lemma | statement | needs |
-|---|---|---|---|
-| 1 | `add_zero_l` | `0 + y = y` | — |
-| 1 | `add_succ_l` | `(x+1) + y = (x+y)+1` | — |
-| 1 | `add_assoc` | `(x+y)+z = x+(y+z)` | — |
-| 2 | `add_comm` | `x + y = y + x` | `add_zero_l`, `add_succ_l` |
-| 3 | `add_left_comm` | `x+(y+z) = y+(x+z)` | `add_assoc`, `add_comm` |
-| 4 | `mul_succ_l` | `(x+1)*y = x*y + y` | `add_left_comm`, … |
-| 5 | `mul_comm` | `x * y = y * x` | `mul_zero_l`, `mul_succ_l` |
+| depth | lemma | needs |
+|---|---|---|
+| 1 | `lowEq_refl`, `lowEq_symm`, `lowEq_trans` | — |
+| 1 | `Lvl.le_refl`, `Lvl.le_trans`, `secure_sub` | — |
+| 2 | `sub_base_inv` | `Lvl.le_refl`, `Lvl.le_trans` |
+| 2 | `confinement` | `lowEq_refl`, `lowEq_trans`, `secure_sub` |
+| 3 | `tyE_var_L`, `tyE_binop_L`, `tyE_call_L` | `sub_base_inv` |
+| 4 | `evalE_agree_nocall` | `tyE_var_L`, `tyE_binop_L` |
+| 4 | `agree` | `confinement`, the three `tyE_*`, `lowEq_symm`, `lowEq_trans` |
+| 5 | `noninterference_full` | `agree` |
 
-The operations recurse on their *second* argument, so the left-handed statements
-require induction rather than falling to computation. That asymmetry is what
-generates the chain.
+These are the dependencies the Lean kernel records, not ones chosen to produce a
+gradient. `agree` is deep because expression agreement and command
+noninterference must be proved simultaneously by induction on fuel: a call inside
+an expression runs a command, and an assignment inside a command evaluates an
+expression.
 
 ## The experiment
 
@@ -117,17 +126,18 @@ restate, or substitute the goal.
 
 ## Contamination
 
-Both theories are textbook material every frontier model has seen. The defence
-is renaming: types, constructors, operators and lemma names are freshly sampled
-per seed (`Warp`, `lem_a7f2`, …), so a model cannot pattern-match the goal onto
-a remembered `Nat.mul_comm` proof term.
+The two families take opposite approaches, which is the point of having both.
 
-This weakens the confound; it does not eliminate it. A model that knows the
-Peano development, or knows Volpano–Smith–Irvine, can still transfer the proof
-strategy — and arguably should, since that is legitimate proving. What renaming
-removes is verbatim library recall, not knowledge. **The renaming defence is
-itself untested**; comparing pass rates on renamed versus native `Nat`
-statements would measure it, and has not been run.
+`noninterference` is a toy theory, so every identifier is freshly sampled per
+seed (`Warp`, `lem_a7f2`, …) and a model cannot pattern-match onto a remembered
+proof term. `vsi` cannot be renamed without breaking its own Lean imports, and
+does not need to be: the development does not exist in any public corpus.
+
+Renaming removes verbatim recall, not knowledge. A model that knows
+Volpano–Smith–Irvine can still transfer the strategy, and arguably should, since
+that is legitimate proving. **The renaming defence is itself untested.** Running
+matched tasks under renamed and canonical identifiers in `noninterference` would
+measure it, and is the designed use of the control family.
 
 ## Usage
 
@@ -136,7 +146,7 @@ curl https://elan.lean-lang.org/elan-init.sh -sSf | sh   # Lean 4 toolchain
 uv sync
 
 uv run python -m pdd.selftest --family noninterference   # certify the benchmark
-uv run python -m pdd.sweep --policy reference --family arithmetic
+uv run python -m pdd.sweep --policy reference --family vsi
 uv run python -m pdd.sweep --policy claude-opus-5 --family noninterference --k 8 --seeds 5
 uv run python -m pdd.plot results/noninterference-claude-opus-5@T1.0.json
 ```
@@ -164,8 +174,8 @@ That is the natural next version.
 src/pdd/
   ladder.py    Rung/Family/Instance, depth derivation, renaming
   families/
-    arith.py            Peano development, 11 rungs, depths 1-5
-    noninterference.py  security type system, 7 rungs, depths 1-3
+    vsi.py              machine-checked VSI chain, 14 rungs, depths 1-5
+    noninterference.py  synthetic IFC control, 12 rungs, depths 1-4
   task.py      monolithic / compositional rendering, prompts
   grader.py    compile + axiom audit + banned syntax
   selftest.py  benchmark certification (run this first)
@@ -184,7 +194,6 @@ correlations with compositional reference-proof length:
 
 | family | corr(depth, refLoC) | corr(depth, ancestors) |
 |---|---|---|
-| `arithmetic` | −0.08 | +0.96 |
 | `noninterference` | +0.56 | +1.00 |
 
 `noninterference` began at +0.97 and was rebuilt down to +0.56 by adding rungs
@@ -196,15 +205,23 @@ Correlation between depth and *monolithic* length is ~0.98 in both, and no
 choice of family fixes that: monolithic length is the sum over ancestors, so it
 grows with depth by construction.
 
-This matters because Theorem's own post reports a difficulty cliff at "17+
-marginal LoC." In the arithmetic ladder, monolithic length crosses 17 right at
-depth 3→4 — **their length cliff predicts our curve without any depth effect at
-all.** A raw pass@k-vs-depth plot cannot distinguish the two.
+This matters because a reported difficulty cliff at "17+ marginal LoC" is a
+*length* effect, so on any ladder where length tracks depth, a length model with
+no depth term predicts the same curve. A raw pass@k-vs-depth plot cannot
+distinguish the two.
 
 The identification strategy is therefore a **within-depth contrast on ancestor
-count**, not a depth sweep. That lever exists in `arithmetic` (at depth 3, one
-rung has 4 ancestors and another has 2; at depth 4, 5 versus 4) and not in
-`noninterference`, where ancestor count tracks depth at r = 1.000.
+count**, not a depth sweep. Verified levers in the surviving families:
+
+| family | depth | contrast |
+|---|---|---|
+| `vsi` | 4 | `evalE_agree_nocall` (5 ancestors) vs `agree` (11) |
+| `vsi` | 2 | `sub_base_inv` (2) vs `confinement` (3) |
+| `noninterference` | 2 | `assign_ni` (1) vs `confinement` (4) |
+
+The `vsi` depth-4 pair is the strongest contrast available: identical derived
+depth, 2.2x spread in ancestor count, in the uncontaminated corpus. It has not
+yet been run at usable sample size.
 
 `docs/design-log.md` records this in full, including the fact that the
 noninterference family was built expecting the opposite result.

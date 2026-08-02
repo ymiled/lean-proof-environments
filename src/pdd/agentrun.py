@@ -226,7 +226,7 @@ def cmd_plan(args) -> None:
     """Print the exact agent assignments implied by the verified grouping.
 
     This exists because the grouping rule is easy to state, easy to check, and
-    easy to violate by hand. During the first arithmetic run the grouping was
+    easy to violate by hand. During an early run the grouping was
     verified correct and then overridden twice while spawning agents -- batches
     were merged to save agent count, which silently reintroduced the leak
     (`mul_assoc` is an ancestor of `pow_add`; `mul_succ_l` is an ancestor of
@@ -250,7 +250,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     e = sub.add_parser("export")
-    e.add_argument("--family", default="arithmetic")
+    e.add_argument("--family", default="vsi")
     e.add_argument("--seeds", type=int, default=3)
     e.add_argument("--samples", type=int, default=2)
     e.add_argument("--mode", default="contrast", choices=("contrast", "depth"))

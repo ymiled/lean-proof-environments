@@ -1,0 +1,290 @@
+{
+  "policy": "reference",
+  "k": 1,
+  "seeds": 1,
+  "elapsed_s": 9.0,
+  "summary": {
+    "compositional:1": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 4,
+      "n_samples": 4
+    },
+    "compositional:2": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "compositional:3": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "compositional:4": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "compositional:5": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 1,
+      "n_samples": 1
+    },
+    "monolithic:1": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 4,
+      "n_samples": 4
+    },
+    "monolithic:2": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "monolithic:3": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "monolithic:4": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 2,
+      "n_samples": 2
+    },
+    "monolithic:5": {
+      "pass_at_k": 1.0,
+      "per_sample": 1.0,
+      "n_tasks": 1,
+      "n_samples": 1
+    }
+  },
+  "attempts": [
+    {
+      "seed": 0,
+      "key": "add_zero_l",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_succ_l",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_assoc",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_zero_l",
+      "depth": 1,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_comm",
+      "depth": 2,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_add_distrib",
+      "depth": 2,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_left_comm",
+      "depth": 3,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_assoc",
+      "depth": 3,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_succ_l",
+      "depth": 4,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "pow_add",
+      "depth": 4,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_comm",
+      "depth": 5,
+      "condition": "monolithic",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_zero_l",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_succ_l",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_assoc",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_zero_l",
+      "depth": 1,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_comm",
+      "depth": 2,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_add_distrib",
+      "depth": 2,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "add_left_comm",
+      "depth": 3,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_assoc",
+      "depth": 3,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_succ_l",
+      "depth": 4,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "pow_add",
+      "depth": 4,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    },
+    {
+      "seed": 0,
+      "key": "mul_comm",
+      "depth": 5,
+      "condition": "compositional",
+      "sample": 0,
+      "verdict": "proved",
+      "detail": "",
+      "ok": true
+    }
+  ]
+}

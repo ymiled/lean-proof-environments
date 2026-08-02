@@ -17,38 +17,22 @@ Three design choices make this tractable without Mathlib:
 *   **The language is loop-free.** `while` would force termination reasoning
     that adds nothing to the noninterference argument.
 
-Why this family exists alongside `arithmetic`, stated accurately after
-measurement rather than from the expectation that motivated building it:
+Role in the benchmark: this is the **synthetic control**, not the evidence
+source. It is a toy IFC theory, so it supports per-seed renaming of every
+identifier, which an imported or machine-checked corpus cannot without breaking
+its own imports. That makes it the only family in which the contamination
+defence can be measured: run matched tasks under renamed and canonical
+identifiers and compare. `vsi` carries the headline numbers; this family exists
+to say how much those numbers owe to recall.
 
-This family was built on the hypothesis that it would *decorrelate* depth from
-proof length, since its rungs range from one-line to thirty-line proofs. That
-hypothesis is false, and measurably so. Correlations between depth and
-compositional reference-proof length:
-
-    arithmetic       -0.13
-    noninterference  +0.97
-
-Arithmetic is the family where compositional proof length is independent of
-depth; here the two are nearly the same variable. The reason is structural: in
-this theory the deep rungs are deep *because* they do more case analysis, so
-depth and length grow together, whereas arithmetic's rungs are uniformly ~3
-lines regardless of how much sits beneath them.
-
-Correlation between depth and *monolithic* length is ~0.98 in both families and
-cannot be removed by choosing a family at all: monolithic length is by
-definition the sum over ancestors, so it grows with depth mechanically. Breaking
-that requires contrasting rungs of equal depth but differing ancestor count --
-a lever that exists within `arithmetic` (at depth 3, one rung has 4 ancestors
-and another has 2) and not here (ancestor count and depth correlate at 1.000).
-
-What this family does contribute:
-
-*   **Domain diversity.** Whether the decay constant is a property of proving-at-
-    depth or of a particular corpus is only answerable with more than one
-    theory.
-*   **Genuine difficulty at the top.** The final rung is a real metatheorem with
-    a thirty-line proof, not a three-line induction. Depth and intrinsic
-    difficulty are entangled here in a way they are not in arithmetic.
+Four rungs were added deliberately after measurement. `conf_ite` and
+`assign_ni` extract cases from what was originally a single 37-line soundness
+proof, dropping the target to 22 lines; that alone took the top theorem from
+unprovable to provable for a fixed policy at a fixed budget. `wt_anti` is an
+18-line proof at depth 1 and `ite_high_ni` a 3-line proof at depth 3, a
+shallow-long and a deep-short rung, which together cut the correlation between
+depth and reference proof length from +0.97 to +0.56. `upd_pair` and `wt_anti`
+are also maximal, which is what lets antichains exist here at all.
 """
 
 from __future__ import annotations

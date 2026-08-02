@@ -485,3 +485,36 @@ The general form: **every check should be tested against a case it is supposed
 to reject.** The three certifications in `selftest` were written against ladders
 that had already failed in specific ways, which is why the other two work. This
 one was never run against a family it should have rejected until now.
+
+## 2026-08-01 — the arithmetic family was removed
+
+The benchmark now covers information-flow security only. `families/arith.py` is
+deleted and its results are quarantined under `results/archive/`.
+
+Two reasons. It measured general proving ability rather than verification of a
+security property, so it answered a different question from the one the corpus
+is for. And Peano arithmetic is in every model's training data, which is exactly
+the confound the machine-checked `vsi` corpus exists to remove; keeping a family
+whose contamination we could not rule out weakened the claim we could make about
+the families where we can.
+
+Nothing above this entry is edited. The arithmetic ladder is where the
+closed-term collapse, the permutative-rewrite dependency in `mul_succ_l`, and the
+first `sorryAx` incident were all found, and those findings stand. The
+$1.73\times$-per-depth measurement and its refutation by the $1.44\times$-per-lemma
+fit at identical $R^2$ also came from that family; the identification argument
+survives the family's removal because it is about the *design* of depth sweeps,
+but any citation of those numbers must now say they come from a removed ladder.
+
+Two files were archived alongside it for separate reasons. `contrast-sonnet5.json`
+was 24 of 24 successes, so both arms sat at ceiling and it carried no
+information. `vsi-depth-5.json` was 420 attempts with 0 successes, including 210
+compositional depth-1 tasks that pass in every other run of the identical
+prompts; a pass rate of exactly zero on tasks certified solvable indicates a
+harness fault rather than a policy result, and it is kept only so the failure is
+on record.
+
+The surviving pair now has explicit and distinct roles. `vsi` is the evidence
+source and cannot be renamed without breaking its imports. `noninterference` is
+the synthetic control, kept precisely because it *can* be renamed, which makes it
+the only place the contamination defence can be measured.

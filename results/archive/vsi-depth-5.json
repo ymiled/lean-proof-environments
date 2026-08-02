@@ -1,0 +1,8342 @@
+[
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s0-n0",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s0-n1",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s0-n2",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s0-n3",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s0-n4",
+    "family": "vsi",
+    "seed": 0,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s1-n0",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s1-n1",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s1-n2",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s1-n3",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s1-n4",
+    "family": "vsi",
+    "seed": 1,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-lowEq_refl-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-lowEq_refl-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "lowEq_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-lowEq_symm-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-lowEq_symm-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "lowEq_symm"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_symm",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-monolithic-lowEq_trans-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 3,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 3
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-compositional-lowEq_trans-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "lowEq_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "lowEq_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-monolithic-Lvl.le_refl-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d1-compositional-Lvl.le_refl-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 1,
+    "targets": [
+      "Lvl.le_refl"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_refl",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-monolithic-Lvl.le_trans-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 2,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 2,
+    "reference_loc": 2,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 2
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d2-compositional-Lvl.le_trans-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 2,
+    "targets": [
+      "Lvl.le_trans"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "Lvl.le_trans",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-sub_base_inv-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-sub_base_inv-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "sub_base_inv"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "sub_base_inv",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_var_L-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 27,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 27
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_var_L-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_var_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 12,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_var_L",
+    "target_loc": 12,
+    "total_loc": 12
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_binop_L-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 31,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 31
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_binop_L-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_binop_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 16,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_binop_L",
+    "target_loc": 16,
+    "total_loc": 16
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-monolithic-evalE_agree_nocall-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 73,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 73
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d5-compositional-evalE_agree_nocall-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "evalE_agree_nocall"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 29,
+    "verdict": "missing",
+    "ok": false,
+    "target": "evalE_agree_nocall",
+    "target_loc": 29,
+    "total_loc": 29
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-monolithic-secure_sub-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 3,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub"
+    ],
+    "residual_depth": 3,
+    "reference_loc": 15,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 15
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d3-compositional-secure_sub-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 3,
+    "targets": [
+      "secure_sub"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 13,
+    "verdict": "missing",
+    "ok": false,
+    "target": "secure_sub",
+    "target_loc": 13,
+    "total_loc": 13
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-monolithic-confinement-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "secure_sub",
+      "confinement"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 94,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 94
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-compositional-confinement-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "confinement"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 76,
+    "verdict": "missing",
+    "ok": false,
+    "target": "confinement",
+    "target_loc": 76,
+    "total_loc": 76
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-monolithic-tyE_call_L-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 4,
+    "targets": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_call_L"
+    ],
+    "residual_depth": 4,
+    "reference_loc": 35,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 35
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d4-compositional-tyE_call_L-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 4,
+    "targets": [
+      "tyE_call_L"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 20,
+    "verdict": "missing",
+    "ok": false,
+    "target": "tyE_call_L",
+    "target_loc": 20,
+    "total_loc": 20
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-monolithic-agree-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 5,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree"
+    ],
+    "residual_depth": 5,
+    "reference_loc": 302,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 302
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d5-compositional-agree-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 5,
+    "targets": [
+      "agree"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 147,
+    "verdict": "missing",
+    "ok": false,
+    "target": "agree",
+    "target_loc": 147,
+    "total_loc": 147
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-monolithic-noninterference_full-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "monolithic",
+    "k": 6,
+    "targets": [
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_var_L",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "secure_sub",
+      "confinement",
+      "agree",
+      "noninterference_full"
+    ],
+    "residual_depth": 6,
+    "reference_loc": 303,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 303
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s2-n0",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 0,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s2-n1",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 1,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s2-n2",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 2,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s2-n3",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 3,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  },
+  {
+    "task_id": "vsi-d6-compositional-noninterference_full-s2-n4",
+    "family": "vsi",
+    "seed": 2,
+    "sample": 4,
+    "arm": "compositional",
+    "k": 6,
+    "targets": [
+      "noninterference_full"
+    ],
+    "residual_depth": 1,
+    "reference_loc": 1,
+    "verdict": "missing",
+    "ok": false,
+    "target": "noninterference_full",
+    "target_loc": 1,
+    "total_loc": 1
+  }
+]

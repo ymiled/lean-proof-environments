@@ -7,7 +7,7 @@ because dependency chains *compound*, or merely because deep tasks require
 *more output*. Those are different claims: under the second, compositional
 verification helps for reasons unrelated to dependency structure, and any
 chunking would do as well. Theorem's own reported difficulty cliff at "17+
-marginal LoC" is a length effect, and in the arithmetic ladder that threshold
+marginal LoC" is a length effect, and in a ladder of uniform per-rung cost that threshold
 falls between depth 3 and depth 4 -- so their length cliff predicts the same
 curve with no depth effect existing at all.
 

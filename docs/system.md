@@ -17,6 +17,11 @@ toc-depth: 2
 
 # What this is, in one page
 
+> **Note (August 2026).** This document describes the system at the time three
+> families shipped. The `arithmetic` family has since been removed and the
+> benchmark narrowed to information-flow security; see `docs/design-log.md`.
+> Sections referring to the arithmetic ladder are retained as design history.
+
 A **Lean 4 environment for measuring how a language model's proof success falls
 off as proofs get deeper**, plus the experiments run against it.
 
@@ -430,7 +435,7 @@ sweep} → report`. No cycles.
 | file | lines | role |
 |---|---|---|
 | `ladder.py` | 159 | `Rung`, `Family`, `Instance`; depth derivation; renaming |
-| `families/arith.py` | 199 | Peano development, 15 rungs, depths 1–5 |
+| `families/vsi.py` | 84 | machine-checked VSI chain, 14 rungs, depths 1–5 |
 | `families/noninterference.py` | 317 | security type system, 12 rungs, depths 1–4 |
 | `task.py` | 234 | target sets, both conditions, prompts, assembly |
 | `grader.py` | 145 | compile, axiom audit, banned syntax |
