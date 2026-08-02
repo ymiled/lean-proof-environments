@@ -73,7 +73,9 @@ def grade_all() -> list[dict]:
     return rows
 
 
-def report(rows: list[dict], label: str) -> None:
+def report(rows: list[dict], label: str, max_depth: int | None = None) -> None:
+    if max_depth is not None:
+        rows = [r for r in rows if r["k"] <= max_depth]
     cells: dict[tuple[str, int], list[bool]] = defaultdict(list)
     for r in rows:
         cells[(r["arm"], r["k"])].append(r["ok"])
@@ -123,8 +125,12 @@ def report(rows: list[dict], label: str) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", default="vsi-sonnet5")
+    ap.add_argument("--max-depth", type=int, default=None,
+                    help="drop depths above this; use when one arm has no data "
+                         "there, since a condition contrast is undefined if an "
+                         "arm is empty")
     args = ap.parse_args()
-    report(grade_all(), args.label)
+    report(grade_all(), args.label, args.max_depth)
 
 
 if __name__ == "__main__":

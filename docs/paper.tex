@@ -45,13 +45,13 @@ resulting corpus spans 14 theories, 158 lemmas and 2{,}607 distinct task shapes,
 every edge machine-established and every rung certified solvable. It includes a
 784-line machine-checked soundness proof for a security type system with
 subtyping, loops and functions, which is absent from public corpora and so is
-free of the recall confound. Measurements support compositional verification, though less
-strongly than a first partial sweep suggested: pooling tasks with at least one
-dependency, supplying dependencies yields $25/40$ successes against $4/14$ when
-withheld (Fisher exact $p=0.035$). An earlier sweep at a third of the sample
-size gave $16/23$ against $0/9$ at $p=8.2\times10^{-4}$; the apparent floor of
-zero did not survive more data, which we report because it is the kind of
-regression a partial sweep invites. Our central practical claim is that the binding
+free of the recall confound. Measurements support compositional verification, but weakly and with an
+instructive caveat: pooling tasks with at least one dependency, supplying
+dependencies yields $18/27$ successes against $4/14$ when withheld (Fisher exact
+$p=0.026$). Counting duplicate policy responses as separate observations instead
+gives $p=0.114$. The conclusion therefore turns on a single analysis decision,
+which is what an underpowered benchmark looks like from the inside, and we
+report both numbers rather than the favourable one. Our central practical claim is that the binding
 constraint on such environments is neither grading nor task generation but
 calibration, and we give instrumentation for it, including a noise-floor
 estimator that costs nothing.
@@ -306,10 +306,10 @@ evidence. We report both rather than the larger number alone.}
 \caption{Left: task shapes by dependency depth. Mass concentrates at depth~4
 because the number of admissible withheld sets grows with the size of a lemma's
 cone, so deep rungs contribute more distinct obligations than shallow ones.
-Right: pass rate by depth under the two conditions, with Wilson intervals. The
-withheld arm has no depth-5 cell; that condition was not collected. Per-cell
-intervals are wide and several overlap, so only the pooled comparison over depth
-$\ge2$ carries weight.}
+Right: pass rate by depth under the two conditions, counting distinct policy
+responses, with Wilson intervals. Depth~5 is omitted because the withheld arm
+has no data there. Every interval overlaps its partner, so only the pooled
+comparison over depths $2$ to $4$ carries weight, and it is not large.}
 \label{fig:main}
 \end{figure}
 
@@ -353,19 +353,35 @@ depth & compositional & 95\% CI & monolithic & 95\% CI \\
 \label{tab:vsi}
 \end{table}
 
-Per-cell intervals are wide. Pooling the tasks where the conditions genuinely
-differ, that is depth $\ge2$: compositional $25/40$ ($[0.47,0.76]$) against
-monolithic $4/14$ ($[0.12,0.55]$), Fisher exact two-sided $p=0.035$. Supplying
-dependencies helps on an uncontaminated corpus with a kernel-checked reward.
+Every per-cell interval overlaps its partner, so no single depth supports a
+claim. Pooling depths $2$ to $4$, where the conditions genuinely differ:
+supplied $18/27$ ($[0.48,0.81]$) against withheld $4/14$ ($[0.12,0.55]$), Fisher
+exact two-sided $p=0.026$.
 
-We flag a regression rather than bury it. A partial sweep at a third of this
-sample size gave $16/23$ against $0/9$ at $p=8.2\times10^{-4}$, and we had
-written that the withheld arm was at zero. It is not: with more data the
-withheld arm reaches $4/14$, and the significance falls by more than an order of
-magnitude. The effect survives; the strength of the original claim did not. A
-cell reading exactly zero at $n=9$ is a small sample landing on a boundary, not
-a floor, and treating it as the latter is a mistake this environment makes easy
-because its cells are cheap to under-fill.
+\paragraph{The result is fragile, and we say how.}
+Three analysis decisions each move it, and we made all three before seeing that
+they mattered rather than after.
+
+\emph{Duplicates.} Tasks were dispatched to policy instances in batches chosen
+to stop one prompt leaking another's answer. In the supplied arm that batching
+let one instance answer several samples of the same task, which it did
+identically. Counting those copies as separate observations gives $p=0.114$;
+counting distinct responses gives $p=0.026$. Copies are not independent draws,
+so the second is correct, but a result that flips on this is not a robust one.
+
+\emph{Depth 5.} An earlier partial sweep included a supplied depth-5 cell at
+$5/5$ against an empty withheld cell, and reported $p=8.2\times10^{-4}$. That
+cell contained one distinct response repeated five times, and no contrast is
+definable against an arm with no data. Removing it costs most of the apparent
+effect.
+
+\emph{Sample size.} That same earlier sweep put the withheld arm at $0/9$ and we
+wrote that it was at zero. It is not: with more data it reaches $4/14$. A cell
+reading exactly zero at $n=9$ is a small sample on a boundary, not a floor.
+
+We keep the claim at $p=0.026$ and state that it rests on 27 and 14
+observations. What the environment demonstrates here is less the size of the
+compositional effect than how easily an under-filled cell manufactures one.
 
 The depth-5 compositional cell at $1.00$ illustrates the mechanism rather than
 contradicting it: that theorem is a one-line application of the lemma beneath
@@ -457,20 +473,21 @@ impossibility is what surfaced the error.
 
 \section{Limitations}
 
-Sample sizes are small: cells hold between 2 and 18 attempts, and the sweep is
-incomplete at 78 of 140 planned tasks, with the withheld depth-5 cell not
-collected at all. Only the pooled comparison of \S\ref{sec:exp} carries weight,
-and no constant should be fitted to Table~\ref{tab:vsi}. Results cover two model
-families.
+Sample sizes are small. After deduplication, cells hold between 2 and 15
+distinct responses, and the sweep is incomplete at 73 of 140 planned tasks.
+Depth~5 was dropped entirely because the withheld arm there was never collected.
+Only the pooled comparison of \S\ref{sec:exp} carries weight, it reaches
+$p=0.026$, and it does not survive counting duplicates as independent. Results
+cover two model families.
 
-Independence within cells is imperfect. Tasks were dispatched to policy
-instances in batches chosen to prevent one prompt leaking another's answer, and
-in the supplied arm that batching allowed a single instance to answer several
-samples of the same task, which it did identically. Distinct answers per
-supplied cell are 4, 15, 8 and 1 at depths 2 to 5 against nominal 10, 15, 10 and
-5, so the depth-5 supplied cell in particular is one draw reported five times.
-The withheld arm was dispatched one instance per sample index and is unaffected.
-Cells should be read at their distinct-answer counts.
+Independence within cells was imperfect and is the reason deduplication matters.
+Batching chosen to prevent answer leakage let one policy instance answer several
+samples of a task in the supplied arm, which it did identically; distinct
+responses per supplied cell are 4, 15 and 8 at depths 2 to 4 against nominal 10,
+15 and 10. The withheld arm was dispatched one instance per sample index and is
+unaffected. The fix is one instance per (task, sample) pair, which we did not do
+throughout and which the runner should enforce rather than leave to whoever
+launches the sweep.
 
 Episodes are single-step: one attempt, one binary reward. Per-tactic actions
 with intermediate proof states would need a persistent Lean server rather than
@@ -488,11 +505,25 @@ rather than a substitute.
 
 Building a verifiable-reward environment turns out to be mostly a problem of not
 fooling yourself. The kernel is honest, but everything around it, the dependency
-graph, the difficulty knob, the checks that certify them, can be quietly wrong
-in ways that still produce plausible tables. Every substantive error in this
-work was caught by a check or by an impossible number, and one was caught only
-after discovering that a check reporting success for months could never have
-reported anything else.
+graph, the difficulty knob, the checks that certify them, the sweep that fills
+the cells, can be quietly wrong in ways that still produce plausible tables.
+Every substantive error here was caught by a check or by an impossible number,
+and one was caught only after discovering that a check reporting success
+throughout its life could never have reported anything else.
+
+That pattern reached our own headline result. At one point this paper would have
+reported a compositional effect at $p=8.2\times10^{-4}$, resting on a cell of
+five identical responses and a comparison against an arm with no data. What it
+reports now is $p=0.026$ on 27 and 14 observations, which does not survive
+counting duplicate responses as independent. The effect is probably real and is
+certainly not established, and the distance between those two statements was
+three analysis decisions rather than any new experiment.
+
+We think that is the honest lesson of building this. Calibration determines
+whether an environment can teach anything, and the same under-filled cells that
+give a policy no gradient give the experimenter a spurious result. The two
+failures have one cause, and a benchmark that instruments the first should
+instrument the second.
 
 The environment, the corpus, the extraction procedure and the design log of
 every failure above are released together, on the view that the failures are the
