@@ -103,9 +103,10 @@ of the axioms the result depends on.
 \item We determine the dependency structure required by that parameter
 semantically, by deleting a lemma and observing whether the proof fails, which
 measures necessity rather than mention.
-\item We measure three configurations of the environment and find that two
-produce a constant reward, and therefore no learning signal, while presenting no
-outward sign of doing so.
+\item We measure three configurations and find that two return a constant
+reward. We then show that one of those is an artefact of our own reward being
+all-or-nothing: regrading the identical responses with per-target credit
+recovers a varying signal where the original reward reported none.
 \item We show that difficulty is controllable, and that the control is the
 granularity of decomposition: a theorem that a model could not prove became
 provable, at the same budget, once its proof was split into intermediate lemmas.
@@ -265,14 +266,13 @@ the model cannot iterate against the kernel. As controls, the reference solution
 score $1.00$ in every cell and a trivial tactic scores $0.00$, which confirms
 that the reward discriminates.
 
-\subsection{The kernel does not supply a learning signal}
+\subsection{An all-or-nothing reward discards the signal}
 
 We ran three configurations of ladder and model. The following gives the
-proportion of tasks solved in the withheld condition, that is with
-$W$ equal to the entire dependency cone of the target, so that at depth $d$ the
-model must supply $d$ levels of lemmas rather than one. Depth here indexes the
-target lemma, and $W$ is determined by it; the two are not independent axes in
-this table.
+proportion of tasks solved in the withheld condition, that is with $W$ equal to
+the entire dependency cone of the target, so that at depth $d$ the model must
+supply $d$ levels of lemmas rather than one. Depth here indexes the target
+lemma, and $W$ is determined by it; the two are not independent axes.
 
 \begin{center}
 \begin{tabular}{llc}
@@ -286,29 +286,54 @@ arithmetic & Haiku~4.5 & $1.00,\ 0.75,\ 0.33,\ 0.00$ \\
 \end{tabular}
 \end{center}
 
-In the first configuration the model solves everything, and in the second it
-solves nothing beyond the trivial lemmas. In both, the reward is constant. A
-policy interacting with either receives no information about which of its
-behaviours were better, which is precisely the sparse-reward condition that the
-appeal to proof assistants was supposed to avoid. Only the third configuration
-produces a reward that varies with depth.
+Read naively, the first two rows show a constant reward and therefore no
+learning signal. We initially drew that conclusion, and it is wrong, for a
+reason worth stating plainly: the reward being graded here is our own, and it is
+all-or-nothing. A task at depth~$4$ in the withheld condition asks for twelve
+lemmas, and a response proving eleven of them scores exactly what a response
+proving none scores. The constancy is a property of the reward function we
+wrote, not of the information available from the kernel.
 
-That saturation and floor effects destroy a learning signal is not a new
-observation; it is the standard motivation for curriculum construction, and we
-claim no discovery in restating it. What we take from the table is narrower and
-empirical. For this domain and these models, the ceiling and the floor are close
-enough together that two of our three configurations landed outside the usable
-band, and neither was chosen carelessly: the arithmetic ladder was the natural
-first corpus and the security ladder was written specifically to be harder.
+The kernel in fact reports a good deal more: which goals remain, where
+elaboration failed, and, since a withheld task has many targets, how many of
+them individually check. Regrading the same collected responses with per-target
+credit gives:
 
-The practical point is that neither failure announces itself. Every task is well
-formed, every reward is correctly computed, the kernel behaves exactly as
-intended, and the test suite reports no failures. Distinguishing an environment
-that teaches from one that does not requires measuring the distribution of
-rewards it produces, which is not a property the reward function can check on its
-own. A kernel guarantees the reward is honest. Whether it is informative is a
-question about the task distribution and the policy together, and has to be
-measured.
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+target depth, withheld & all-or-nothing & per-target credit \\
+\midrule
+$2$ & $0.17$ & $0.64$ \quad ($2/3$, $3/3$, $2/3$, $2/4$, $2/4$, $2/4$) \\
+$3$ & $0.50$ & $0.75$ \quad ($4/4$, $2/4$, $4/4$, $2/4$, $4/4$, $2/4$) \\
+$4$ & $0.00$ & $0.46$ \quad ($3/6$, $5/12$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The depth-$4$ row is the informative one. Under the original reward it reads
+$0.00$ twice and looks like a floor with no gradient. The same two responses
+prove three of six and five of twelve of their targets respectively, so they are
+neither equal to each other nor equal to failure. A policy optimised against the
+first column would receive nothing from these tasks; against the second it would
+receive a usable ordering.
+
+We therefore correct the framing. It is not that a proof assistant fails to
+supply dense feedback. It is that a proof assistant supplies feedback at a
+granularity finer than a single accept-or-reject bit, and a reward function that
+collapses to that bit throws the difference away. Saturation and floor effects
+are familiar in reinforcement learning and we claim no discovery in observing
+them; what the measurement above shows is that one of our two apparent floors
+was an artefact of reward design rather than a property of the task
+distribution. The arithmetic ceiling at $1.00$ is not, since a task solved
+completely admits no finer grading.
+
+The practical consequence is that neither failure announces itself. Every task
+is well formed, every reward is correctly computed, the kernel behaves as
+intended, and the test suite reports no failures. Whether an environment
+supplies a usable gradient is a question about the reward's granularity and the
+task distribution together, and has to be measured rather than assumed from the
+presence of a verifier.
 
 \subsection{Difficulty is controllable, and decomposition is the control}
 
@@ -359,12 +384,15 @@ task generator, the renaming that protects against memorisation, and the
 machinery that establishes dependencies all worked once built, and none of them
 determined whether the environment was useful.
 
-What determined it was calibration, in the specific sense of whether the tasks
-are hard enough that the model does not solve them all and easy enough that it
-does not fail them all. This is a familiar requirement; what we found is that in
-this domain it is tight, and that it has no natural alarm. A ceiling and a floor
-look the same as each other, and the same as a healthy environment, from every
-vantage point except the distribution of rewards.
+Two things determined it. The first is calibration, in the familiar sense of
+whether tasks are hard enough that the model does not solve them all and easy
+enough that it does not fail them all; in this domain that band proved narrow.
+The second, which we did not anticipate and which cost us a wrong conclusion, is
+the granularity of the reward. A verifier that returns one bit per task is
+discarding information it already has, and the discarding is invisible: the
+resulting cell looks exactly like a genuine floor. We would now treat any
+constant-zero cell as a question about the reward function before treating it as
+a fact about the policy.
 
 We would put the practical recommendation as follows. If one intends to scale
 reinforcement learning on program verification, the proof assistant is the part
