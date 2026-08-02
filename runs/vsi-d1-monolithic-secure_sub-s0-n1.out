@@ -1,0 +1,16 @@
+-- PROOF secure_sub
+  induction h with
+  | refl t => exact hs
+  | base hab => exact hs.elim
+  | cmd ha hb =>
+      simp only [secure] at hs ⊢
+      subst hs
+      cases a <;> simp_all [Lvl.le]
+  | ncmd ha =>
+      simp only [secure] at hs ⊢
+      subst hs
+      cases a <;> simp_all [Lvl.le]
+  | ncmdCmd => exact hs
+  | funcNcmd => trivial
+  | func ha hb => trivial
+  | trans h1 h2 ih1 ih2 => exact ih1 (ih2 hs)

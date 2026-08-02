@@ -45,10 +45,13 @@ resulting corpus spans 14 theories, 158 lemmas and 2{,}607 distinct task shapes,
 every edge machine-established and every rung certified solvable. It includes a
 784-line machine-checked soundness proof for a security type system with
 subtyping, loops and functions, which is absent from public corpora and so is
-free of the recall confound. Measurements support compositional verification:
-pooling tasks with at least one dependency, supplying dependencies yields
-$16/23$ successes against $0/9$ when withheld (Fisher exact
-$p=8.2\times10^{-4}$). Our central practical claim is that the binding
+free of the recall confound. Measurements support compositional verification, though less
+strongly than a first partial sweep suggested: pooling tasks with at least one
+dependency, supplying dependencies yields $25/40$ successes against $4/14$ when
+withheld (Fisher exact $p=0.035$). An earlier sweep at a third of the sample
+size gave $16/23$ against $0/9$ at $p=8.2\times10^{-4}$; the apparent floor of
+zero did not survive more data, which we report because it is the kind of
+regression a partial sweep invites. Our central practical claim is that the binding
 constraint on such environments is neither grading nor task generation but
 calibration, and we give instrumentation for it, including a noise-floor
 estimator that costs nothing.
@@ -304,9 +307,9 @@ evidence. We report both rather than the larger number alone.}
 because the number of admissible withheld sets grows with the size of a lemma's
 cone, so deep rungs contribute more distinct obligations than shallow ones.
 Right: pass rate by depth under the two conditions, with Wilson intervals. The
-withheld arm has no depth-5 cell because that sweep was halted by an API rate
-limit. Per-cell intervals are wide; the pooled comparison over depth $\ge2$ is
-the powered one.}
+withheld arm has no depth-5 cell; that condition was not collected. Per-cell
+intervals are wide and several overlap, so only the pooled comparison over depth
+$\ge2$ carries weight.}
 \label{fig:main}
 \end{figure}
 
@@ -339,11 +342,11 @@ confirming the grader discriminates.
 \toprule
 depth & compositional & 95\% CI & monolithic & 95\% CI \\
 \midrule
-1 & 5/6\ (0.83)  & [0.44, 0.97] & 10/12\ (0.83) & [0.55, 0.95] \\
-2 & 1/2\ (0.50)  & [0.09, 0.91] & 0/4\ \ (0.00) & [0.00, 0.49] \\
-3 & 9/12\ (0.75) & [0.47, 0.91] & 0/3\ \ (0.00) & [0.00, 0.56] \\
-4 & 3/6\ (0.50)  & [0.19, 0.81] & 0/2\ \ (0.00) & [0.00, 0.66] \\
-5 & 3/3\ (1.00)  & [0.44, 1.00] & --            & -- \\
+1 & 5/6\ \ (0.83)  & [0.44, 0.97] & 15/18\ (0.83) & [0.61, 0.94] \\
+2 & 1/10\ (0.10)   & [0.02, 0.40] & 1/6\ \ (0.17) & [0.03, 0.56] \\
+3 & 12/15\ (0.80)  & [0.55, 0.93] & 3/6\ \ (0.50) & [0.19, 0.81] \\
+4 & 7/10\ (0.70)   & [0.40, 0.89] & 0/2\ \ (0.00) & [0.00, 0.66] \\
+5 & 5/5\ \ (1.00)  & [0.57, 1.00] & --             & -- \\
 \bottomrule
 \end{tabular}
 \caption{Machine-checked ladder, Sonnet~5, one-shot, Wilson intervals. Depth-1 tasks are identical across conditions by construction.}
@@ -351,10 +354,18 @@ depth & compositional & 95\% CI & monolithic & 95\% CI \\
 \end{table}
 
 Per-cell intervals are wide. Pooling the tasks where the conditions genuinely
-differ, that is depth $\ge2$: compositional $16/23$ ($[0.49,0.84]$) against
-monolithic $0/9$ ($[0.00,0.30]$), Fisher exact two-sided
-$p=8.2\times10^{-4}$. On an uncontaminated corpus with a kernel-checked reward,
-trusted interfaces are worth a great deal.
+differ, that is depth $\ge2$: compositional $25/40$ ($[0.47,0.76]$) against
+monolithic $4/14$ ($[0.12,0.55]$), Fisher exact two-sided $p=0.035$. Supplying
+dependencies helps on an uncontaminated corpus with a kernel-checked reward.
+
+We flag a regression rather than bury it. A partial sweep at a third of this
+sample size gave $16/23$ against $0/9$ at $p=8.2\times10^{-4}$, and we had
+written that the withheld arm was at zero. It is not: with more data the
+withheld arm reaches $4/14$, and the significance falls by more than an order of
+magnitude. The effect survives; the strength of the original claim did not. A
+cell reading exactly zero at $n=9$ is a small sample landing on a boundary, not
+a floor, and treating it as the latter is a mistake this environment makes easy
+because its cells are cheap to under-fill.
 
 The depth-5 compositional cell at $1.00$ illustrates the mechanism rather than
 contradicting it: that theorem is a one-line application of the lemma beneath
@@ -446,10 +457,20 @@ impossibility is what surfaced the error.
 
 \section{Limitations}
 
-Sample sizes are small: cells hold between 2 and 12 attempts and an API rate
-limit halted one sweep at 50 of 140 planned tasks. Only the pooled comparison of
-\S\ref{sec:exp} is adequately powered, and no constant should be fitted to
-Table~\ref{tab:vsi}. Results cover two model families.
+Sample sizes are small: cells hold between 2 and 18 attempts, and the sweep is
+incomplete at 78 of 140 planned tasks, with the withheld depth-5 cell not
+collected at all. Only the pooled comparison of \S\ref{sec:exp} carries weight,
+and no constant should be fitted to Table~\ref{tab:vsi}. Results cover two model
+families.
+
+Independence within cells is imperfect. Tasks were dispatched to policy
+instances in batches chosen to prevent one prompt leaking another's answer, and
+in the supplied arm that batching allowed a single instance to answer several
+samples of the same task, which it did identically. Distinct answers per
+supplied cell are 4, 15, 8 and 1 at depths 2 to 5 against nominal 10, 15, 10 and
+5, so the depth-5 supplied cell in particular is one draw reported five times.
+The withheld arm was dispatched one instance per sample index and is unaffected.
+Cells should be read at their distinct-answer counts.
 
 Episodes are single-step: one attempt, one binary reward. Per-tactic actions
 with intermediate proof states would need a persistent Lean server rather than

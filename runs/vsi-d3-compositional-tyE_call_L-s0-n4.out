@@ -1,0 +1,20 @@
+-- PROOF tyE_call_L
+  suffices H : ∀ e t, TyE G sg e t → e = Exp.call f a → t = Ty.base Lvl.L →
+      sg f = some (Lvl.L, Lvl.L) ∧ TyE G sg a (Ty.base Lvl.L) by
+    exact H _ _ h rfl rfl
+  intro e t he
+  induction he with
+  | evar hx => intro he2 ht2; cases he2
+  | int => intro he2 ht2; cases he2
+  | binop h1 h2 ih1 ih2 => intro he2 ht2; cases he2
+  | call hsg h2 ih2 =>
+      intro he2 ht2
+      cases he2
+      cases ht2
+      exact ⟨hsg, h2⟩
+  | sub h1 hsub ih1 =>
+      intro he2 ht2
+      subst ht2
+      obtain ⟨a', hta, hab⟩ := sub_base_inv hsub
+      have ha' : a' = Lvl.L := by cases a' <;> simp_all [Lvl.le]
+      exact ih1 he2 (by rw [hta, ha'])

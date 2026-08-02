@@ -1,0 +1,49 @@
+-- PROOF evalE_agree_nocall
+  intro e
+  induction e with
+  | int n =>
+      intro _ _ k v w hv hw
+      cases k with
+      | zero => simp [evalE] at hv
+      | succ k =>
+          simp [evalE] at hv hw
+          omega
+  | evar x =>
+      intro _ hty k v w hv hw
+      cases k with
+      | zero => simp [evalE] at hv
+      | succ k =>
+          simp [evalE] at hv hw
+          have hgx : G x = Ty.tvar Lvl.L := tyE_var_L hty
+          have heq : s x = t x := hst x hgx
+          omega
+  | binop a b iha ihb =>
+      intro hnc hty k v w hv hw
+      cases k with
+      | zero => simp [evalE] at hv
+      | succ k =>
+          simp [noCall] at hnc
+          have hnca : noCall a = true := hnc.1
+          have hncb : noCall b = true := hnc.2
+          have htya : TyE G sg a (.base .L) := (tyE_binop_L hty).1
+          have htyb : TyE G sg b (.base .L) := (tyE_binop_L hty).2
+          cases hea : evalE ft k s a with
+          | none => simp [evalE, hea] at hv
+          | some va =>
+            cases heb : evalE ft k s b with
+            | none => simp [evalE, hea, heb] at hv
+            | some vb =>
+              cases hea' : evalE ft k t a with
+              | none => simp [evalE, hea'] at hw
+              | some va' =>
+                cases heb' : evalE ft k t b with
+                | none => simp [evalE, hea', heb'] at hw
+                | some vb' =>
+                  simp [evalE, hea, heb] at hv
+                  simp [evalE, hea', heb'] at hw
+                  have hva : va = va' := iha hnca htya k va va' hea hea'
+                  have hvb : vb = vb' := ihb hncb htyb k vb vb' heb heb'
+                  omega
+  | call f a iha =>
+      intro hnc _ k v w hv hw
+      simp [noCall] at hnc

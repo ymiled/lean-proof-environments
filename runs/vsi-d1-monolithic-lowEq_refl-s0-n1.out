@@ -1,0 +1,3 @@
+-- PROOF lowEq_refl
+  intro x hx
+  rfl

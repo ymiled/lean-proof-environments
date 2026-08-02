@@ -1,0 +1,136 @@
+-- PROOF lowEq_refl
+  intro x hx
+  rfl
+-- PROOF lowEq_trans
+  intro x hx
+  exact (h1 x hx).trans (h2 x hx)
+-- PROOF secure_sub
+  induction h with
+  | refl t => exact hs
+  | base hab => exact hs.elim
+  | cmd ha hb =>
+      simp only [secure] at hs ⊢
+      subst hs
+      cases a <;> simp_all [Lvl.le]
+  | ncmd ha =>
+      simp only [secure] at hs ⊢
+      subst hs
+      cases a <;> simp_all [Lvl.le]
+  | ncmdCmd => exact hs
+  | funcNcmd => trivial
+  | func ha hb => trivial
+  | trans h1 h2 ih1 ih2 => exact ih1 (ih2 hs)
+-- PROOF confinement
+  induction k with
+  | zero =>
+      intro c ty h hs s s' hev
+      simp [evalC] at hev
+  | succ k ih =>
+      intro c ty h
+      induction h with
+      | skip =>
+          intro hs s s' hev
+          simp [evalC] at hev
+          subst hev
+          exact lowEq_refl G _
+      | assign hx he =>
+          intro hs s s' hev
+          cases hv : evalE ft k s e with
+          | none => simp [evalC, hv] at hev
+          | some v =>
+              simp [evalC, hv] at hev
+              subst hev
+              intro y hy
+              by_cases hxy : y = x
+              · subst hxy
+                simp [secure] at hs
+                rw [hs] at hx
+                rw [hx] at hy
+                injection hy with hy2
+                cases hy2
+              · simp [upd, hxy]
+      | iteHH he hc hd ihc ihd =>
+          intro hs s s' hev
+          cases hv : evalE ft k s e with
+          | none => simp [evalC, hv] at hev
+          | some v =>
+            by_cases hv0 : v = 0
+            · simp [evalC, hv, hv0] at hev
+              exact ih _ _ hd rfl s s' hev
+            · simp [evalC, hv, hv0] at hev
+              exact ih _ _ hc rfl s s' hev
+      | iteL he hc hd ihc ihd =>
+          intro hs s s' hev
+          cases hv : evalE ft k s e with
+          | none => simp [evalC, hv] at hev
+          | some v =>
+            by_cases hv0 : v = 0
+            · simp [evalC, hv, hv0] at hev
+              exact ih _ _ hd hs s s' hev
+            · simp [evalC, hv, hv0] at hev
+              exact ih _ _ hc hs s s' hev
+      | iteN he hc hd ihc ihd =>
+          intro hs s s' hev
+          cases hv : evalE ft k s e with
+          | none => simp [evalC, hv] at hev
+          | some v =>
+            by_cases hv0 : v = 0
+            · simp [evalC, hv, hv0] at hev
+              exact ih _ _ hd hs s s' hev
+            · simp [evalC, hv, hv0] at hev
+              exact ih _ _ hc hs s s' hev
+      | whHH he hc ihc =>
+          intro hs s s' hev
+          cases hv : evalE ft k s e with
+          | none => simp [evalC, hv] at hev
+          | some v =>
+            by_cases hv0 : v = 0
+            · simp [evalC, hv, hv0] at hev
+              subst hev
+              exact lowEq_refl G _
+            · simp [evalC, hv, hv0] at hev
+              cases hv' : evalC ft k s c with
+              | none => simp [hv'] at hev
+              | some s2 =>
+                simp [hv'] at hev
+                have h1 := ih _ _ hc rfl s s2 hv'
+                have h2 := ih _ _ (TyC.whHH he hc) rfl s2 s' hev
+                exact lowEq_trans h1 h2
+      | whL he hc hle ihc =>
+          intro hs s s' hev
+          cases hv : evalE ft k s e with
+          | none => simp [evalC, hv] at hev
+          | some v =>
+            by_cases hv0 : v = 0
+            · simp [evalC, hv, hv0] at hev
+              subst hev
+              exact lowEq_refl G _
+            · simp [evalC, hv, hv0] at hev
+              cases hv' : evalC ft k s c with
+              | none => simp [hv'] at hev
+              | some s2 =>
+                simp [hv'] at hev
+                have h1 := ih _ _ hc hs s s2 hv'
+                have h2 := ih _ _ (TyC.whL he hc hle) hs s2 s' hev
+                exact lowEq_trans h1 h2
+      | seqH hc hd ihc ihd =>
+          intro hs s s' hev
+          cases hv' : evalC ft k s c with
+          | none => simp [evalC, hv'] at hev
+          | some s2 =>
+            simp [evalC, hv'] at hev
+            have h1 := ih _ _ hc hs s s2 hv'
+            have h2 := ih _ _ hd rfl s2 s' hev
+            exact lowEq_trans h1 h2
+      | seqL hc hd ihc ihd =>
+          intro hs s s' hev
+          cases hv' : evalC ft k s c with
+          | none => simp [evalC, hv'] at hev
+          | some s2 =>
+            simp [evalC, hv'] at hev
+            have h1 := ih _ _ hc hs s s2 hv'
+            have h2 := ih _ _ hd hs s2 s' hev
+            exact lowEq_trans h1 h2
+      | sub hc hsub ihc =>
+          intro hs s s' hev
+          exact ihc (secure_sub hsub hs) s s' hev

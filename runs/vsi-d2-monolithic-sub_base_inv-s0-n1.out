@@ -1,0 +1,22 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+-- PROOF sub_base_inv
+  suffices H : ∀ t t' : Ty, SubTy t t' → ∀ c, t' = Ty.base c → ∃ a, t = Ty.base a ∧ a.le c = true by
+    exact H t (Ty.base b) h b rfl
+  intro t t' hsub
+  induction hsub with
+  | refl u => intro c heq; subst heq; exact ⟨c, rfl, Lvl.le_refl c⟩
+  | base hab => intro c heq; injection heq with heq'; subst heq'; exact ⟨_, rfl, hab⟩
+  | cmd ha hb => intro c heq; cases heq
+  | ncmd ha => intro c heq; cases heq
+  | ncmdCmd => intro c heq; cases heq
+  | funcNcmd => intro c heq; cases heq
+  | func ha hb => intro c heq; cases heq
+  | trans h1 h2 ih1 ih2 =>
+      intro c heq
+      obtain ⟨a2, ha2, hle2⟩ := ih2 c heq
+      subst ha2
+      obtain ⟨a1, ha1, hle1⟩ := ih1 a2 rfl
+      exact ⟨a1, ha1, Lvl.le_trans hle1 hle2⟩
