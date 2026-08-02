@@ -1,230 +1,294 @@
-\documentclass[11pt,a4paper]{article}
-\usepackage[margin=1.1in]{geometry}
+\documentclass[10pt]{article}
+\usepackage[margin=1.25in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{listings}
-\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{microtype}
-\usepackage{parskip}
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
 
-\lstset{basicstyle=\ttfamily\small,breaklines=true,frame=none,columns=fullflexible,
-        xleftmargin=1em}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,frame=none,
+        columns=fullflexible,xleftmargin=1em}
 
-\title{\textbf{An environment for measuring proof success at depth}}
+\title{\textbf{Proof-depth decay is not identifiable from depth sweeps:\\
+an environment, a measurement, and four ways to build one wrong}}
 \author{Youssef Miled}
-\date{August 2026}
+\date{}
 
 \begin{document}
 \maketitle
 
-\section*{The number I wanted to check}
+\begin{abstract}
+\noindent
+Compositional proof pipelines are justified by a reported exponential decay in
+model success with dependency depth, specifically ``roughly a 3x reduction in
+successful problem count for every additional dependency solved.'' We build an
+open Lean~4 environment to test that claim: lemma ladders with derived depths,
+two conditions differing only in whether dependencies are supplied, and a reward
+that audits which axioms a proof depends on rather than whether a file compiled.
+One of our three ladders is the lemma chain of a security-type-system soundness
+theorem that we machine-check end to end, giving a corpus with genuine
+dependency structure and no plausible training-set contamination. We report a
+robust condition effect: pooling depths $\ge 2$, supplying dependencies yields
+$16/23$ successes against $0/9$ when they are withheld (Fisher exact
+$p = 8.2\times10^{-4}$). We then argue that the headline quantity people want
+from such sweeps, a per-depth decay constant, is \emph{not identifiable} from
+them. On our arithmetic ladder a fit against depth gives $1.73\times$ with
+$R^2=0.930$, while refitting the same observations against lemma count gives
+$1.44\times$ with $R^2=0.930$; depth and total proof length correlate at $0.98$
+across our ladders, and the source work's own reported 17-line difficulty cliff
+predicts our curve with no depth effect at all. We also measure the environment's
+own noise floor at roughly $25\%$ using prompts that are byte-identical across
+conditions by construction. Finally we document four benchmark-design failures,
+including a self-check that reported success for the entire life of a family
+while four of its fourteen lemmas carried fabricated dependencies.
+\end{abstract}
 
-Theorem's \texttt{lf-lean} write-up reports that when proofs are produced without
-compositional structure, success falls by ``roughly a 3x reduction in successful
-problem count for every additional dependency solved,'' and that a monolithic
-approach ``would yield less than 20\% success.'' That constant is doing real
-work. It is the reason to supply already-verified dependencies as trusted
-interfaces instead of re-proving them, which is the central architectural choice
-of their pipeline.
+\section{Introduction}
 
-It was measured once, on one corpus, with one pipeline, and as far as I can tell
-nobody has checked it since. So I built an environment to check it, and this note
-is mostly about what I learned building it rather than about the number, because
-the number turned out not to mean what I wanted it to mean.
+Verification is an attractive target for reinforcement learning because the
+reward is a proof kernel rather than a learned proxy or a test suite. A recurring
+empirical claim in this area is that success decays sharply with the number of
+dependencies a model must establish itself, and that supplying already-verified
+dependencies as trusted interfaces is therefore the right architecture. The
+specific figure we test, from Theorem's \texttt{lf-lean} report, is a
+$3\times$ reduction per additional dependency, with monolithic translation
+estimated below $20\%$ success.
 
-\section*{How the environment works}
+That figure has been measured once, on one corpus, with one pipeline. We set out
+to reproduce it and instead found that the experimental design used to produce
+such numbers cannot separate the hypothesis of interest from a mundane
+alternative. Our contributions are an environment, one statistically supported
+effect, one identification argument, and a set of negative results about how to
+build these benchmarks.
 
-A \emph{ladder} is a Lean theory plus a dependency graph of lemmas over it. Depth
-is computed from the graph rather than written down: a lemma with no dependencies
-has depth 1, and otherwise its depth is one more than the deepest thing it needs.
-That sounds pedantic and it is not. If depths are declared by hand they drift, and
-I will come back to how badly.
+We are explicit about what this is not. There is no training here: the policy is
+frozen and this is the environment half of an RL setup. And our sample sizes are
+small, for reasons given in Section~\ref{sec:lim}. We regard the environment and
+the identification argument as the contribution, not the decay constant.
 
-A task is a set of lemmas to prove, with everything else in the family supplied
-already proved. Two conditions fall out of that. \emph{Compositional} asks for one
-lemma with all its ancestors handed over. \emph{Monolithic} asks for that lemma
-plus every ancestor, with nothing supplied. At depth five in the arithmetic ladder
-that is the difference between writing three lines and writing eight lemmas from
-scratch.
+\section{The environment}
 
-Grading runs the Lean kernel. Acceptance needs three things: the file compiles,
-\texttt{\#print axioms} on every target stays inside
-\{\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}\}, and the
-model's text contains no banned tactic.
+\paragraph{Ladders and depth.}
+A family is a Lean theory together with a dependency graph over lemmas. Depth is
+derived from the graph, never declared: a lemma with no dependencies has depth
+$1$, otherwise depth is one more than its deepest dependency. Derivation matters
+because hand-written graphs drift, as Section~\ref{sec:neg} documents.
 
-The axiom check is the one that matters, and I did not appreciate why until it
-caught something. A lemma failed to prove. Lean reported the error and then
-\emph{declared the theorem anyway}. Every downstream lemma citing it compiled with
-exit status 0 and no diagnostics of its own. Three rungs later the only trace was
-\texttt{'L07' depends on axioms: [propext, sorryAx]}. A grader that asks whether
-the file compiled would have marked that entire subtree as proved. Exit status is
-not a reward signal.
+\paragraph{Conditions.}
+A task is a set of lemmas to prove; every other lemma in the family is supplied
+already proved. \emph{Compositional} is the singleton $\{L\}$. \emph{Monolithic}
+is $\{L\}\cup\mathrm{ancestors}(L)$. Both are instances of one mechanism, which
+also admits arbitrary intermediate sets.
 
-One more design choice worth stating: the model never writes the theorem
-statement. The harness emits the \texttt{theorem \ldots := by} header and splices
-in only a tactic block. That makes it structurally impossible to weaken or restate
-the goal, which removes the largest class of reward hacking without any
-statement-comparison code. I had written that comparison code first and deleted
-it.
+\paragraph{Reward.}
+A candidate is accepted only if the file compiles, \texttt{\#print axioms} on
+every target is contained in
+$\{\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}\}$, and no
+banned tactic appears in the model's text. Multi-lemma tasks are graded
+all-or-nothing.
 
-\section*{Where the lemmas come from}
+The axiom audit is not redundant with compilation. During development a lemma
+failed to prove; Lean reported the error and still declared the theorem, and every
+downstream lemma citing it compiled with exit status $0$ and no diagnostics. Only
+\texttt{\#print axioms} revealed \texttt{sorryAx} three rungs later. A reward
+based on compilation would have scored that subtree as proved.
 
-Two of the three families are theories I wrote for the purpose: a Peano
-development, and a small security type system. The third is not.
+\paragraph{Preventing statement drift.}
+The policy never writes the theorem statement. The harness emits the
+\texttt{theorem \ldots := by} header and splices in a tactic block only, so a
+model cannot weaken, restate, or substitute the goal. This removes a large class
+of reward hacking structurally rather than detecting it.
 
-As an undergrad I built a security type system in OCaml, Volpano-Smith-Irvine
-style with subtyping, plus a function extension of my own, and proved
-noninterference by hand in a paper. For this project I machine-checked that
-theorem in Lean 4: 784 lines, no \texttt{sorry}, axioms limited to
-\texttt{propext} and \texttt{Quot.sound}. Semantics is fuel-indexed because the
-language has while loops, so the theorem is termination-insensitive, relating two
-runs that both finish. Expression agreement and command noninterference have to be
-proved simultaneously by induction on fuel, since a call inside an expression runs
-a command and an assignment inside a command evaluates an expression.
+\paragraph{Certification.}
+Before any sweep, each rung is checked to be provable in both conditions, and each
+declared dependency is checked to be real by compiling the rung with its ancestors
+absent from the file entirely.
 
-The reason that matters here is not the theorem, which is textbook. It is that the
-lemma chain of a real metatheorem makes a much better ladder than anything I would
-design. Its depths are the dependency structure the proof actually has, so nobody
-can say the ladder was shaped to produce a curve. And it appears in no training
-corpus, which the Peano ladder certainly does.
+\section{Corpora}
 
-\section*{What the measurements say, and what they do not}
+Two families are theories written for the purpose: a Peano development
+(15 lemmas, depths 1--5) and a small security type system (12 lemmas, depths
+1--4). The third is not written for the purpose.
 
-On the arithmetic ladder, monolithic pass rates for Haiku 4.5 fall
-$1.00, 0.75, 0.33, 0.00, 0.00$ across depths one to five. Fitting the log of the
-pass rate against depth on the non-zero points gives $1.73\times$ per depth with
-$R^2 = 0.93$, against the reported $3\times$.
+We machine-checked, in Lean~4, the soundness theorem of a security type system in
+the Volpano-Smith-Irvine style with subtyping, while loops, and a function
+extension. The formalisation is 784 lines with no \texttt{sorry}; axioms are
+limited to \texttt{propext} and \texttt{Quot.sound}. Semantics is fuel-indexed, so
+the theorem is termination-insensitive, relating runs that both terminate.
+Expression agreement and command noninterference must be proved simultaneously by
+induction on fuel, because a call inside an expression executes a command while an
+assignment inside a command evaluates an expression.
 
-I do not think that is a replication, and the reason is the most useful thing I
-found. Refitting the identical data against the \emph{number of lemmas} instead of
-depth gives $1.44\times$ per lemma at $R^2 = 0.930$, the same to three decimals.
-The two explanations are statistically indistinguishable on this data. Across
-these ladders the correlation between depth and total monolithic proof length is
-about $0.98$, so any depth curve is also a length curve.
+We use its lemma chain as the third ladder (14 lemmas, depths 1--5). Two
+properties motivate this. The depths are the dependency structure the proof
+actually has, so the ladder cannot have been shaped to produce a curve. And the
+system does not appear in any public corpus, unlike Peano arithmetic, which
+removes the dominant contamination concern.
 
-That is not a hypothetical objection. The same \texttt{lf-lean} write-up reports a
-difficulty cliff at ``17+ marginal LoC.'' In my arithmetic ladder, monolithic
-length crosses seventeen lines exactly between depth three and depth four. Their
-own length cliff predicts my curve with no depth effect existing at all. So the
-honest reading is that this style of measurement cannot tell you whether chains
-compound or whether there is simply more to write.
+\section{Experiments}
 
-On the ladder taken from the machine-checked metatheorem, with one frontier model
-answering one-shot and with no compiler access:
+All results use one-shot policies with no compiler access, so a model cannot
+iterate against the kernel. Reference and empty policies bound the environment:
+the reference solution scores $1.00$ in every cell and a trivial \texttt{rfl}
+policy scores $0.00$, confirming the grader discriminates.
+
+\subsection{Condition effect}
+
+Table~\ref{tab:vsi} reports Sonnet~5 on the machine-checked ladder, with Wilson
+$95\%$ intervals.
 
 \begin{table}[h]\centering
-\begin{tabular}{lrrrr}
+\small
+\begin{tabular}{lrlrl}
 \toprule
-depth & compositional & $n$ & monolithic & $n$ \\
+depth & compositional & 95\% CI & monolithic & 95\% CI \\
 \midrule
-1 & 0.83 & 6  & 0.83 & 12 \\
-2 & 0.50 & 2  & 0.00 & 4 \\
-3 & 0.75 & 12 & 0.00 & 3 \\
-4 & 0.50 & 6  & 0.00 & 2 \\
-5 & 1.00 & 3  & --   & 0 \\
+1 & 5/6\ \ (0.83)   & [0.44, 0.97] & 10/12\ (0.83) & [0.55, 0.95] \\
+2 & 1/2\ \ (0.50)   & [0.09, 0.91] & 0/4\ \ (0.00) & [0.00, 0.49] \\
+3 & 9/12\ (0.75)    & [0.47, 0.91] & 0/3\ \ (0.00) & [0.00, 0.56] \\
+4 & 3/6\ \ (0.50)   & [0.19, 0.81] & 0/2\ \ (0.00) & [0.00, 0.66] \\
+5 & 3/3\ \ (1.00)   & [0.44, 1.00] & --            & -- \\
 \bottomrule
 \end{tabular}
+\caption{Machine-checked ladder, Sonnet~5, one-shot. Depth-1 tasks are identical
+across conditions by construction (no ancestors exist to supply or withhold).}
+\label{tab:vsi}
 \end{table}
 
-Supplying the dependencies keeps success between a half and one at every depth.
-Withholding them drops it to zero from depth two upward. The depth-five
-compositional cell sitting at $1.00$ is not noise: that theorem is a one-line
-application of the lemma directly beneath it, which the compositional condition
-hands over. Depth and difficulty come apart exactly when the interfaces are
-supplied, which is what compositional verification is supposed to buy.
+Per-cell intervals are wide. Pooling the cells where the conditions actually
+differ, that is depths $\ge 2$, gives compositional $16/23$ ($[0.49,0.84]$)
+against monolithic $0/9$ ($[0.00,0.30]$), Fisher exact two-sided
+$p = 8.2\times 10^{-4}$. Supplying dependencies has a large effect on this
+corpus.
 
-I would not fit a constant to that table. Cells run from two to twelve samples, an
-API limit cut the sweep off at fifty of a hundred and forty tasks, and five of the
-nine cells fall short of the five samples I was aiming for.
+The depth-5 compositional cell at $1.00$ is informative rather than anomalous:
+that theorem is a one-line application of the lemma directly beneath it, which
+the compositional condition supplies. Depth and difficulty decouple precisely
+when interfaces are handed over.
 
-\section*{The benchmark measures its own noise for free}
+\subsection{The decay constant is not identifiable}
 
-A lemma at depth one has no ancestors, so its monolithic and compositional prompts
-are byte-identical. I checked with \texttt{diff}. They are still answered by
-independent model instances under different labels.
+On the arithmetic ladder, Haiku~4.5 monolithic pass rates fall
+$1.00, 0.75, 0.33, 0.00, 0.00$ across depths 1--5. Regressing $\log(\text{pass})$
+on depth over the non-zero points gives
+\[
+1.73\times \text{ per depth},\qquad R^2 = 0.930 .
+\]
+Regressing the identical observations on \emph{lemma count} instead gives
+\[
+1.44\times \text{ per lemma},\qquad R^2 = 0.930 .
+\]
+The two models fit equally well to three decimal places. This is not a
+coincidence of one ladder: across our families the correlation between depth and
+total monolithic proof length is approximately $0.98$, because monolithic length
+is by construction the sum over ancestors.
 
-In one sweep those identical prompts scored 8/8 in one arm and 6/8 in the other.
-Two lemmas passed in one instance and failed in another on the same input, which
-puts run-to-run variance somewhere near twenty-five percent. That kills the
-apparent depth-one gap in that sweep, and it means every single-sample cell
-anywhere in this project has to be read against a quarter-scale coin flip. It also
-means depth-one rungs work as a built-in replication control, which I now think
-any benchmark of this shape should have deliberately.
+The alternative hypothesis is concrete rather than rhetorical. The same
+\texttt{lf-lean} report documents a difficulty cliff at ``17+ marginal LoC.'' In
+our arithmetic ladder, monolithic length crosses seventeen lines between depths
+3 and 4. A pure length-cliff model with no depth term predicts our observed curve.
 
-\section*{Four things that went wrong}
+We therefore do not report $1.73\times$ as a replication of $3\times$. We report
+that depth sweeps of this form cannot distinguish compounding from volume.
 
-These cost the most time and are the least likely to be rediscovered by anyone
-reading a clean repository, so they are the part I would actually want reviewed.
+\paragraph{A design that would.}
+Compare $k$ mutually independent lemmas against $k$ chained ones at matched count
+and matched total length. Equal rates implicate volume; a gap implicates
+chaining. Two constraints make this harder than it appears. Withheld sets must be
+upward closed, so independent sets can only be drawn from maximal elements, and a
+funnel-shaped family supports no such comparison at any $k$. And matched pairs
+cannot be constructed by making every rung the same shape, because uniformity
+makes chains bypassable by unfolding (Section~\ref{sec:neg}). Pairs must be
+searched for. We locate exactly length-matched pairs at $k=2,3$ in the arithmetic
+family, but have run the contrast only against a policy that ceilings on it.
 
-\textbf{Closed goals collapse depth silently.} My first ladder stated its lemmas
-at a concrete point, something like $\mathrm{op}_i\,1\,y = 1$. Every resulting goal
-was a closed term, so \texttt{simp} did not reason about it, it evaluated it. A
-depth-three rung fell to \texttt{simp\_all} with no lemmas in scope at all. The
-ladder compiled, looked plausible, and measured nothing. Rungs have to quantify
-over the variables the definitions recurse on.
+\subsection{Noise floor}
 
-\textbf{Uniformity and real depth are in conflict.} To compare a chain of $k$
-lemmas against $k$ independent ones you want the two arms matched exactly, so I
-built a family where every rung had the same shape. It failed, because when each
-rung is the previous one composed once more, the chain can be bypassed by
-unfolding the definitions and reusing the base lemma. I verified that by compiling
-the depth-four lemma with the two beneath it deleted. Matching by construction
-requires uniformity, and uniformity is exactly what makes a chain decorative. So
-matched pairs have to be searched for among naturally occurring lemmas instead.
+Depth-1 lemmas have no ancestors, so their monolithic and compositional prompts
+are byte-identical, which we verify with \texttt{diff}. They are nonetheless
+answered by independent policy instances under different labels. In one sweep
+these identical prompts scored $8/8$ in one arm and $6/8$ in the other, placing
+run-to-run variance near $25\%$. Depth-1 rungs thus act as a built-in replication
+control, and we recommend any benchmark of this shape include one deliberately.
 
-\textbf{A funnel admits no independent sets.} Withheld sets have to be closed
-upwards, because a supplied lemma cites its own dependencies. That means
-independent sets can only be drawn from lemmas nothing depends on. My security
-family had exactly one such lemma, the top theorem, so the comparison I wanted was
-not underpowered there, it was impossible. Shape of the graph decides which
-experiments a ladder can support.
+\section{Four benchmark-design failures}
+\label{sec:neg}
 
-\textbf{A check that cannot fail is worse than no check.} The self-test verifies
-that each declared dependency is real by rebuilding the rung without it. For
-multi-lemma tasks that check was inert: it graded a monolithic task using the
-single-lemma solution, so the missing blocks were filled with \texttt{sorry}, the
-axiom audit rejected the attempt for the wrong reason, and the failure branch
-could never be reached. It reported green for the entire life of one family, while
-four of that family's fourteen lemmas declared dependencies their proofs never
-cite. Depths were inflated and every depth-indexed number from it was an artifact.
-I found it because one dependency looked implausible on inspection: a one-line
-proof cannot need a lemma. The fix was to compile each rung with its ancestors
-absent from the file entirely, and to derive the dependency graph from the proof
-text rather than a hand-written table.
+\paragraph{Closed goals collapse depth.}
+Stating lemmas at a concrete point produces goals that are closed terms, which
+\texttt{simp} evaluates rather than reasons about. A depth-3 rung fell to
+\texttt{simp\_all} with no lemmas in scope. The ladder compiled and measured
+nothing. Rungs must quantify over the variables the definitions recurse on.
 
-\section*{What I think the actual finding is}
+\paragraph{Uniformity destroys essential depth.}
+A family built so that chain and independent arms match exactly failed, because
+when each rung is the previous one composed once more the chain is bypassable by
+unfolding definitions and reusing the base lemma. We verified this by compiling
+the depth-4 lemma with the two beneath it deleted. Exact matching requires
+uniformity and uniformity makes dependencies decorative.
 
-The grader worked. The dependency machinery worked. The renaming worked. The
-certifications worked once repaired. None of those was the bottleneck.
+\paragraph{Graph shape determines feasible experiments.}
+Because withheld sets are upward closed, independent sets exist only among maximal
+elements. A family with one maximal element admits none at all. Our security
+family originally had exactly one, making the identification contrast impossible
+rather than merely underpowered.
 
-The bottleneck was difficulty calibration. The arithmetic ladder ceilings for a
-strong model, so it measures nothing. The first version of the security ladder
-floored above depth one, so it measured nothing either. Only a weaker model, or a
-rebuilt ladder with intermediate lemmas inserted, landed in the band where there
-is a curve to see at all.
+\paragraph{An inert safeguard is worse than none.}
+The dependency-reality check was vacuous for multi-lemma tasks: it graded a
+monolithic task using the single-lemma solution, so missing blocks were filled
+with \texttt{sorry} and the audit rejected the attempt for the wrong reason,
+making the failure branch unreachable. It reported success for the entire life of
+one family while four of its fourteen lemmas declared dependencies their proofs
+never cite, inflating depths and invalidating every depth-indexed number from it.
+It was found by inspection, not by the check. The repair compiles each rung with
+ancestors absent from the file and derives the graph from proof text.
 
-A task that always passes and a task that always fails both produce zero gradient.
-That is the same sparse-reward complaint usually made about unit tests. So dense
-feedback is not a property of proof assistants. It is a property of a task
-distribution matched to a particular policy. Proof assistants make dense feedback
-possible and do not make it automatic, and anyone planning to scale reinforcement
-learning on verification needs a calibration story rather than just a kernel.
+\section{Limitations}
+\label{sec:lim}
 
-\section*{What this is not}
+Sample sizes are small: cells contain between 2 and 12 attempts, and an API rate
+limit halted our sweep at 50 of 140 planned tasks. Only the pooled comparison in
+Section~4.1 is adequately powered; no per-cell number should be read as precise,
+and no constant should be fitted to Table~\ref{tab:vsi}.
 
-There is no training here. No gradients, no policy updates. This is the
-environment half of a reinforcement learning setup with a frozen model in the
-policy slot: state space, action space, a task distribution with a difficulty
-knob, and a reward that is a proof kernel rather than a learned proxy. There is a
-\texttt{reset}/\texttt{step} interface so a learner could be attached. None has
-been.
+Results cover two model families. Episodes are single-step, with one attempt and
+one binary reward; per-tactic actions with intermediate proof states would require
+a persistent Lean server. The renaming defence against contamination is untested,
+though the machine-checked ladder largely sidesteps the issue. The soundness
+theorem we prove is termination-insensitive.
 
-Episodes are single-step: one attempt, one whole proof, one binary reward. Per
-tactic actions with intermediate proof states would need a persistent Lean server
-instead of one-shot compilation.
+Finally, we do not train. Attaching a learner to the provided
+\texttt{reset}/\texttt{step} interface is future work, and we consider the
+calibration problem below a precondition for it.
 
-And the causal question is still open. The comparison designed to settle it, $k$
-chained lemmas against $k$ independent ones at matched length, has only ever been
-run against a model that ceilings on it.
+\section{Conclusion}
+
+Our clearest practical finding is not about depth. The grader, the dependency
+machinery, the renaming, and the certifications all worked once repaired, and
+none was the bottleneck. The bottleneck was difficulty calibration: a strong model
+ceilings on the arithmetic ladder, the first version of the security ladder floored
+above depth 1, and only a weaker model or a rebuilt ladder produced a measurable
+curve at all.
+
+Tasks that always succeed and tasks that always fail both yield zero gradient,
+which is the sparse-reward failure usually attributed to unit tests. Dense
+feedback is therefore not a property of proof assistants. It is a property of a
+task distribution matched to a policy. Proof assistants make dense feedback
+possible and do not make it automatic, and scaling reinforcement learning on
+verification requires a calibration story in addition to a kernel.
+
+\section*{Reproducibility}
+
+The environment, grader, three families, the 784-line machine-checked
+formalisation, and a design log of every failure in Section~\ref{sec:neg} are
+released. \texttt{selftest} certifies a family before any sweep and must report
+zero failures. Sweeps are split into a prompt-export and a grading phase so that
+policies without an HTTP API can be evaluated, and the runner emits the safe
+partition of tasks across policy instances, since a compositional prompt supplies
+its target's ancestors together with their proofs and so leaks answers if batched
+carelessly.
 
 \end{document}
