@@ -563,3 +563,45 @@ distinguishes constants belonging to the theory from external ones, which is the
 supplied-versus-withheld split, and it identifies auto-generated declarations
 (`.rec`, `.casesOn`, `match_*`, projections) that must never become tasks. Of
 418 declarations in `Vsi.lean`, 248 are auto-generated and 46 are theorems.
+
+## 2026-08-02 — dependency extraction by necessity
+
+Kernel extraction being unavailable (previous entry), the graph is now derived
+by deletion: an edge `T -> A` exists only when removing `A` from the file makes
+`T`'s proof fail. `src/pdd/extract.py`.
+
+One subtlety made this harder than it looks. Removing `A` also breaks every
+supplied lemma that itself needs `A`, and those failures would otherwise be
+charged to `T`. Rungs are therefore processed in source order, so the graph for
+everything earlier is already known and the whole `A`-cone can be removed
+together. A failure then means `T` needs something in that cone, hence
+transitively needs `A`. That produces the transitive relation; direct edges come
+from transitive reduction afterwards.
+
+Results. `vsi`: 91 probes, 52s, 13 of 14 rungs matching the hand-declared graph,
+max depth 5. `noninterference`: 66 probes, 30s, 10 of 12 matching, max depth 4.
+
+All three discrepancies are the extractor being right. `agree -> lowEq_trans`,
+`ite_high_ni -> conf_ite`, `ite_high_ni -> lowEq_trans` and
+`noninterference -> evalE_agree` are all reachable through another declared
+edge, so transitive reduction removes them. They were redundant rather than
+fabricated, and no depth changes.
+
+The four genuinely fabricated edges are rejected:
+
+    lowEq_symm   -> lowEq_refl   closure(lowEq_symm)   = []  REJECTED
+    lowEq_trans  -> lowEq_refl   closure(lowEq_trans)  = []  REJECTED
+    Lvl.le_trans -> Lvl.le_refl  closure(Lvl.le_trans) = []  REJECTED
+    secure_sub   -> Lvl.le_refl  closure(secure_sub)   = []  REJECTED
+
+with real edges still accepted, so the check discriminates rather than rejecting
+everything.
+
+`families/vsi.py` now loads `results/graph-vsi.json` instead of scanning proof
+text. The loader refuses a graph not produced by necessity extraction and
+refuses one missing any rung; both refusals were exercised by corrupting the
+file, in keeping with the rule that a check nobody has seen fail is not a check.
+
+`noninterference` still declares its edges by hand. Its extracted graph is in
+`results/graph-noninterference.json` and differs only by the two redundant edges
+above.

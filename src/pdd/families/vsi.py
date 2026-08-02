@@ -8,7 +8,7 @@ this family because the source itself is the object being benchmarked.
 
 from __future__ import annotations
 
-import re
+import json
 
 from pathlib import Path
 
@@ -56,27 +56,31 @@ _NAMES = (
     "secure_sub", "confinement", "tyE_call_L", "agree", "noninterference_full",
 )
 
+_GRAPH = Path(__file__).resolve().parents[3] / "results" / "graph-vsi.json"
 
-def _deps_of(name: str) -> tuple[str, ...]:
-    """Dependencies read off the proof text rather than declared by hand.
 
-    An earlier version of this module listed them manually and drifted: four
-    rungs claimed dependencies their proofs never cite, which inflated their
-    depths and made every depth-indexed measurement from this family
-    meaningless. `selftest` did not catch it because its depth check was
-    vacuous for multi-target rungs. Deriving the graph from the source removes
-    the possibility of that drift entirely.
+def _load_deps() -> dict[str, tuple[str, ...]]:
+    """Dependencies established by necessity, produced by `pdd.extract`.
 
-    The lookbehind stops `agree` from matching inside `evalE_agree_nocall`.
+    An edge is present only when deleting the ancestor from the file actually
+    breaks the proof. That is stronger than reading the proof term, which Lean
+    4.32 does not expose anyway, and stronger than scanning the proof text,
+    which is what produced four fabricated edges in an earlier version of this
+    module and inflated the reported depths.
+
+    Regenerate with `uv run python -m pdd.extract --family vsi`.
     """
-    proof = _raw(name).split(":= by", 1)[1]
-    return tuple(
-        n for n in _NAMES
-        if n != name and re.search(r"(?<![\w.])" + re.escape(n) + r"\b", proof)
-    )
+    data = json.loads(_GRAPH.read_text())
+    if data.get("method") != "necessity":
+        raise ValueError(f"{_GRAPH} was not produced by necessity extraction")
+    direct = data["direct"]
+    missing = set(_NAMES) - set(direct)
+    if missing:
+        raise ValueError(f"{_GRAPH} is missing rungs: {sorted(missing)}")
+    return {n: tuple(direct[n]) for n in _NAMES}
 
 
-_deps = {n: _deps_of(n) for n in _NAMES}
+_deps = _load_deps()
 
 
 RUNGS = tuple(
