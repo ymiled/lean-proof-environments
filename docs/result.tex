@@ -21,25 +21,24 @@ what a proof kernel does and does not give you}
 
 \begin{abstract}
 \noindent
-Training language models to verify programs is an attractive proposition because
-a proof assistant supplies a reward that cannot be fooled: a proof either
-type-checks against the kernel or it does not. This is unlike the rewards
-normally used for code generation, where a test suite passing is only weakly
-related to a program being correct. It is often concluded from this that proof
-assistants provide the dense feedback that reinforcement learning requires. This
-work reports what we found when we built such an environment and measured it. A
-kernel makes the reward \emph{honest}, but it does nothing to make the reward
-\emph{informative}, and these are different properties. We construct an
-environment for information-flow security proofs in Lean~4, in which difficulty
-is controlled by how much of a lemma's dependency structure is withheld from the
-model, and we observe that two of our three configurations produce a constant
-reward and therefore no learning signal at all, while appearing entirely healthy
-from the outside. We further show that the difficulty can be moved deliberately,
-and that the mechanism for moving it is decomposition: splitting a proof into
-intermediate lemmas took a theorem from unprovable to provable for a fixed model
-at a fixed budget. Along the way we report that the dependency structure on
-which the whole construction rests cannot be read from the Lean environment at
-all, and give the alternative we used instead.
+A proof assistant supplies a reward that cannot be gamed: a candidate proof
+either type-checks against the kernel or it does not. This is often taken to mean
+that verification furnishes the dense feedback reinforcement learning requires.
+We report a measurement bearing on that. We build an environment for
+information-flow security proofs in Lean~4 in which difficulty is set by how much
+of a lemma's dependency structure is withheld from the model, and we locate where
+contemporary models saturate and where they fail outright. The corpus is
+anchored on a machine-checked development: a security type system in the
+Volpano--Smith--Irvine style extended with subtyping, while loops and functions,
+$784$ lines of Lean~4 containing no \verb|sorry|, whose soundness theorem depends
+on \verb|propext| and \verb|Quot.sound| and nothing else. Saturation and floor
+effects are of course familiar in reinforcement learning, and we claim no
+discovery in noting them; what we contribute is where they sit for this domain
+and these models, and a mechanism for moving between them. Two of our three
+configurations return a constant reward across every depth, and the difficulty
+can be moved deliberately by changing the granularity of decomposition: splitting
+a thirty-seven line proof into two intermediate lemmas took a theorem from
+unprovable to provable for a fixed model at a fixed single-attempt budget.
 \end{abstract}
 
 \tableofcontents
@@ -101,9 +100,9 @@ chain of supporting lemmas. That chain gives the environment its structure.
 controlled by a single parameter, namely how much of a lemma's dependency cone
 is withheld, and in which the reward is kernel acceptance together with an audit
 of the axioms the result depends on.
-\item We report that the dependency structure required to define that parameter
-cannot be obtained from the Lean environment, because proof terms are discarded
-after checking, and we give a replacement procedure based on deletion.
+\item We determine the dependency structure required by that parameter
+semantically, by deleting a lemma and observing whether the proof fails, which
+measures necessity rather than mention.
 \item We measure three configurations of the environment and find that two
 produce a constant reward, and therefore no learning signal, while presenting no
 outward sign of doing so.
@@ -128,8 +127,7 @@ $1 + \max\{\mathrm{depth}(A) : A \text{ is a dependency of } L\}$.
 \end{definition}
 
 Depth is therefore determined entirely by the dependency relation, and
-Section~\ref{sec:extract} describes how we obtain that relation, which is less
-straightforward than it appears.
+Section~\ref{sec:extract} describes how we obtain that relation.
 
 For example, in the security type system we use, the fact that agreement of two
 memories on public variables is a transitive relation has depth~$1$, since it
@@ -201,68 +199,46 @@ writes the statement, it cannot weaken it. We had first implemented a comparison
 between the model's statement and the intended one, and removed it: making a
 failure impossible is preferable to detecting it.
 
-\section{Recovering the dependency structure}
+\section{Determining the dependency relation}
 \label{sec:extract}
 
 The difficulty parameter of Section~2.2 is defined in terms of a lemma's
 dependency cone, so the environment cannot be built without knowing, for each
-lemma, which other lemmas its proof requires. This turned out to be the hardest
-part of the construction.
-
-\subsection{The direct approach is unavailable}
-
-The natural method is to ask Lean. The kernel has just checked the proof, so it
-has seen every constant the proof refers to. In Lean~4 this information is not
-retained. Theorem bodies are elaborated asynchronously and the resulting term is
-not kept, so the field that should contain it is empty:
-
-\begin{lstlisting}
-theorem foo (n : Nat) : n = n := rfl
-theorem bar (n : Nat) : n = n := foo n     -- cites foo
-
-env.find? `bar                  -- value?.isSome = false
-env.toKernelEnv.find? `bar      -- value?.isSome = false
-liftCoreM (getConstInfo `bar)   -- value?.isSome = false
-liftCoreM (collectAxioms `bar)  -- []
-\end{lstlisting}
-
-Two lines after \verb|bar| is declared, its proof is already unreachable.
-Compiling to a \verb|.olean| file and loading it through
-\verb|withImportModules| gives the same result, so this is not an artefact of an
-unflushed in-memory structure. Only the constants occurring in the
-\emph{statement} survive. Applied to our largest development, extraction by this
-route reported all $46$ theorems as having no dependencies, and therefore a
-maximum depth of $1$.
+lemma, which other lemmas its proof requires.
 
 \subsection{Dependency by necessity}
 
-We therefore determine the relation semantically. We assert that $L$ depends on
-$A$ precisely when removing $A$ from the file causes $L$'s proof to fail.
+We determine the relation semantically. We assert that $L$ depends on $A$
+precisely when removing $A$ from the file causes $L$'s proof to fail.
 
-This is not merely a workaround; it is a stronger criterion than the one we could
-not use. A proof may mention a lemma without that lemma being load-bearing, in
-which case reading the proof term would record a dependency that does not exist.
-What the difficulty parameter requires is necessity, and necessity is what the
-deletion test measures.
+We prefer this to inspecting proof terms, and would prefer it even where doing so
+is convenient. A proof may refer to a lemma without that lemma being
+load-bearing, in which case the term records a dependency that is not one. The
+difficulty parameter is defined by what the model must reconstruct, so what it
+requires is necessity, and the deletion test measures necessity directly.
 
 One complication must be handled. Removing $A$ also breaks any supplied lemma
 whose own proof requires $A$, and those failures would otherwise be attributed to
 $L$. We therefore process lemmas in order, so that the relation among earlier
-lemmas is already known, and remove the whole set of lemmas that depend on $A$
+lemmas is already known, and remove the whole set of lemmas depending on $A$
 together with $A$ itself. A failure then establishes that $L$ requires something
 in that set, hence that $L$ transitively requires $A$. Direct dependencies are
 recovered afterwards by transitive reduction.
 
-\subsection{Cost}
+\subsection{Behaviour and cost}
 
-The procedure requires one compilation per candidate dependency, and is
-therefore quadratic in the number of lemmas in a ladder, though the inner loop
-parallelises. For the formalisation described in Section~4 this amounts to $91$
-deletion tests taking $52$ seconds, and for the corpus as a whole $660$ tests
-taking $261$ seconds. Applied to that formalisation the procedure recovers a
-relation of maximum depth $5$. We consider this affordable enough that
-establishing dependencies mechanically is preferable to asserting them, quite
-apart from the question of whether an asserted relation would be correct.
+The test discriminates in both directions, which we check rather than assume. In
+the formalisation of Section~4, the lemma \verb|sub_base_inv| compiles when its
+two ancestors are present and fails when either is deleted, while
+\verb|lowEq_symm| compiles with the reflexivity lemma absent from the file
+entirely, establishing that it does not depend on it.
+
+The procedure requires one compilation per candidate dependency and is therefore
+quadratic in the number of lemmas, though the inner loop parallelises. For the
+formalisation this amounts to $91$ deletion tests taking $52$ seconds, and for
+the corpus as a whole $660$ tests taking $261$ seconds. We consider this cheap
+enough that establishing dependencies mechanically is preferable to asserting
+them by hand.
 
 \section{The corpus}
 
@@ -292,12 +268,16 @@ that the reward discriminates.
 \subsection{The kernel does not supply a learning signal}
 
 We ran three configurations of ladder and model. The following gives the
-proportion of tasks solved at each depth in the withheld condition.
+proportion of tasks solved in the withheld condition, that is with
+$W$ equal to the entire dependency cone of the target, so that at depth $d$ the
+model must supply $d$ levels of lemmas rather than one. Depth here indexes the
+target lemma, and $W$ is determined by it; the two are not independent axes in
+this table.
 
 \begin{center}
 \begin{tabular}{llc}
 \toprule
-ladder & model & pass rate at depths $1,2,3,4$ \\
+ladder & model & pass rate, target depth $1,2,3,4$ \\
 \midrule
 arithmetic & Sonnet~5 & $1.00,\ 1.00,\ 1.00,\ 1.00$ \\
 security types, first version & Sonnet~5 & $1.00,\ 0.00,\ 0.00,\ 0.00$ \\
@@ -313,16 +293,22 @@ behaviours were better, which is precisely the sparse-reward condition that the
 appeal to proof assistants was supposed to avoid. Only the third configuration
 produces a reward that varies with depth.
 
-We stress that nothing distinguishes the first two from the outside. Every task
-is well formed, every reward is correctly computed, the kernel is behaving
-exactly as intended, and the test suite reports no failures. An environment that
-teaches nothing looks identical to one that teaches, unless one measures the
-distribution of rewards it actually produces.
+That saturation and floor effects destroy a learning signal is not a new
+observation; it is the standard motivation for curriculum construction, and we
+claim no discovery in restating it. What we take from the table is narrower and
+empirical. For this domain and these models, the ceiling and the floor are close
+enough together that two of our three configurations landed outside the usable
+band, and neither was chosen carelessly: the arithmetic ladder was the natural
+first corpus and the security ladder was written specifically to be harder.
 
-We therefore state the conclusion as follows. Dense feedback is not a property
-conferred by a proof assistant. It is a property of a task distribution
-considered together with a particular policy. The kernel guarantees that the
-reward is honest; it makes no guarantee that the reward is informative.
+The practical point is that neither failure announces itself. Every task is well
+formed, every reward is correctly computed, the kernel behaves exactly as
+intended, and the test suite reports no failures. Distinguishing an environment
+that teaches from one that does not requires measuring the distribution of
+rewards it produces, which is not a property the reward function can check on its
+own. A kernel guarantees the reward is honest. Whether it is informative is a
+question about the task distribution and the policy together, and has to be
+measured.
 
 \subsection{Difficulty is controllable, and decomposition is the control}
 
@@ -375,9 +361,10 @@ determined whether the environment was useful.
 
 What determined it was calibration, in the specific sense of whether the tasks
 are hard enough that the model does not solve them all and easy enough that it
-does not fail them all. This has no natural alarm. A ceiling and a floor look the
-same as each other and the same as a healthy environment, from every vantage
-point except the distribution of rewards.
+does not fail them all. This is a familiar requirement; what we found is that in
+this domain it is tight, and that it has no natural alarm. A ceiling and a floor
+look the same as each other, and the same as a healthy environment, from every
+vantage point except the distribution of rewards.
 
 We would put the practical recommendation as follows. If one intends to scale
 reinforcement learning on program verification, the proof assistant is the part
@@ -386,6 +373,22 @@ distribution whose difficulty can be adjusted, instrumentation that detects when
 the reward has become constant, and an estimate of measurement noise against
 which apparent effects can be judged. We have found the third of these to be
 obtainable for free, and the first to be obtainable through decomposition.
+
+\section*{Verification}
+
+Every quantitative claim above is checkable from the repository. The
+formalisation is $784$ lines with no occurrence of \verb|sorry| or
+\verb|admit|, and under Lean \verb|4.32.2| the axiom audit reports
+
+\begin{lstlisting}
+'noninterference_full' depends on axioms: [propext, Quot.sound]
+\end{lstlisting}
+
+The deletion test was checked in both directions, as described in Section~3.2.
+The reported $p = 0.026$ was computed three ways that agree: the implementation
+used for the paper, an independent evaluation of the hypergeometric sum, and a
+permutation test over $2\times10^{5}$ relabellings, giving $0.026241$,
+$0.026241$ and $0.0261$ respectively.
 
 \section*{Availability}
 
