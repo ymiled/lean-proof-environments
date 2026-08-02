@@ -61,8 +61,12 @@ def task_shapes(fam: Family, target: str) -> int:
     for r in range(len(anc) + 1):
         for sub in combinations(anc, r):
             withheld = set(sub) | {target}
-            if all(not (withheld & set(fam.by_key[k].deps))
-                   for k in fam.by_key if k not in withheld):
+            # Only the target's own cone is ever rendered. Lemmas above the
+            # target are absent from the file entirely, so they impose no
+            # constraint; checking them would wrongly rule out every rung that
+            # has a dependent, which is most of them.
+            supplied = [k for k in anc if k not in withheld]
+            if all(not (withheld & set(fam.by_key[k].deps)) for k in supplied):
                 total += 1
     return total
 

@@ -605,3 +605,59 @@ file, in keeping with the rule that a check nobody has seen fail is not a check.
 `noninterference` still declares its edges by hand. Its extracted graph is in
 `results/graph-noninterference.json` and differs only by the two redundant edges
 above.
+
+## 2026-08-02 — the generated corpus
+
+`pdd.generate` emits IFC theories over a parameter space: expression grammar
+size (one to three binary operators), which branch the conditional takes when
+the guard is zero, and the order in which sequencing evaluates its operands.
+Twelve variants, eleven rungs each, running the full chain from the equivalence
+properties of public agreement up to the soundness theorem.
+
+The proof strategy is deliberately not a parameter. Every instance is discharged
+by the same tactic skeleton, so a variant either compiles for structural reasons
+or never enters the corpus. The generator is allowed to emit theories that do
+not work; it is not allowed to ship them.
+
+Two mistakes, both caught by checks rather than by reading.
+
+**The first generated theories were depth 2.** The chain stopped at
+`confinement`, which is far too shallow next to `vsi`'s depth 5, and would have
+produced a corpus that looked large while measuring almost nothing. Extending
+the generator with `assign_ni`, `ite_high_ni` and `noninterference` took every
+variant to depth 4.
+
+**The first task count was wrong in a way that hid it.** Task shapes were
+counted by enumerating up-closed subsets of a rung's ancestor cone, but
+up-closedness was checked against *every* lemma in the family rather than only
+those actually rendered. Lemmas above the target never appear in the file at
+all, so requiring them to be satisfiable ruled out every rung that has a
+dependent, which is most of them. The histogram showed zero shapes at depths 2
+and 3, which is impossible when rungs exist at those depths, and that
+impossibility is what exposed the bug.
+
+Corpus after both fixes:
+
+    theory            rungs  shapes  instances
+    12 x ifc-*           11     164        492   each
+    noninterference      12     165        495
+    vsi                  14     474        474
+    TOTAL               158    2607       6873
+
+    shapes per depth:  d1 98,  d2 246,  d3 457,  d4 1589,  d5 217
+
+Two counts are reported rather than one. A *shape* is a distinct (target,
+withheld-set) pair, a structurally distinct obligation. An *instance* is a shape
+under one renaming seed. Instances differ only in identifiers, so they are
+distinct tasks to a policy but not independent evidence about proving at depth,
+and quoting only the larger number would overstate the corpus.
+
+Timings. Necessity extraction over the twelve generated theories: 261s wall
+clock, 660 probes. Compositional self-test over the generated corpus: 132 tasks,
+0 failures, 48.8s wall clock, 2.85s mean per task grade.
+
+Statement-drift protection was checked against statements the existing families
+do not exercise. A theorem with implicit binders, an instance argument and a
+universe variable compiles and grades; and for `vsi`'s implicit-binder
+statements the harness still owns the header, with the policy contributing only
+a tactic block.
