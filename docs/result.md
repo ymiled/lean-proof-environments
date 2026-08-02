@@ -1,6 +1,6 @@
 ---
-title: "Lean 4 won't tell you what a proof used"
-subtitle: "So I recovered dependency structure by deleting lemmas, and it caught four fabricated ones"
+title: "A proof kernel gives you an honest reward, not a learnable one"
+subtitle: "What I found building an RL environment for verification"
 geometry: margin=1.15in
 fontsize: 11pt
 mainfont: "Palatino"
@@ -8,103 +8,96 @@ monofont: "Menlo"
 colorlinks: true
 ---
 
-I was building a benchmark that measures how well models prove lemmas that
-depend on other lemmas. Difficulty is set by dependency depth, so the whole
-thing rests on knowing which lemma actually needs which.
+The case for verification as an RL target is that a proof kernel is ground truth
+rather than a proxy: unit tests degrade as a signal because coverage does not
+track correctness, whereas a kernel cannot be fooled about whether a proof is a
+proof.
 
-## The obvious approach doesn't work
+I built the environment. That argument is half right, and the missing half is
+the part that decides whether you can train on it.
 
-Ask Lean. It just checked the proof, so it knows what the proof used.
+## The environment
 
-It doesn't. Lean 4 elaborates theorem bodies asynchronously and does not retain
-the term. Two lines after a theorem is declared, its proof is unreachable:
+A ladder is a set of lemmas with a dependency graph. Difficulty is one knob: how
+much of a lemma's dependency cone you withhold. Withhold nothing and the model
+proves one lemma with everything beneath it supplied as trusted interfaces;
+withhold the cone and it must rebuild the whole subtree. Reward is kernel
+acceptance plus an audit of which axioms the result depends on.
 
-```lean
-theorem foo (n : Nat) : n = n := rfl
-theorem bar (n : Nat) : n = n := foo n     -- cites foo
+14 theories, 158 lemmas, 2,607 distinct task shapes. Every dependency edge was
+established by deleting a lemma and checking that the proof breaks, because Lean
+4 discards proof terms after checking and will not tell you what a proof used.
 
-env.find? `bar                  -- value?.isSome = false
-env.toKernelEnv.find? `bar      -- value?.isSome = false
-liftCoreM (getConstInfo `bar)   -- value?.isSome = false
-liftCoreM (collectAxioms `bar)  -- []
-```
+## The kernel does not give you dense signal
 
-Compiling to `.olean` and loading through `withImportModules` gives the same
-answer, so it isn't staleness of an in-memory map. Only the *statement's*
-constants survive. Run over my main development, extraction reported all 46
-theorems as dependency-free, max depth 1.
+Same environment, same reward function, three configurations:
 
-## Delete it and see what breaks
+| ladder | policy | pass rate by depth |
+|---|---|---|
+| arithmetic | Sonnet 5 | 1.00, 1.00, 1.00, 1.00 |
+| security types (v1) | Sonnet 5 | 1.00, 0.00, 0.00, 0.00 |
+| arithmetic | Haiku 4.5 | 1.00, 0.75, 0.33, 0.00 |
 
-So don't ask what a proof mentions. Assert `T → A` only when removing `A` makes
-`T` fail to compile.
+The first two produce **zero gradient**. Reward is constant, so there is nothing
+to learn from, and both look perfectly healthy from outside: every task is
+well-formed, every reward is correct, the suite is green. A dashboard cannot
+tell you that an environment is teaching nothing.
 
-This is stronger than reading the proof term even where reading is possible: a
-name can appear in a proof without being load-bearing, and what the benchmark
-needs is necessity, not mention.
+Only the third has signal, and getting there was not a matter of picking a
+harder theory. It took a weaker policy, or a rebuilt ladder.
 
-One subtlety makes it work. Removing `A` also breaks every supplied lemma that
-itself needs `A`, and those failures would be blamed on `T`. So rungs are
-processed in source order, the graph for everything earlier is already known,
-and the entire `A`-cone is removed together. A failure then means `T` needs
-something in that cone, hence transitively needs `A`. Direct edges follow by
-transitive reduction.
+**Dense feedback is not conferred by the proof assistant. It is a property of a
+task distribution matched to a particular policy.** The kernel guarantees the
+reward is *honest*. Nothing about it makes the reward *informative*. That is the
+gap between having a verifier and having an environment, and it is the part that
+fails silently.
 
-## It caught four fabrications
+## Difficulty is tunable, and the knob is decomposition
 
-The dependency graph had been written by hand. Running the extractor against it:
+The failure mode is fixable, and the fix says something about compositional
+verification directly.
 
-```
-                    declared edge            closure        verdict
-     lowEq_symm  ->  lowEq_refl                  []        REJECTED
-    lowEq_trans  ->  lowEq_refl                  []        REJECTED
-   Lvl.le_trans  ->  Lvl.le_refl                 []        REJECTED
-     secure_sub  ->  Lvl.le_refl                 []        REJECTED
+The security ladder floored because its soundness theorem was one 37-line proof
+with nothing between it and the trivial lemmas. Splitting it into two
+intermediate lemmas, so the target became 22 lines, took that theorem from
+**unprovable to proved** for the same policy at the same one-shot budget.
 
-   sub_base_inv  ->  Lvl.le_refl            present        accepted
-    confinement  ->  secure_sub             present        accepted
-```
+Nothing about the mathematics changed. Only the granularity of the trusted
+interfaces did. That is the compositional-verification argument reproduced as a
+property of the environment: the same corpus is unlearnable or learnable
+depending on how finely you cut it.
 
-Four of fourteen edges were fiction. `lowEq_symm` claimed to need `lowEq_refl`,
-and its entire proof is:
+Measured across the whole ladder, supplying a lemma's dependencies rather than
+withholding them takes the pass rate from 4/14 to 18/27 (Fisher exact
+$p=0.026$). Real, but thin, and I would not lead with it.
 
-```lean
-theorem lowEq_symm {G : Ctx} {s t : St} (h : lowEq G s t) : lowEq G t s := by
-  intro x hx; exact (h x hx).symm
-```
+## The environment measures its own noise for free
 
-Reflexivity cannot help you swap two states. Deleting `lowEq_refl` from the file
-entirely, `lowEq_symm` still compiles clean, no axioms. Reported max depth was
-6; the true value is 5, so every depth-indexed number from that family had been
-wrong.
+A depth-1 lemma has no dependencies, so "supply its dependencies" and "withhold
+them" render **byte-identical prompts**. I verified this with `diff`. They are
+still dispatched to independent policy instances under different labels.
 
-## The part I'd want you to notice
+Identical input, different draws: 8/8 in one arm and 6/8 in the other. About
+**25% run-to-run variance.**
 
-There was already a check for exactly this. It had reported zero failures for
-the family's entire life, and it was **structurally incapable of failing.**
+That is a free noise-floor estimate on every sweep, and any environment of this
+shape can build one in. It matters more than it sounds: without it I would have
+read several single-sample cells as effects. With it, most individual cells in
+my own results are visibly not significant.
 
-It graded a multi-lemma task using a single-lemma solution, so the harness
-filled the missing proofs with `sorry`, the axiom audit rejected the attempt,
-and the rejection was read as "the dependency is real." It was asking *did this
-fail?* when it needed to ask *did this fail because the dependency was needed?*
-The failure branch was unreachable.
+## What I would tell someone building one of these
 
-Nothing looked wrong. Everything compiled, the audit worked correctly, the
-suite printed `0 failure(s)`. I found it by reading the dependency listing and
-noticing that a one-line proof cannot plausibly need a helper lemma.
+The grader, the task generator, the dependency machinery, the renaming, all of
+it worked. None of it was the bottleneck.
 
-The rule I now apply, and the reason this writeup exists: **a check that has
-never failed is not evidence that nothing is wrong.** It is an untested branch.
-Every check in the repository is now exercised against a case it is supposed to
-reject before it is trusted, and I corrupt the graph file on purpose to watch
-both refusals fire.
+The bottleneck was calibration, and it has no natural alarm. A task that always
+succeeds and one that always fails both produce zero gradient, which is the same
+sparse-reward failure usually attributed to unit tests, arriving by a different
+route. If you are planning to scale RL on verification, the kernel is the easy
+part. You need a calibration story, instrumentation to detect ceiling and floor,
+and a difficulty knob fine enough to move between them.
 
 ---
 
-Cost of the guarantee: one compile per candidate edge, 91 probes in 52 s for a
-14-lemma development, parallelisable. Across the full corpus, 660 probes in
-261 s. That is what makes machine-established dependency structure practical
-rather than merely preferable.
-
-Code, corpus, and a log of every other thing that went wrong:
+Environment, corpus, extractor, and a log of everything that broke on the way:
 `github.com/ymiled/proof-depth-decay`
