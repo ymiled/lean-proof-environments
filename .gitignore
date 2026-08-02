@@ -1,14 +1,14 @@
 __pycache__/
+.mypy_cache/
 *.pyc
 .venv/
 results/*.json
 results/*.png
 .lake/
 
-# generated docs
 *.pdf
+*.tex
 
-# generated figures
-docs/fig1.pdf
+docs/
 runs/duplicates/
 .scratch_lean/
