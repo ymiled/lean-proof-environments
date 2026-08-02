@@ -22,23 +22,25 @@ what a proof kernel does and does not give you}
 \begin{abstract}
 \noindent
 A proof assistant supplies a reward that cannot be gamed: a candidate proof
-either type-checks against the kernel or it does not. This is often taken to mean
-that verification furnishes the dense feedback reinforcement learning requires.
-We report a measurement bearing on that. We build an environment for
-information-flow security proofs in Lean~4 in which difficulty is set by how much
-of a lemma's dependency structure is withheld from the model, and we locate where
-contemporary models saturate and where they fail outright. The corpus is
-anchored on a machine-checked development: a security type system in the
-Volpano--Smith--Irvine style extended with subtyping, while loops and functions,
+either type-checks against the kernel or it does not. We built an environment on
+that premise, for information-flow security proofs in Lean~4, in which difficulty
+is set by how much of a lemma's dependency structure is withheld from the model.
+The corpus is anchored on a machine-checked development: a security type system
+in the Volpano--Smith--Irvine style with subtyping, while loops and functions,
 $784$ lines of Lean~4 containing no \verb|sorry|, whose soundness theorem depends
-on \verb|propext| and \verb|Quot.sound| and nothing else. Saturation and floor
-effects are of course familiar in reinforcement learning, and we claim no
-discovery in noting them; what we contribute is where they sit for this domain
-and these models, and a mechanism for moving between them. Two of our three
-configurations return a constant reward across every depth, and the difficulty
-can be moved deliberately by changing the granularity of decomposition: splitting
-a thirty-seven line proof into two intermediate lemmas took a theorem from
-unprovable to provable for a fixed model at a fixed single-attempt budget.
+on \verb|propext| and \verb|Quot.sound| and nothing else.
+
+Our main result is a correction to our own measurements, and we believe it
+generalises. Grading a task all-or-nothing, which is the obvious way to use a
+kernel, badly distorts the difficulty curve it appears to reveal. Under binary
+grading the pass rate of one model fell $1.00, 0.75, 0.33, 0.00, 0.00$ across
+depths, implying a collapse and a decay of $1.74\times$ per level. Regrading the
+identical responses by how many of each task's required lemmas individually
+check gives $1.00, 0.92, 0.73, 0.73, 0.62$, a decay of $1.13\times$. In the
+starkest case a response proving seven of eight required lemmas scored exactly
+zero, indistinguishable from proving none. The kernel had the information
+throughout; our reward discarded it. We report what survives the correction, and
+what does not.
 \end{abstract}
 
 \tableofcontents
@@ -103,10 +105,11 @@ of the axioms the result depends on.
 \item We determine the dependency structure required by that parameter
 semantically, by deleting a lemma and observing whether the proof fails, which
 measures necessity rather than mention.
-\item We measure three configurations and find that two return a constant
-reward. We then show that one of those is an artefact of our own reward being
-all-or-nothing: regrading the identical responses with per-target credit
-recovers a varying signal where the original reward reported none.
+\item We show that grading tasks all-or-nothing, the obvious way to lift a
+kernel verdict to a reward, substantially distorts the measured difficulty
+curve. Regrading identical responses by per-target credit moves a measured decay
+of $1.74\times$ per depth to $1.13\times$, and turns a cell reading zero into one
+in which seven of eight required lemmas were proved.
 \item We show that difficulty is controllable, and that the control is the
 granularity of decomposition: a theorem that a model could not prove became
 provable, at the same budget, once its proof was split into intermediate lemmas.
@@ -266,13 +269,12 @@ the model cannot iterate against the kernel. As controls, the reference solution
 score $1.00$ in every cell and a trivial tactic scores $0.00$, which confirms
 that the reward discriminates.
 
-\subsection{An all-or-nothing reward discards the signal}
+\subsection{An all-or-nothing reward distorts the difficulty curve}
 
-We ran three configurations of ladder and model. The following gives the
-proportion of tasks solved in the withheld condition, that is with $W$ equal to
-the entire dependency cone of the target, so that at depth $d$ the model must
-supply $d$ levels of lemmas rather than one. Depth here indexes the target
-lemma, and $W$ is determined by it; the two are not independent axes.
+We ran three configurations of ladder and model in the withheld condition, that
+is with $W$ equal to the entire dependency cone of the target, so that at depth
+$d$ the model must supply $d$ levels of lemmas rather than one. Depth indexes the
+target lemma and $W$ is determined by it; the two are not independent axes.
 
 \begin{center}
 \begin{tabular}{llccccc}
@@ -292,61 +294,57 @@ arithmetic & Haiku~4.5 & $1.00$ & $0.75$ & $0.33$ & $0.00$ & $0.00$ \\
 \end{center}
 
 The security ladder reached only depth $3$ before it was rebuilt, hence the
-missing cells. Sample sizes are small throughout and are given because several
-cells rest on one or two observations; the depth-$5$ entries in particular are
-single tasks and should not be read as rates.
+missing cells. Sample sizes are small and are given because several cells rest
+on one or two observations.
 
-Read naively, the first two rows show a constant reward and therefore no
-learning signal. Even taken at face value that is not quite what they show: the
-arithmetic ladder under Sonnet~5 is solved at every depth up to $4$ and then
-fails at depth $5$, so it is a cliff at the end of the ladder rather than a
-ceiling across it, resting on a single task. But the deeper problem is with the
-reading itself, for a reason worth stating plainly: the reward being graded here is our own, and it is
-all-or-nothing. A task at depth~$4$ in the withheld condition asks for twelve
-lemmas, and a response proving eleven of them scores exactly what a response
-proving none scores. The constancy is a property of the reward function we
-wrote, not of the information available from the kernel.
+Taken at face value this table says that both models collapse: Haiku degrades
+smoothly to zero, and Sonnet solves everything until it does not. Fitting
+$\log(\text{pass})$ against depth on the Haiku row gives a decay of
+$1.74\times$ per level with $R^2 = 0.93$, and we reported that figure.
 
-The kernel in fact reports a good deal more: which goals remain, where
-elaboration failed, and, since a withheld task has many targets, how many of
-them individually check. Regrading the same collected responses with per-target
-credit gives:
+It is largely an artefact of how we graded. A withheld task at depth $5$ asks
+for eight lemmas and our reward paid out only if all eight checked, so a
+response establishing seven of them scored what a response establishing none
+scored. Since the kernel checks each lemma separately, the finer measurement was
+available and we simply did not take it. Regrading the identical responses by the
+proportion of a task's targets that individually check:
 
 \begin{center}
-\begin{tabular}{lcc}
+\begin{tabular}{lccccc}
 \toprule
-target depth, withheld & all-or-nothing & per-target credit \\
+& \multicolumn{5}{c}{target depth} \\
+\cmidrule(l){2-6}
+& $1$ & $2$ & $3$ & $4$ & $5$ \\
 \midrule
-$2$ & $0.17$ & $0.64$ \quad ($2/3$, $3/3$, $2/3$, $2/4$, $2/4$, $2/4$) \\
-$3$ & $0.50$ & $0.75$ \quad ($4/4$, $2/4$, $4/4$, $2/4$, $4/4$, $2/4$) \\
-$4$ & $0.00$ & $0.46$ \quad ($3/6$, $5/12$) \\
+Sonnet~5, all-or-nothing & $1.00$ & $1.00$ & $1.00$ & $1.00$ & $0.00$ \\
+Sonnet~5, per-target     & $1.00$ & $1.00$ & $1.00$ & $1.00$ & $0.88$ \\
+\midrule
+Haiku~4.5, all-or-nothing & $1.00$ & $0.75$ & $0.33$ & $0.00$ & $0.00$ \\
+Haiku~4.5, per-target     & $1.00$ & $0.92$ & $0.73$ & $0.73$ & $0.62$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The depth-$4$ row is the informative one. Under the original reward it reads
-$0.00$ twice and looks like a floor with no gradient. The same two responses
-prove three of six and five of twelve of their targets respectively, so they are
-neither equal to each other nor equal to failure. A policy optimised against the
-first column would receive nothing from these tasks; against the second it would
-receive a usable ordering.
+The Sonnet depth-$5$ cell, which under the original reward reads $0.00$ and looks
+like the point at which the model fails, is a single response proving seven of
+its eight required lemmas. The Haiku row, which under the original reward decays
+to zero by depth $4$, declines instead to $0.62$. Refitting the decay on the
+corrected row gives $1.13\times$ per level rather than $1.74\times$, with
+comparable fit quality ($R^2 = 0.94$).
 
-We therefore correct the framing. It is not that a proof assistant fails to
-supply dense feedback. It is that a proof assistant supplies feedback at a
-granularity finer than a single accept-or-reject bit, and a reward function that
-collapses to that bit throws the difference away. Saturation and floor effects
-are familiar in reinforcement learning and we claim no discovery in observing
-them; what the measurement above shows is that one of our two apparent floors
-was an artefact of reward design rather than a property of the task
-distribution. The arithmetic ceiling at $1.00$ is not, since a task solved
-completely admits no finer grading.
+Two conclusions, of different strengths. The weaker and safer one is that a
+binary reward measured our reward function rather than the models: most of the
+apparent difficulty gradient in the original table is the all-or-nothing rule
+compounding over tasks that ask for more lemmas as depth increases. The stronger
+one, which we state with less confidence because it rests on the same small
+samples, is that after correction a real but much gentler depth effect remains,
+and that the environment is nowhere near the floor we believed it was at.
 
-The practical consequence is that neither failure announces itself. Every task
-is well formed, every reward is correctly computed, the kernel behaves as
-intended, and the test suite reports no failures. Whether an environment
-supplies a usable gradient is a question about the reward's granularity and the
-task distribution together, and has to be measured rather than assumed from the
-presence of a verifier.
+We think the general form of this is worth stating. A verifier gives a natural
+accept-or-reject verdict per declaration, and it is tempting to lift that
+directly to a task-level reward. Where a task contains several declarations, that
+lift discards ordering information the verifier already computed, and the loss is
+invisible: the resulting cell looks exactly like a genuine floor.
 
 \subsection{Difficulty is controllable, and decomposition is the control}
 
@@ -397,15 +395,23 @@ task generator, the renaming that protects against memorisation, and the
 machinery that establishes dependencies all worked once built, and none of them
 determined whether the environment was useful.
 
-Two things determined it. The first is calibration, in the familiar sense of
-whether tasks are hard enough that the model does not solve them all and easy
-enough that it does not fail them all; in this domain that band proved narrow.
-The second, which we did not anticipate and which cost us a wrong conclusion, is
-the granularity of the reward. A verifier that returns one bit per task is
-discarding information it already has, and the discarding is invisible: the
-resulting cell looks exactly like a genuine floor. We would now treat any
-constant-zero cell as a question about the reward function before treating it as
-a fact about the policy.
+What determined it was the granularity of the reward, which we did not
+anticipate and which cost us a wrong conclusion twice. A verifier returns a
+verdict per declaration; a task containing several declarations admits a finer
+reward than the conjunction of those verdicts, and taking the conjunction throws
+away an ordering the verifier already computed. The loss is invisible, because
+the resulting cell is indistinguishable from a genuine floor.
+
+We would now apply two rules. Treat any constant-zero cell as a question about
+the reward function before treating it as a fact about the policy. And when
+reporting a difficulty curve, state the granularity at which reward was
+computed, because as the table above shows the same responses support decay
+constants differing by a factor of $1.5$ depending on that choice alone.
+
+Calibration remains a real constraint, in the familiar sense of tasks being
+neither uniformly solved nor uniformly failed. But we now believe we misdiagnosed
+where our own environment sat: after correction, none of our configurations is at
+a floor.
 
 We would put the practical recommendation as follows. If one intends to scale
 reinforcement learning on program verification, the proof assistant is the part
