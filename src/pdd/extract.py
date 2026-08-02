@@ -35,7 +35,7 @@ from pathlib import Path
 
 from .families import FAMILIES
 from .grader import grade_source
-from .ladder import Family, Instance
+from .ladder import Family, Instance, family_from_spec
 
 RESULTS = Path(__file__).resolve().parents[2] / "results"
 
@@ -95,30 +95,37 @@ def transitive_reduction(closure: dict[str, set[str]]) -> dict[str, tuple[str, .
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--family", required=True, choices=sorted(FAMILIES))
+    ap.add_argument("--family", choices=sorted(FAMILIES))
+    ap.add_argument("--spec", help="path to a generated family spec")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
 
-    family = FAMILIES[args.family]
+    if args.spec:
+        family = family_from_spec(json.loads(Path(args.spec).read_text()))
+    elif args.family:
+        family = FAMILIES[args.family]
+    else:
+        ap.error("pass --family or --spec")
     inst = Instance.sample(family, args.seed)
 
     started = time.time()
-    print(f"extracting {args.family} by necessity ({len(family.rungs)} rungs)\n")
+    print(f"extracting {family.name} by necessity ({len(family.rungs)} rungs)\n")
     closure = necessity_closure(family, inst, workers=args.workers)
     direct = transitive_reduction(closure)
     elapsed = time.time() - started
 
     declared = {k: set(family.by_key[k].deps) for k in family.by_key}
-    print("\n=== extracted vs declared ===")
     diffs = 0
-    for k in [r.key for r in family.rungs]:
-        ext, dec = set(direct[k]), declared[k]
-        if ext == dec:
-            print(f"  ok    {k:<24} {sorted(ext) or '-'}")
-        else:
-            diffs += 1
-            print(f"  DIFF  {k:<24} extracted={sorted(ext)} declared={sorted(dec)}")
+    if any(declared.values()):
+        print("\n=== extracted vs declared ===")
+        for k in [r.key for r in family.rungs]:
+            ext, dec = set(direct[k]), declared[k]
+            if ext == dec:
+                print(f"  ok    {k:<24} {sorted(ext) or '-'}")
+            else:
+                diffs += 1
+                print(f"  DIFF  {k:<24} extracted={sorted(ext)} declared={sorted(dec)}")
 
     def depth(k: str) -> int:
         return 1 + max((depth(d) for d in direct[k]), default=0)
@@ -129,9 +136,9 @@ def main() -> None:
           f"({sum(len(direct) and i for i in range(len(family.rungs)))} probes)")
 
     RESULTS.mkdir(exist_ok=True)
-    out = RESULTS / f"graph-{args.family}.json"
+    out = RESULTS / f"graph-{family.name}.json"
     out.write_text(json.dumps(
-        {"family": args.family,
+        {"family": family.name,
          "method": "necessity",
          "elapsed_s": round(elapsed, 1),
          "closure": {k: sorted(v) for k, v in closure.items()},

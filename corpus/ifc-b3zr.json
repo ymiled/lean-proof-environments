@@ -1,0 +1,109 @@
+{
+ "name": "ifc-b3zr",
+ "variant": {
+  "binops": 3,
+  "guard_zero": true,
+  "seq_first": false
+ },
+ "definitions": "inductive {Exp} where\n  | {lit} (n : Nat)\n  | {var} (x : Nat)\n  | {op0} (a b : {Exp})\n  | {op1} (a b : {Exp})\n  | {op2} (a b : {Exp})\n\ninductive {Com} where\n  | {cskip}\n  | {cassign} (x : Nat) (e : {Exp})\n  | {cseq} (c d : {Com})\n  | {cite} (e : {Exp}) (c d : {Com})\n\nabbrev {St} := Nat \u2192 Nat\nabbrev {Ctx} := Nat \u2192 Bool   -- true = secret, false = public\n\ndef {upd} (s : {St}) (x v : Nat) : {St} := fun y => if y = x then v else s y\n\ndef {evalE} (s : {St}) : {Exp} \u2192 Nat\n  | .{lit} n => n\n  | .{var} x => s x\n  | .{op0} a b => ({evalE} s a) + ({evalE} s b)\n  | .{op1} a b => ({evalE} s a) * ({evalE} s b)\n  | .{op2} a b => max ({evalE} s a) ({evalE} s b)\n\ndef {lvl} (G : {Ctx}) : {Exp} \u2192 Bool\n  | .{lit} _ => false\n  | .{var} x => G x\n  | .{op0} a b => {lvl} G a || {lvl} G b\n  | .{op1} a b => {lvl} G a || {lvl} G b\n  | .{op2} a b => {lvl} G a || {lvl} G b\n\ndef {evalC} (s : {St}) : {Com} \u2192 {St}\n  | .{cskip}       => s\n  | .{cassign} x e => {upd} s x ({evalE} s e)\n  | .{cseq} c d    => {evalC} ({evalC} s d) c\n  | .{cite} e c d  => if {evalE} s e = 0 then {evalC} s d else {evalC} s c\n\ndef {wt} (G : {Ctx}) (pc : Bool) : {Com} \u2192 Bool\n  | .{cskip}       => true\n  | .{cassign} x e => !({lvl} G e || pc) || G x\n  | .{cseq} c d    => {wt} G pc c && {wt} G pc d\n  | .{cite} e c d  => {wt} G (pc || {lvl} G e) c && {wt} G (pc || {lvl} G e) d\n\ndef {lowEq} (G : {Ctx}) (s t : {St}) : Prop := \u2200 x, G x = false \u2192 s x = t x\n",
+ "slots": {
+  "Exp": "type",
+  "Com": "type",
+  "St": "type",
+  "Ctx": "type",
+  "lit": "ctor",
+  "var": "ctor",
+  "cskip": "ctor",
+  "cassign": "ctor",
+  "cseq": "ctor",
+  "cite": "ctor",
+  "upd": "fn",
+  "evalE": "fn",
+  "lvl": "fn",
+  "evalC": "fn",
+  "wt": "fn",
+  "lowEq": "fn",
+  "op0": "ctor",
+  "op1": "ctor",
+  "op2": "ctor"
+ },
+ "rungs": [
+  {
+   "key": "lowEq_refl",
+   "role": "public agreement is reflexive",
+   "binders": "(G : {Ctx}) (s : {St})",
+   "statement": "{lowEq} G s s",
+   "proof": "  intro x _; rfl"
+  },
+  {
+   "key": "lowEq_symm",
+   "role": "public agreement is symmetric",
+   "binders": "(G : {Ctx}) (s t : {St}) (h : {lowEq} G s t)",
+   "statement": "{lowEq} G t s",
+   "proof": "  intro x hx; exact (h x hx).symm"
+  },
+  {
+   "key": "lowEq_trans",
+   "role": "public agreement is transitive",
+   "binders": "(G : {Ctx}) (s t u : {St}) (h1 : {lowEq} G s t) (h2 : {lowEq} G t u)",
+   "statement": "{lowEq} G s u",
+   "proof": "  intro x hx; exact (h1 x hx).trans (h2 x hx)"
+  },
+  {
+   "key": "upd_pair",
+   "role": "agreement survives a common update",
+   "binders": "(G : {Ctx}) (s t : {St}) (x v : Nat) (h : {lowEq} G s t)",
+   "statement": "{lowEq} G ({upd} s x v) ({upd} t x v)",
+   "proof": "  intro y hy\n  by_cases hyx : y = x\n  \u00b7 simp [{upd}, hyx]\n  \u00b7 simp [{upd}, hyx]; exact h y hy"
+  },
+  {
+   "key": "evalE_agree",
+   "role": "public expressions evaluate alike in agreeing states",
+   "binders": "(G : {Ctx}) (s t : {St}) (e : {Exp}) (hl : {lvl} G e = false) (h : {lowEq} G s t)",
+   "statement": "{evalE} s e = {evalE} t e",
+   "proof": "  induction e with\n  | {lit} n => rfl\n  | {var} x => exact h x (by simpa [{lvl}] using hl)\n  | {op0} a b iha ihb =>\n    simp [{lvl}, Bool.or_eq_false_iff] at hl\n    simp [{evalE}, iha hl.1, ihb hl.2]\n  | {op1} a b iha ihb =>\n    simp [{lvl}, Bool.or_eq_false_iff] at hl\n    simp [{evalE}, iha hl.1, ihb hl.2]\n  | {op2} a b iha ihb =>\n    simp [{lvl}, Bool.or_eq_false_iff] at hl\n    simp [{evalE}, iha hl.1, ihb hl.2]"
+  },
+  {
+   "key": "assign_conf",
+   "role": "a secret-context assignment cannot touch a public variable",
+   "binders": "(G : {Ctx}) (s : {St}) (x : Nat) (e : {Exp}) (hw : {wt} G true (.{cassign} x e) = true)",
+   "statement": "{lowEq} G s ({upd} s x ({evalE} s e))",
+   "proof": "  simp [{wt}] at hw\n  intro y hy\n  have : y \u2260 x := by\n    intro h; rw [h] at hy; rw [hw] at hy; exact Bool.noConfusion hy\n  simp [{upd}, this]"
+  },
+  {
+   "key": "conf_ite",
+   "role": "conditional step of confinement",
+   "binders": "(G : {Ctx}) (e : {Exp}) (c d : {Com}) (s : {St}) (hc : {lowEq} G s ({evalC} s c)) (hd : {lowEq} G s ({evalC} s d))",
+   "statement": "{lowEq} G s ({evalC} s (.{cite} e c d))",
+   "proof": "  by_cases hz : {evalE} s e = 0\n  \u00b7 simp [{evalC}, hz]; exact hd\n  \u00b7 simp [{evalC}, hz]; exact hc"
+  },
+  {
+   "key": "confinement",
+   "role": "secret-context code leaves the public projection fixed",
+   "binders": "(G : {Ctx}) (c : {Com})",
+   "statement": "\u2200 (s : {St}), {wt} G true c = true \u2192 {lowEq} G s ({evalC} s c)",
+   "proof": "  induction c with\n  | {cskip} => intro s _; exact {lowEq_refl} G s\n  | {cassign} x e => intro s hw; exact {assign_conf} G s x e hw\n  | {cseq} c d ihc ihd =>\n    intro s hw\n    simp [{wt}, Bool.and_eq_true] at hw\n    exact {lowEq_trans} G _ _ _ (ihd s hw.2) (ihc ({evalC} s d) hw.1)\n  | {cite} e c d ihc ihd =>\n    intro s hw\n    simp [{wt}, Bool.and_eq_true] at hw\n    exact {conf_ite} G e c d s (ihc s hw.1) (ihd s hw.2)"
+  },
+  {
+   "key": "assign_ni",
+   "role": "assignment case of noninterference",
+   "binders": "(G : {Ctx}) (s t : {St}) (x : Nat) (e : {Exp}) (hw : {wt} G false (.{cassign} x e) = true) (h : {lowEq} G s t)",
+   "statement": "{lowEq} G ({evalC} s (.{cassign} x e)) ({evalC} t (.{cassign} x e))",
+   "proof": "  intro y hy\n  by_cases hyx : y = x\n  \u00b7 subst hyx\n    have hlv : {lvl} G e = false := by\n      simp [{wt}, hy] at hw; exact hw\n    simp [{evalC}, {upd}, {evalE_agree} G s t e hlv h]\n  \u00b7 simp [{evalC}, {upd}, hyx]; exact h y hy"
+  },
+  {
+   "key": "ite_high_ni",
+   "role": "secret-guard conditional case of noninterference",
+   "binders": "(G : {Ctx}) (e : {Exp}) (c d : {Com}) (s t : {St}) (hc : {wt} G true c = true) (hd : {wt} G true d = true) (h : {lowEq} G s t)",
+   "statement": "{lowEq} G ({evalC} s (.{cite} e c d)) ({evalC} t (.{cite} e c d))",
+   "proof": "  have cs := {conf_ite} G e c d s ({confinement} G c s hc) ({confinement} G d s hd)\n  have ct := {conf_ite} G e c d t ({confinement} G c t hc) ({confinement} G d t hd)\n  exact {lowEq_trans} G _ _ _ ({lowEq_trans} G _ _ _ ({lowEq_symm} G _ _ cs) h) ct"
+  },
+  {
+   "key": "noninterference",
+   "role": "well-typed programs leak nothing from secret to public",
+   "binders": "(G : {Ctx}) (c : {Com})",
+   "statement": "\u2200 (s t : {St}), {wt} G false c = true \u2192 {lowEq} G s t \u2192 {lowEq} G ({evalC} s c) ({evalC} t c)",
+   "proof": "  induction c with\n  | {cskip} => intro s t _ h; exact h\n  | {cassign} x e => intro s t hw h; exact {assign_ni} G s t x e hw h\n  | {cseq} c d ihc ihd =>\n    intro s t hw h\n    simp [{wt}, Bool.and_eq_true] at hw\n    exact ihc _ _ hw.1 (ihd _ _ hw.2 h)\n  | {cite} e c d ihc ihd =>\n    intro s t hw h\n    simp [{wt}, Bool.and_eq_true] at hw\n    by_cases hlv : {lvl} G e = false\n    \u00b7 have hg := {evalE_agree} G s t e hlv h\n      simp [hlv] at hw\n      by_cases hz : {evalE} s e = 0\n      \u00b7 simp [{evalC}, hz, \u2190 hg]; exact ihd _ _ hw.2 h\n      \u00b7 simp [{evalC}, hz, \u2190 hg]; exact ihc _ _ hw.1 h\n    \u00b7 have hlvT : {lvl} G e = true := by\n        cases hl : {lvl} G e with\n        | false => exact absurd hl hlv\n        | true => rfl\n      simp [hlvT] at hw\n      exact {ite_high_ni} G e c d s t hw.1 hw.2 h"
+  }
+ ]
+}

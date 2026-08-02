@@ -170,3 +170,52 @@ class Instance:
         parts.append(self.render_rung(key))
         parts.append(f"#print axioms {self.names[key]}")
         return "\n\n".join(parts) + "\n"
+
+
+def family_from_spec(spec: dict, deps: dict[str, list[str]] | None = None) -> Family:
+    """Build a `Family` from a JSON spec rather than a hand-written module.
+
+    This is what lets a generated or imported theory become a ladder without
+    anyone writing Python for it. The spec carries the Lean definitions, the
+    rungs with their reference proofs, and the renaming slots; the dependency
+    graph is supplied separately because it is *derived*, not authored. Passing
+    `deps=None` means the graph has not been extracted yet, which is only valid
+    while bootstrapping a new theory: every rung then looks depth 1, so
+    `selftest` and any sweep would be meaningless until `pdd.extract` has run.
+
+    Authoring dependencies by hand is exactly what produced four fabricated
+    edges in an earlier family, so this function refuses to invent them.
+    """
+    required = {"name", "definitions", "rungs"}
+    missing = required - set(spec)
+    if missing:
+        raise ValueError(f"family spec missing keys: {sorted(missing)}")
+
+    rungs = []
+    for r in spec["rungs"]:
+        key = r["key"]
+        rungs.append(Rung(
+            key=key,
+            role=r.get("role", ""),
+            binders=r.get("binders", ""),
+            statement=r.get("statement", ""),
+            proof=r.get("proof", ""),
+            deps=tuple(deps.get(key, ())) if deps is not None else (),
+            raw=r.get("raw", ""),
+        ))
+
+    if deps is not None:
+        known = {r.key for r in rungs}
+        for k, ds in deps.items():
+            if k not in known:
+                raise ValueError(f"dependency graph names unknown rung {k!r}")
+            for d in ds:
+                if d not in known:
+                    raise ValueError(f"rung {k!r} depends on unknown {d!r}")
+
+    return Family(
+        name=spec["name"],
+        definitions=spec["definitions"],
+        rungs=tuple(rungs),
+        slots=spec.get("slots", {}),
+    )
