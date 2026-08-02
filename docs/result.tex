@@ -1,0 +1,426 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+
+\lstset{basicstyle=\ttfamily\small,breaklines=true,frame=none,
+        columns=fullflexible,xleftmargin=1em,aboveskip=6pt,belowskip=6pt}
+
+\newtheorem{definition}{Definition}[section]
+
+\title{Reinforcement learning environments for program verification:\\
+what a proof kernel does and does not give you}
+\author{Youssef \textsc{Miled}}
+\date{August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Training language models to verify programs is an attractive proposition because
+a proof assistant supplies a reward that cannot be fooled: a proof either
+type-checks against the kernel or it does not. This is unlike the rewards
+normally used for code generation, where a test suite passing is only weakly
+related to a program being correct. It is often concluded from this that proof
+assistants provide the dense feedback that reinforcement learning requires. This
+work reports what we found when we built such an environment and measured it. A
+kernel makes the reward \emph{honest}, but it does nothing to make the reward
+\emph{informative}, and these are different properties. We construct an
+environment for information-flow security proofs in Lean~4, in which difficulty
+is controlled by how much of a lemma's dependency structure is withheld from the
+model, and we observe that two of our three configurations produce a constant
+reward and therefore no learning signal at all, while appearing entirely healthy
+from the outside. We further show that the difficulty can be moved deliberately,
+and that the mechanism for moving it is decomposition: splitting a proof into
+intermediate lemmas took a theorem from unprovable to provable for a fixed model
+at a fixed budget. Along the way we report that the dependency structure on
+which the whole construction rests cannot be read from the Lean environment at
+all, and give the alternative we used instead.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+\subsection{Motivation}
+
+A recurring proposal in machine learning for programs is to train models with
+reinforcement learning against a reward derived from a proof assistant. The
+appeal is that the reward is ground truth. When a model is trained against a
+test suite, passing tests is a proxy for correctness, and it is a poor one: test
+coverage is not strongly related to the number of defects a program contains, so
+a model may improve its reward without improving the property one cares about.
+A proof assistant does not have this weakness. Its kernel decides whether a
+candidate proof establishes the stated theorem, and no amount of optimisation
+pressure changes that decision.
+
+From this it is frequently concluded that verification supplies the dense
+feedback signal that reinforcement learning needs. The purpose of this work is
+to examine that conclusion by building the environment and measuring it.
+
+\subsection{Background}
+
+It is useful to separate three things that are often discussed together.
+
+A \emph{proof corpus} is a collection of statements and proofs. It is not an
+environment: it contains no notion of difficulty, it cannot generate tasks that
+have not been written, and if it is public then a model may have seen it during
+training.
+
+A \emph{kernel} is a decision procedure for proof validity. It is not an
+environment either: it scores a candidate that is presented to it, but it says
+nothing about which candidates should be presented.
+
+An \emph{environment}, in the sense required for reinforcement learning, is a
+distribution over tasks together with a reward function, such that a policy
+interacting with it receives a signal that varies with its behaviour. The last
+clause is the one that matters here, and it is the one that a kernel does not
+supply.
+
+\subsection{Objective}
+
+We set out to build an environment of the third kind for a specific domain,
+information-flow security, and then to characterise it: to determine whether the
+tasks it produces actually elicit a varying reward from contemporary models, and
+if not, to identify what governs that.
+
+We chose information-flow security because it admits a family of related
+theorems of graded difficulty. A security type system assigns confidentiality
+levels to variables and constrains which assignments are permitted, and the
+theorem that such a system is sound, called non-interference, is proved through a
+chain of supporting lemmas. That chain gives the environment its structure.
+
+\subsection{Contributions}
+
+\begin{itemize}
+\item We construct an environment for Lean~4 proof tasks in which difficulty is
+controlled by a single parameter, namely how much of a lemma's dependency cone
+is withheld, and in which the reward is kernel acceptance together with an audit
+of the axioms the result depends on.
+\item We report that the dependency structure required to define that parameter
+cannot be obtained from the Lean environment, because proof terms are discarded
+after checking, and we give a replacement procedure based on deletion.
+\item We measure three configurations of the environment and find that two
+produce a constant reward, and therefore no learning signal, while presenting no
+outward sign of doing so.
+\item We show that difficulty is controllable, and that the control is the
+granularity of decomposition: a theorem that a model could not prove became
+provable, at the same budget, once its proof was split into intermediate lemmas.
+\item We observe that the environment admits a free estimate of its own
+measurement noise, and report that this noise is large enough to account for
+several apparent effects.
+\end{itemize}
+
+\section{The environment}
+
+\subsection{Ladders and dependency depth}
+
+The basic object is what we call a \emph{ladder}: a Lean theory together with a
+set of lemmas proved over it, and the dependency relation between those lemmas.
+
+\begin{definition}
+The \emph{depth} of a lemma $L$ is $1$ if $L$ has no dependencies, and otherwise
+$1 + \max\{\mathrm{depth}(A) : A \text{ is a dependency of } L\}$.
+\end{definition}
+
+Depth is computed from the dependency relation rather than assigned by hand.
+This is deliberate, and Section~\ref{sec:extract} explains why it must be.
+
+For example, in the security type system we use, the fact that agreement of two
+memories on public variables is a transitive relation has depth~$1$, since it
+follows directly from transitivity of equality. The confinement lemma, which
+states that a command typed in a secret context cannot modify the public part of
+the memory, has depth~$2$, because its proof requires the transitivity fact
+together with two others. The soundness theorem itself has depth~$5$.
+
+\subsection{Tasks and the difficulty parameter}
+
+A \emph{task} presents the model with a Lean file and asks it to complete one or
+more proofs. What varies between tasks is how much of the surrounding
+development it is given.
+
+\begin{definition}
+Given a target lemma $L$, a task is determined by a set $W$ of \emph{withheld}
+lemmas, where $L \in W$ and $W$ is contained in the dependency cone of $L$.
+Lemmas in $W$ appear as goals the model must prove. Lemmas in the cone but not
+in $W$ appear in the file already proved, and may be cited.
+\end{definition}
+
+Two extremes are of particular interest. When $W = \{L\}$, every dependency is
+supplied to the model as an already-established result; we call this the
+\emph{supplied} condition. When $W$ is the entire cone, the model must
+reconstruct the whole subtree beneath $L$ before it can prove $L$ itself; we call
+this the \emph{withheld} condition. At depth $5$ this is the difference between
+writing three lines and writing eight lemmas.
+
+Intermediate choices of $W$ interpolate between these, which is what makes
+difficulty a parameter rather than a property of the corpus. It is also worth
+observing that a supplied lemma is exactly what is meant by a trusted interface
+in compositional verification, so this parameter is not an artificial construct
+but the thing that architecture is about.
+
+\subsection{Reward}
+
+A candidate is accepted if three conditions hold. The file must compile. The
+declaration \verb|#print axioms| applied to each target must report a subset of
+the three axioms that Lean's own standard library depends upon. And the model's
+text must not contain certain tactics, principally \verb|native_decide|, which
+delegates to the compiler rather than the kernel.
+
+The second condition is not redundant with the first, and this is worth stating
+because we did not anticipate it. During development, one lemma failed to prove.
+Lean reported the error, and nonetheless \emph{declared the theorem}. Every
+later lemma that cited it compiled with exit status zero and produced no
+diagnostic of its own. The only remaining trace, three lemmas further on, was:
+
+\begin{lstlisting}
+'L07' depends on axioms: [propext, sorryAx]
+\end{lstlisting}
+
+A reward function keyed on successful compilation would have paid out for that
+entire subtree. We therefore treat the axiom audit, and not the exit status, as
+the acceptance criterion.
+
+\subsection{Preventing the model from changing the question}
+
+A model asked to produce a proof may instead produce a proof of something
+weaker. We remove this possibility structurally rather than by detection. The
+harness emits the theorem statement itself, in the form
+
+\begin{lstlisting}
+theorem <name> <binders> : <statement> := by
+\end{lstlisting}
+
+and the model supplies only the tactic block that follows. Since the model never
+writes the statement, it cannot weaken it. We had first implemented a comparison
+between the model's statement and the intended one, and removed it: making a
+failure impossible is preferable to detecting it.
+
+\section{Recovering the dependency structure}
+\label{sec:extract}
+
+The difficulty parameter of Section~2.2 is defined in terms of a lemma's
+dependency cone, so the environment cannot be built without knowing, for each
+lemma, which other lemmas its proof requires. This turned out to be the hardest
+part of the construction.
+
+\subsection{The direct approach is unavailable}
+
+The natural method is to ask Lean. The kernel has just checked the proof, so it
+has seen every constant the proof refers to. In Lean~4 this information is not
+retained. Theorem bodies are elaborated asynchronously and the resulting term is
+not kept, so the field that should contain it is empty:
+
+\begin{lstlisting}
+theorem foo (n : Nat) : n = n := rfl
+theorem bar (n : Nat) : n = n := foo n     -- cites foo
+
+env.find? `bar                  -- value?.isSome = false
+env.toKernelEnv.find? `bar      -- value?.isSome = false
+liftCoreM (getConstInfo `bar)   -- value?.isSome = false
+liftCoreM (collectAxioms `bar)  -- []
+\end{lstlisting}
+
+Two lines after \verb|bar| is declared, its proof is already unreachable.
+Compiling to a \verb|.olean| file and loading it through
+\verb|withImportModules| gives the same result, so this is not an artefact of an
+unflushed in-memory structure. Only the constants occurring in the
+\emph{statement} survive. Applied to our largest development, extraction by this
+route reported all $46$ theorems as having no dependencies, and therefore a
+maximum depth of $1$.
+
+\subsection{Dependency by necessity}
+
+We therefore determine the relation semantically. We assert that $L$ depends on
+$A$ precisely when removing $A$ from the file causes $L$'s proof to fail.
+
+This is not merely a workaround; it is a stronger criterion than the one we could
+not use. A proof may mention a lemma without that lemma being load-bearing, in
+which case reading the proof term would record a dependency that does not exist.
+What the difficulty parameter requires is necessity, and necessity is what the
+deletion test measures.
+
+One complication must be handled. Removing $A$ also breaks any supplied lemma
+whose own proof requires $A$, and those failures would otherwise be attributed to
+$L$. We therefore process lemmas in order, so that the relation among earlier
+lemmas is already known, and remove the whole set of lemmas that depend on $A$
+together with $A$ itself. A failure then establishes that $L$ requires something
+in that set, hence that $L$ transitively requires $A$. Direct dependencies are
+recovered afterwards by transitive reduction.
+
+\subsection{Validation}
+
+We had, at the time, a dependency relation that had been written by hand.
+Applying the procedure to it produced the following:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+asserted dependency & established by deletion? & verdict \\
+\midrule
+\verb|lowEq_symm| requires \verb|lowEq_refl|   & no & rejected \\
+\verb|lowEq_trans| requires \verb|lowEq_refl|  & no & rejected \\
+\verb|Lvl.le_trans| requires \verb|Lvl.le_refl|& no & rejected \\
+\verb|secure_sub| requires \verb|Lvl.le_refl|  & no & rejected \\
+\verb|sub_base_inv| requires \verb|Lvl.le_refl|& yes & accepted \\
+\verb|confinement| requires \verb|secure_sub|  & yes & accepted \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Four of the fourteen asserted dependencies did not exist. The first of them
+claimed that symmetry of memory agreement requires reflexivity of the same
+relation, whereas its proof is
+
+\begin{lstlisting}
+theorem lowEq_symm {G : Ctx} {s t : St} (h : lowEq G s t) : lowEq G t s := by
+  intro x hx; exact (h x hx).symm
+\end{lstlisting}
+
+which cannot use reflexivity, since reflexivity relates a memory to itself and
+says nothing about exchanging two memories. Deleting the reflexivity lemma from
+the file leaves this proof compiling and axiom-clean.
+
+The consequence was that the reported maximum depth of that ladder was $6$ when
+the true value is $5$, and every measurement indexed by depth had been taken
+against the wrong scale. We note that a check intended to detect exactly this had
+been reporting no failures throughout, and was on inspection incapable of
+reporting anything else: it inferred that a dependency was genuine from a
+rejection that the harness itself had caused. We now require that every check in
+the system be demonstrated failing on a case it is meant to reject before it is
+relied upon.
+
+\section{The corpus}
+
+The environment contains fourteen theories: twelve generated over a parameter
+space, one written by hand as a control, and one that is a full formalisation.
+Together they contain $158$ lemmas and yield $2{,}607$ distinct tasks. Every
+dependency edge was established by the procedure of Section~3, none by hand.
+
+The formalisation is a security type system in the style of Volpano, Smith and
+Irvine, extended with subtyping, while loops, and functions. It is $784$ lines of
+Lean, contains no \verb|sorry|, and its soundness theorem depends only on
+\verb|propext| and \verb|Quot.sound|. Because evaluation of a language with loops
+need not terminate, the semantics is indexed by a fuel parameter, and the theorem
+proved is accordingly termination-insensitive: it relates two executions that
+both complete. A structural consequence is that agreement of expressions and
+non-interference of commands must be proved simultaneously, by induction on the
+fuel, since a function call occurring in an expression executes a command while
+an assignment occurring in a command evaluates an expression.
+
+\section{Measurements}
+
+All measurements use a single attempt per task, with no access to a compiler, so
+the model cannot iterate against the kernel. As controls, the reference solutions
+score $1.00$ in every cell and a trivial tactic scores $0.00$, which confirms
+that the reward discriminates.
+
+\subsection{The kernel does not supply a learning signal}
+
+We ran three configurations of ladder and model. The following gives the
+proportion of tasks solved at each depth in the withheld condition.
+
+\begin{center}
+\begin{tabular}{llc}
+\toprule
+ladder & model & pass rate at depths $1,2,3,4$ \\
+\midrule
+arithmetic & Sonnet~5 & $1.00,\ 1.00,\ 1.00,\ 1.00$ \\
+security types, first version & Sonnet~5 & $1.00,\ 0.00,\ 0.00,\ 0.00$ \\
+arithmetic & Haiku~4.5 & $1.00,\ 0.75,\ 0.33,\ 0.00$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+In the first configuration the model solves everything, and in the second it
+solves nothing beyond the trivial lemmas. In both, the reward is constant. A
+policy interacting with either receives no information about which of its
+behaviours were better, which is precisely the sparse-reward condition that the
+appeal to proof assistants was supposed to avoid. Only the third configuration
+produces a reward that varies with depth.
+
+We stress that nothing distinguishes the first two from the outside. Every task
+is well formed, every reward is correctly computed, the kernel is behaving
+exactly as intended, and the test suite reports no failures. An environment that
+teaches nothing looks identical to one that teaches, unless one measures the
+distribution of rewards it actually produces.
+
+We therefore state the conclusion as follows. Dense feedback is not a property
+conferred by a proof assistant. It is a property of a task distribution
+considered together with a particular policy. The kernel guarantees that the
+reward is honest; it makes no guarantee that the reward is informative.
+
+\subsection{Difficulty is controllable, and decomposition is the control}
+
+The second configuration above is not merely a bad choice of theory; it was
+repaired, and the repair is instructive.
+
+That ladder failed above depth~$1$ because its soundness theorem was proved in a
+single step of thirty-seven lines, with nothing between it and the elementary
+lemmas. We divided that proof into two intermediate lemmas, one handling the
+assignment case and one handling the conditional with a secret guard, which
+reduced the final proof to twenty-two lines. The same model, given the same
+single attempt and no other assistance, then proved the theorem it had
+previously failed.
+
+No mathematics changed. The theory, the statement, and the model were identical;
+only the granularity at which intermediate results were made available differed.
+We regard this as the claim of compositional verification appearing as a property
+of the environment: whether a corpus is learnable at all depends on how finely it
+is cut.
+
+Measured over the ladder as a whole, supplying a lemma's dependencies rather than
+withholding them raises the proportion solved from $4/14$ to $18/27$, which is
+significant at $p = 0.026$ by Fisher's exact test. We report this for
+completeness and would not rest an argument on it; the sample is small and the
+result is sensitive to how repeated responses are counted.
+
+\subsection{The environment measures its own noise}
+
+A lemma of depth~$1$ has no dependencies. Consequently the supplied and withheld
+conditions, applied to such a lemma, produce files that are identical. We
+verified this with \verb|diff|. They are nevertheless dispatched to independent
+instances of the model under different labels.
+
+On one such set, the two arms returned $8/8$ and $6/8$ on identical input. The
+implied variation between runs is approximately twenty-five percent.
+
+This is a useful accident. Any environment built in this way contains tasks that
+are duplicates by construction, and therefore obtains an estimate of its own
+measurement noise at no additional cost. We recommend including such tasks
+deliberately. In our own case the estimate was necessary: without it we would
+have read several single-sample cells as effects, and one of our earlier reported
+results was of exactly that kind.
+
+\section{Discussion}
+
+The components we expected to be difficult were not. The reward function, the
+task generator, the renaming that protects against memorisation, and the
+machinery that establishes dependencies all worked once built, and none of them
+determined whether the environment was useful.
+
+What determined it was calibration, in the specific sense of whether the tasks
+are hard enough that the model does not solve them all and easy enough that it
+does not fail them all. This has no natural alarm. A ceiling and a floor look the
+same as each other and the same as a healthy environment, from every vantage
+point except the distribution of rewards.
+
+We would put the practical recommendation as follows. If one intends to scale
+reinforcement learning on program verification, the proof assistant is the part
+of the problem that is already solved. What is required in addition is a task
+distribution whose difficulty can be adjusted, instrumentation that detects when
+the reward has become constant, and an estimate of measurement noise against
+which apparent effects can be judged. We have found the third of these to be
+obtainable for free, and the first to be obtainable through decomposition.
+
+\section*{Availability}
+
+The environment, the corpus, the extraction procedure, the formalisation, and a
+record of the errors described above are available at
+\url{https://github.com/ymiled/proof-depth-decay}.
+
+\end{document}
