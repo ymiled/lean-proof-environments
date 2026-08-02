@@ -37,7 +37,25 @@ are also maximal, which is what lets antichains exist here at all.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from ..ladder import Family, Rung
+
+_GRAPH = Path(__file__).resolve().parents[3] / "results" / "graph-noninterference.json"
+
+
+def _extracted_deps() -> dict[str, tuple[str, ...]]:
+    """Edges established by deletion, not declared here.
+
+    Regenerate with `uv run python -m pdd.extract --family noninterference`.
+    Hand-declaring them is what produced four fabricated edges in a sibling
+    family, so this module no longer states any.
+    """
+    data = json.loads(_GRAPH.read_text())
+    if data.get("method") != "necessity":
+        raise ValueError(f"{_GRAPH} was not produced by necessity extraction")
+    return {k: tuple(v) for k, v in data["direct"].items()}
 
 DEFINITIONS = """\
 inductive {Exp} where
@@ -203,7 +221,6 @@ RUNGS = (
               "    intro s hw\n"
               "    simp [{wt}, Bool.and_eq_true] at hw\n"
               "    exact {conf_ite} G e c d s (ihc s hw.1) (ihd s hw.2)",
-        deps=("lowEq_refl", "assign_conf", "lowEq_trans", "conf_ite"),
     ),
     # --- intermediate rungs, extracted from the top theorem --------------
     # The soundness proof was originally a single 37-line rung, and the family
@@ -224,7 +241,6 @@ RUNGS = (
               "      simp [{wt}, hy] at hw; exact hw\n"
               "    simp [{evalC}, {upd}, {evalE_agree} G s t e hlv h]\n"
               "  · simp [{evalC}, {upd}, hyx]; exact h y hy",
-        deps=("evalE_agree",),
     ),
     Rung(
         key="ite_high_ni",
@@ -240,7 +256,6 @@ RUNGS = (
               "({confinement} G c t hc) ({confinement} G d t hd)\n"
               "  exact {lowEq_trans} G _ _ _ "
               "({lowEq_trans} G _ _ _ ({lowEq_symm} G _ _ cs) h) ct",
-        deps=("conf_ite", "confinement", "lowEq_trans", "lowEq_symm"),
     ),
     Rung(
         key="noninterference",
@@ -271,8 +286,14 @@ RUNGS = (
               "        | true => rfl\n"
               "      simp [hlvT] at hw\n"
               "      exact {ite_high_ni} G e c d s t hw.1 hw.2 h",
-        deps=("assign_ni", "evalE_agree", "ite_high_ni"),
     ),
+)
+
+_deps = _extracted_deps()
+RUNGS = tuple(
+    Rung(key=r.key, role=r.role, binders=r.binders, statement=r.statement,
+         proof=r.proof, deps=_deps.get(r.key, ()), raw=r.raw)
+    for r in RUNGS
 )
 
 NONINTERFERENCE = Family(

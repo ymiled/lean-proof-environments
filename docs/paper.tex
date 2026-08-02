@@ -1,17 +1,20 @@
 \documentclass[10pt]{article}
-\usepackage[margin=1.25in]{geometry}
+\usepackage[margin=1.1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{listings}
+\usepackage{multirow}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{microtype}
 \usepackage{titlesec}
-\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
 
 \lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,frame=none,
-        columns=fullflexible,xleftmargin=1em}
+        columns=fullflexible,xleftmargin=0.8em,aboveskip=4pt,belowskip=4pt}
 
-\title{\textbf{A calibrated verifiable-reward environment for Lean proof tasks}}
+\title{\textbf{A verifiable-reward environment for information-flow security,\\
+with dependency structure recovered by necessity}}
 \author{Youssef Miled}
 \date{}
 
@@ -20,247 +23,458 @@
 
 \begin{abstract}
 \noindent
-Scaling reinforcement learning on program verification requires an environment,
-and environments are the scarce half. Existing code-generation environments rely
-on programmatic rewards or model grading, and unit tests in particular provide
-sparse feedback because coverage correlates poorly with bugs found. A proof
-assistant removes both problems, but a kernel alone is not an environment: it
-supplies a trustworthy reward without supplying a task distribution, a difficulty
-knob, or any guarantee that the tasks sit where a policy can learn from them. We
-build and characterise such an environment for Lean~4. It offers dense
-kernel-derived reward with an axiom audit, a difficulty knob given by how many
-dependencies are withheld, and reuse through supplied lemmas, corresponding to
-the dense-signal, unbounded-complexity and scalable-reuse properties that a
-verification RL environment is expected to have. To obtain a corpus free of
-training-set contamination we machine-check the soundness theorem of a security
-type system with subtyping, loops and functions, and use its lemma chain as a
-ladder. Measurements support compositional verification: pooling tasks with at
-least one dependency, supplying dependencies yields $16/23$ successes against
-$0/9$ when they are withheld (Fisher exact $p=8.2\times10^{-4}$). Our main
-contribution is a calibration methodology. We show that the binding constraint on
-such environments is neither grading nor task generation but placing tasks in the
-band where a policy sometimes succeeds, we give an instrument that measures the
-environment's own noise floor for free, and we show that a naive decay sweep
-cannot separate dependency depth from proof volume, together with a design that
-can.
+Proof assistants are an attractive reward signal for reinforcement learning
+because a kernel is ground truth rather than a proxy. A kernel is not an
+environment, however: it scores a candidate without supplying a task
+distribution, a difficulty knob, or any evidence that tasks sit where a policy
+can learn. We build that middle layer for information-flow security in Lean~4.
+Difficulty is set by how much of a lemma's dependency cone is withheld, reward
+is kernel acceptance plus an axiom audit, and specification gaming is removed
+structurally by never letting the policy write the theorem statement. Two
+findings drive the design. First, the dependency structure that defines
+difficulty \emph{cannot} be read from the Lean environment: theorem bodies are
+elaborated asynchronously and discarded, so every theorem appears
+dependency-free. We recover the graph instead by \emph{necessity}, asserting an
+edge only when deleting the ancestor makes the proof fail, which is strictly
+stronger than reading the proof term because a name can be mentioned without
+being load-bearing. Second, hand-authored graphs are unreliable in practice: an
+earlier version of one family carried four fabricated edges that inflated its
+depths, and the self-check meant to catch them was structurally inert. The
+resulting corpus spans 14 theories, 158 lemmas and 2{,}607 distinct task shapes,
+every edge machine-established and every rung certified solvable. It includes a
+784-line machine-checked soundness proof for a security type system with
+subtyping, loops and functions, which is absent from public corpora and so is
+free of the recall confound. Measurements support compositional verification:
+pooling tasks with at least one dependency, supplying dependencies yields
+$16/23$ successes against $0/9$ when withheld (Fisher exact
+$p=8.2\times10^{-4}$). Our central practical claim is that the binding
+constraint on such environments is neither grading nor task generation but
+calibration, and we give instrumentation for it, including a noise-floor
+estimator that costs nothing.
 \end{abstract}
 
-\section{Environments are the missing half}
+\section{Introduction}
 
-The argument for verification as a reinforcement learning target is well made
-elsewhere and we take it as given: proof assistants supply dense, ground-truth
-feedback, verification tasks have no complexity ceiling, and solved lemmas become
-reusable interfaces so a curriculum compounds. The gap is that this describes a
-\emph{potential} environment rather than an existing one.
+The case for verification as an RL target is by now familiar. Reward from a
+proof kernel is objective, cannot be gamed at the level of logic, and unlike
+unit-test reward it does not degrade as a proxy when coverage and correctness
+diverge. Solved lemmas become reusable interfaces, so a curriculum compounds
+rather than saturating.
 
-A proof corpus is not an environment. It has no difficulty parameter, generates
-no fresh tasks, and is present in model training data. A kernel is not an
-environment either: it scores a candidate but says nothing about which candidates
-to pose. What is needed in between is a task distribution with a knob, a grader
-that cannot be fooled, and evidence that the tasks land where learning signal
-exists. This paper contributes that middle layer and, more importantly, a method
-for checking that the third property actually holds, which we found to be the
-part that fails silently.
+What that argument describes is a \emph{potential} environment. A proof corpus
+is not one: it has no difficulty parameter, generates no fresh tasks, and sits
+in model training data. A kernel is not one either: it grades a candidate but
+says nothing about which candidates to pose. The missing layer is a task
+distribution with a knob, a grader that cannot be fooled, and evidence that the
+tasks land where learning signal exists. We build that layer, and we report that
+the third requirement is the one that fails silently.
 
-\section{Design}
+Our contributions:
 
-\paragraph{Ladders, and derived depth.}
-A family is a Lean theory with a dependency graph over its lemmas. Depth is
-computed from the graph rather than declared: depth $1$ for a lemma with no
-dependencies, otherwise one more than its deepest dependency. Derivation is not
-pedantry; hand-maintained graphs drift, and Section~\ref{sec:cal} reports a case
-where four of fourteen lemmas carried dependencies their proofs never cite.
+\begin{enumerate}\itemsep2pt
+\item \textbf{An environment} for information-flow security verification in
+Lean~4, with a difficulty knob given by withheld dependencies, kernel reward
+with an axiom audit, and structural rather than detective protection against
+specification gaming (\S\ref{sec:env}).
+\item \textbf{Dependency extraction by necessity} (\S\ref{sec:extract}). We
+first show that the obvious method is unavailable: in Lean~4.32 theorem proof
+terms are unreachable after elaboration through every accessor we tried, so
+graph extraction reports max depth~1. We replace it with a deletion test that is
+stronger than term inspection, and validate it against four dependencies known
+to be fabricated.
+\item \textbf{A generated corpus} of 14 IFC theories, 158 lemmas, 2{,}607 task
+shapes, every edge machine-established and every rung certified solvable
+(\S\ref{sec:corpus}), including a machine-checked metatheorem that is absent
+from public corpora.
+\item \textbf{Empirical results} supporting compositional verification, a
+noise-floor instrument that is free by construction, and the argument that
+calibration is the binding constraint (\S\ref{sec:exp}, \S\ref{sec:cal}).
+\item \textbf{Four benchmark-design failures} documented in enough detail to be
+avoided (\S\ref{sec:neg}). Each was caught by a check rather than by reading,
+and one was caught only because a check that had always reported success was
+itself found to be incapable of failing.
+\end{enumerate}
+
+\section{Positioning}
+
+We are aware of no released environment for verification RL that supplies a
+task distribution with a difficulty parameter rather than a fixed corpus. The
+closest published effort we are testing against is Theorem's \texttt{lf-lean},
+which translates the 1{,}276 statements of \emph{Logical Foundations} from Rocq
+to Lean using frontier models with proof-assistant feedback, and reports that
+success without compositional structure falls by roughly a threefold factor per
+additional dependency solved. That is a pipeline and a corpus rather than an
+environment: it has no knob, generates no fresh tasks, and its corpus is public
+and therefore in training data. Our object is the layer underneath it.
+
+On scale, the relevant comparison is not to proof corpora, which are large, but
+to \emph{benchmarks whose dependency structure is known}. Ladders of this kind
+are ordinarily hand-authored and number in the dozens of lemmas, because
+authoring a dependency graph by hand is slow and, as \S\ref{sec:neg} shows,
+unreliable. Ours contains 158 lemmas across 14 theories yielding 2{,}607 task
+shapes, and no edge in it was written by a human: every one was established by
+deleting a lemma and observing the proof fail. The cost of that guarantee is
+2.85\,s per task grade and roughly four minutes of extraction per twelve
+theories, which is what makes machine-established structure practical at this
+scale rather than merely desirable.
+
+Two design commitments follow from the intended use. Adding a theory must be one
+module and no edits elsewhere, so a family is loaded from a specification plus
+an extracted graph rather than from hand-written code; and every check must be
+exercised against a case it is meant to reject before it is trusted, a rule we
+adopted after discovering one that had never been able to fail.
+
+\section{The environment}
+\label{sec:env}
+
+\paragraph{Ladders and derived depth.}
+A \emph{family} is a Lean theory plus a dependency graph over its lemmas. Depth
+is computed, never declared: $\mathrm{depth}(L)=1$ if $L$ has no dependencies,
+otherwise $1+\max$ over them. \S\ref{sec:neg} explains why that distinction is
+load-bearing rather than fussy.
 
 \paragraph{The difficulty knob.}
-A task is a set of lemmas to prove, with every other lemma supplied already
-proved. Withholding nothing gives the \emph{compositional} condition, a single
-lemma with all ancestors available. Withholding everything beneath the target
-gives the \emph{monolithic} condition. Intermediate sets interpolate, which is the
-knob: difficulty is set by how much of the dependency cone the policy must
-reconstruct. This is also the environment's reuse property, since a supplied lemma
-is exactly a trusted interface.
+A task is a \emph{set} of lemmas to prove; every other lemma in the family is
+supplied already proved. Withholding only the target gives the
+\emph{compositional} condition; withholding its whole cone gives the
+\emph{monolithic} condition; intermediate withheld sets interpolate. The
+constraint is that a withheld set must be up-closed within the cone, since a
+supplied lemma carries a proof citing its own dependencies. This knob is also
+the environment's reuse property: a supplied lemma is exactly a trusted
+interface.
 
 \paragraph{Reward.}
-Acceptance requires that the file compiles, that \texttt{\#print axioms} on every
-target lies within
-$\{\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}\}$, and that the
-policy's text contains no banned tactic. Multi-lemma tasks are graded
-all-or-nothing, matching the quantity of interest, which is problems solved.
+Acceptance requires that the file compiles, that \texttt{\#print axioms} on
+every target lies within
+$\{\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}\}$, and that
+the policy's text contains no banned tactic. Multi-lemma tasks are graded
+all-or-nothing, matching the quantity of interest.
 
-The axiom audit is not redundant with compilation, and we recommend it to anyone
-building a similar environment. During development a lemma failed to prove; Lean
-reported the error and \emph{still declared the theorem}. Every downstream lemma
-citing it compiled with exit status $0$ and no diagnostics of its own. Only
-\texttt{\#print axioms}, three rungs later, revealed \texttt{sorryAx}. A reward
-keyed on compilation would have paid out for that entire subtree.
+The axiom audit is not redundant with compilation, and we recommend it to
+anyone building a similar environment. During development a lemma failed to
+prove; Lean reported the error and \emph{still declared the theorem}. Every
+downstream lemma citing it compiled with exit status $0$ and no diagnostics of
+its own. Only \texttt{\#print axioms}, three rungs later, revealed
+\texttt{sorryAx}. A reward keyed on compilation would have paid out for that
+entire subtree.
 
-\paragraph{Reward hacking, removed structurally.}
+\paragraph{Specification gaming, removed structurally.}
 The policy never writes the theorem statement. The harness emits the
-\texttt{theorem \ldots := by} header and splices in a tactic block only. A model
-therefore cannot weaken, restate, or substitute the goal, which eliminates the
-largest class of specification gaming without any statement-comparison logic. We
-implemented that comparison first and deleted it.
+\texttt{theorem \ldots := by} header and splices in a tactic block only, so a
+model cannot weaken, restate, or substitute the goal. We implemented a
+statement-comparison check first and deleted it: making drift impossible is
+better than detecting it. We verified the property holds for statements with
+implicit binders, instance arguments and universe polymorphism.
 
-\paragraph{Certification.}
-No sweep runs until every rung is verified solvable in both conditions and every
-declared dependency is verified real, the latter by compiling the rung with its
-ancestors absent from the file entirely.
+\section{Dependency extraction by necessity}
+\label{sec:extract}
 
-\section{A corpus that is not in the training data}
+\subsection{A negative result: the kernel will not tell you}
 
-Two of our three families are theories written for the purpose, a Peano
-development and a small security type system. Both are textbook material and a
-model may well have memorised proofs of them.
+The natural way to obtain a true dependency graph is to ask Lean which constants
+a proof references. This is not possible in Lean~4.32. Theorem bodies are
+elaborated asynchronously and the term is not retained, so
+\texttt{ConstantInfo.value?} yields \texttt{none}:
 
-For the third we machine-checked, in Lean~4, the soundness theorem of a security
-type system in the Volpano-Smith-Irvine style, extended with subtyping, while
-loops, and functions. The formalisation is 784 lines with no \texttt{sorry};
-axioms are confined to \texttt{propext} and \texttt{Quot.sound}. Semantics is
-fuel-indexed, making the theorem termination-insensitive, and expression agreement
-must be proved simultaneously with command noninterference by induction on fuel,
-because a call inside an expression executes a command while an assignment inside
-a command evaluates an expression.
+\begin{lstlisting}
+theorem foo (n : Nat) : n = n := rfl
+theorem bar (n : Nat) : n = n := foo n     -- cites foo
 
-Its lemma chain becomes the third ladder: 14 lemmas, depths 1--5, from lattice
-properties up to soundness. Two properties recommend it. The depths are the
-dependency structure a real metatheorem has, rather than a gradient chosen to
-produce a curve. And the system exists in no public corpus, so measurements on it
-are not confounded by recall.
+env.find? `bar                  -- value?.isSome = false
+env.toKernelEnv.find? `bar      -- value?.isSome = false
+liftCoreM (getConstInfo `bar)   -- value?.isSome = false
+liftCoreM (collectAxioms `bar)  -- []
+\end{lstlisting}
 
-\section{Measurements}
+Two lines after \texttt{bar} is declared its proof is unreachable. Compiling to
+\texttt{.olean} and loading through \texttt{withImportModules} gives the same
+answer, so this is not staleness of an in-memory map. Only the statement's
+constants survive. Run over our largest theory, extraction reported every
+theorem as dependency-free with max depth~1, which is precisely the failure the
+extractor existed to prevent, arriving from the opposite direction.
 
-Policies answer one-shot with no compiler access. The reference solution scores
-$1.00$ in every cell and a trivial \texttt{rfl} policy scores $0.00$, bounding the
-environment and confirming the grader discriminates.
+The type-level pass is still useful: it separates theory-internal constants from
+external ones, which is the supplied-versus-withheld split, and identifies
+auto-generated declarations that must never become tasks. Of 418 declarations in
+that theory, 248 are auto-generated and 46 are human-written theorems.
 
-\subsection{Supplying dependencies has a large effect}
+\subsection{Necessity as a stronger criterion}
 
-\begin{table}[h]\centering
-\small
+We assert an edge $T \to A$ only when removing $A$ from the file makes $T$'s
+proof fail. This is strictly stronger than reading the proof term: a name can
+appear in a term without being load-bearing, and necessity tests what the
+difficulty knob actually depends on.
+
+One subtlety makes it non-trivial. Removing $A$ also breaks every supplied lemma
+that itself needs $A$, and those failures would be charged to $T$. We therefore
+process rungs in source order, so the graph for everything earlier is already
+known and the whole $A$-cone can be removed together. A failure then means $T$
+needs something in that cone, hence transitively needs $A$. That yields the
+transitive relation; direct edges follow by transitive reduction. Cost is one
+compile per candidate edge, quadratic in rungs, and the inner loop parallelises.
+
+\paragraph{Validation.} Against a family whose hand-written graph was known to
+contain four fabricated edges, necessity extraction rejects exactly those four
+and retains the real ones:
+
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+declared edge & closure & verdict \\
+\midrule
+\texttt{lowEq\_symm $\to$ lowEq\_refl}   & $\emptyset$ & rejected \\
+\texttt{lowEq\_trans $\to$ lowEq\_refl}  & $\emptyset$ & rejected \\
+\texttt{Lvl.le\_trans $\to$ Lvl.le\_refl}& $\emptyset$ & rejected \\
+\texttt{secure\_sub $\to$ Lvl.le\_refl}  & $\emptyset$ & rejected \\
+\texttt{sub\_base\_inv $\to$ Lvl.le\_refl} & present & accepted \\
+\texttt{confinement $\to$ secure\_sub}     & present & accepted \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Reported max depth drops from a declared 6 to a true 5. The three remaining
+differences between extracted and declared graphs are all redundant edges that
+transitive reduction correctly removes, and none changes a depth.
+
+\section{Corpus}
+\label{sec:corpus}
+
+\paragraph{A theory that is not in the training data.}
+We machine-checked in Lean~4 the soundness theorem of a security type system in
+the Volpano-Smith-Irvine style with subtyping, \texttt{while} loops and a
+function extension: 784 lines, no \texttt{sorry}, axioms confined to
+\texttt{propext} and \texttt{Quot.sound}. Semantics is fuel-indexed, so the
+theorem is termination-insensitive. Expression agreement and command
+noninterference must be proved simultaneously by induction on fuel, since a call
+inside an expression executes a command while an assignment inside a command
+evaluates an expression. Its lemma chain is a ladder whose depths are the
+dependency structure a real metatheorem has, and whose content appears in no
+public corpus.
+
+\paragraph{Generated theories.}
+A security type system is parameterised. We generate over expression grammar
+size, the branch convention of the conditional, and the evaluation order of
+sequencing, each point yielding a Lean theory with its own soundness chain. The
+proof strategy is deliberately \emph{not} parameterised: every instance is
+discharged by one tactic skeleton, so a variant either compiles for structural
+reasons or is rejected before entering the corpus. The generator may emit
+theories that do not work; it may not ship them.
+
+\begin{table}[h]\centering\small
+\begin{tabular}{lrrr}
+\toprule
+theory & lemmas & task shapes & instances \\
+\midrule
+$12\times$ generated & 11 each & 164 each & 492 each \\
+\texttt{noninterference} (control) & 12 & 165 & 495 \\
+\texttt{vsi} (machine-checked) & 14 & 474 & 474 \\
+\midrule
+\textbf{total} & \textbf{158} & \textbf{2{,}607} & \textbf{6{,}873} \\
+\bottomrule
+\end{tabular}
+\hfill
+\begin{tabular}{lr}
+\toprule
+depth & shapes \\
+\midrule
+1 & 98 \\
+2 & 246 \\
+3 & 457 \\
+4 & 1{,}589 \\
+5 & 217 \\
+\bottomrule
+\end{tabular}
+\caption{Corpus. A \emph{shape} is a distinct (target, withheld-set) pair. An
+\emph{instance} is a shape under one renaming seed; instances differ only in
+identifiers, so they are distinct tasks to a policy but not independent
+evidence. We report both rather than the larger number alone.}
+\label{tab:corpus}
+\end{table}
+
+\paragraph{Certification and cost.}
+Necessity extraction over the generated theories took 261\,s for 660 probes.
+Compositional self-test over the generated corpus: 132 tasks, \textbf{0
+failures}, 48.8\,s wall clock, 2.85\,s mean per task grade. Every rung is
+certified solvable in the compositional condition using its real proof, and
+every edge was established by deletion.
+
+\paragraph{Contamination.}
+The two roles are deliberate. Generated theories and the control family support
+per-seed renaming of every identifier, so a model cannot pattern-match onto a
+remembered proof. The machine-checked theory cannot be renamed without breaking
+its own imports and does not need to be, since it exists in no public corpus.
+Renaming removes verbatim recall, not knowledge; whether it removes anything
+measurable is the subject of ongoing work and is currently untested, which we
+state rather than assume.
+
+\section{Experiments}
+\label{sec:exp}
+
+Policies are Claude Sonnet~5 and Claude Haiku~4.5, answering one-shot with no
+compiler access, so no iteration against the kernel is possible. The reference solution scores $1.00$ in every cell and a
+trivial \texttt{rfl} policy scores $0.00$, bounding the environment and
+confirming the grader discriminates.
+
+\begin{table}[h]\centering\small
 \begin{tabular}{lrlrl}
 \toprule
 depth & compositional & 95\% CI & monolithic & 95\% CI \\
 \midrule
-1 & 5/6\ \ (0.83) & [0.44, 0.97] & 10/12\ (0.83) & [0.55, 0.95] \\
-2 & 1/2\ \ (0.50) & [0.09, 0.91] & 0/4\ \ (0.00)  & [0.00, 0.49] \\
-3 & 9/12\ (0.75)  & [0.47, 0.91] & 0/3\ \ (0.00)  & [0.00, 0.56] \\
-4 & 3/6\ \ (0.50) & [0.19, 0.81] & 0/2\ \ (0.00)  & [0.00, 0.66] \\
-5 & 3/3\ \ (1.00) & [0.44, 1.00] & --             & -- \\
+1 & 5/6\ (0.83)  & [0.44, 0.97] & 10/12\ (0.83) & [0.55, 0.95] \\
+2 & 1/2\ (0.50)  & [0.09, 0.91] & 0/4\ \ (0.00) & [0.00, 0.49] \\
+3 & 9/12\ (0.75) & [0.47, 0.91] & 0/3\ \ (0.00) & [0.00, 0.56] \\
+4 & 3/6\ (0.50)  & [0.19, 0.81] & 0/2\ \ (0.00) & [0.00, 0.66] \\
+5 & 3/3\ (1.00)  & [0.44, 1.00] & --            & -- \\
 \bottomrule
 \end{tabular}
-\caption{Machine-checked ladder, Sonnet~5, one-shot, Wilson intervals. Depth-1
-tasks are identical across conditions by construction, since no ancestors exist
-to supply or withhold.}
+\caption{Machine-checked ladder, Sonnet~5, one-shot, Wilson intervals. Depth-1 tasks are identical across conditions by construction.}
 \label{tab:vsi}
 \end{table}
 
-Pooling the tasks where the conditions genuinely differ, namely depth $\ge 2$,
-gives compositional $16/23$ ($[0.49,0.84]$) against monolithic $0/9$
-($[0.00,0.30]$), Fisher exact two-sided $p = 8.2\times10^{-4}$. On a corpus with
-no contamination and a kernel-checked reward, trusted interfaces are worth a great
-deal, which is the empirical content of the compositional-verification argument.
+Per-cell intervals are wide. Pooling the tasks where the conditions genuinely
+differ, that is depth $\ge2$: compositional $16/23$ ($[0.49,0.84]$) against
+monolithic $0/9$ ($[0.00,0.30]$), Fisher exact two-sided
+$p=8.2\times10^{-4}$. On an uncontaminated corpus with a kernel-checked reward,
+trusted interfaces are worth a great deal.
 
 The depth-5 compositional cell at $1.00$ illustrates the mechanism rather than
-contradicting it: that theorem is a one-line application of the lemma beneath it,
-which the compositional condition supplies. Depth stops predicting difficulty
-exactly when the interfaces are handed over.
+contradicting it: that theorem is a one-line application of the lemma beneath
+it, which the compositional condition supplies. Depth stops predicting
+difficulty exactly when interfaces are handed over.
 
-\subsection{An instrument for the environment's own noise}
+\paragraph{A noise-floor instrument that costs nothing.}
+Depth-1 lemmas have no ancestors, so their monolithic and compositional prompts
+are byte-identical; we confirm this with \texttt{diff}. They are nonetheless
+answered by independent policy instances under different labels. In one sweep
+those identical prompts scored $8/8$ in one arm and $6/8$ in the other, placing
+run-to-run variance near $25\%$. Any benchmark of this shape gets such an
+estimate for free, and single-sample cells should be read against it.
 
-Depth-1 lemmas have no ancestors, so their prompts are byte-identical across the
-two conditions; we confirm this with \texttt{diff}. They are nevertheless answered
-by independent policy instances under different labels. In one sweep those
-identical prompts scored $8/8$ in one arm and $6/8$ in the other, placing
-run-to-run variance near $25\%$.
-
-This is worth building in deliberately. Any environment of this shape can include
-tasks that are duplicated by construction, giving a free per-sweep estimate of its
-own noise floor, against which single-sample cells can be judged.
+\paragraph{Decay is not identifiable from a depth sweep.}
+On a general-mathematics ladder we later removed from the benchmark, Haiku~4.5
+monolithic pass rates fell $1.00, 0.75, 0.33, 0.00, 0.00$ over depths 1--5. Regressing
+$\log(\text{pass})$ on depth over the non-zero points gives $1.73\times$ per
+depth at $R^2=0.930$; regressing the same observations on \emph{lemma count}
+gives $1.44\times$ per lemma at $R^2=0.930$. The fits are indistinguishable,
+because monolithic length is by construction the sum over ancestors and the two
+regressors correlate at $0.98$. A separating design exists, contrasting $k$
+mutually independent lemmas against $k$ chained ones at matched count and
+length, but it cannot be built by making all rungs uniform, since a chain of
+composed identical steps is bypassable by unfolding (\S\ref{sec:neg}). Matched
+pairs must be searched for.
 
 \section{Calibration is the binding constraint}
 \label{sec:cal}
 
-The property a verification environment is assumed to have is dense signal. In
-practice we found dense signal is not conferred by the kernel. It is conferred by
-a task distribution matched to the policy, and it fails silently in three
-distinguishable ways.
+Dense signal is usually treated as a property conferred by the kernel. It is
+not. It is a property of a task distribution matched to a policy, and it fails
+silently in three distinguishable ways.
 
-\paragraph{Ceiling.} The Peano ladder is solved at every depth by a strong model.
-Reward is constant, gradient is zero, and the environment teaches nothing.
+\textbf{Ceiling.} A general-mathematics ladder was solved at every depth by a
+strong model. Constant reward, zero gradient.
 
-\paragraph{Floor.} The first version of our security ladder failed at every depth
-above 1, including in the compositional condition where all ancestors were
-supplied. Also zero gradient. The repair was to split a 37-line proof into two
-intermediate lemmas, dropping the target to 22 lines, after which the same policy
-at the same budget proved the theorem it had previously failed. Nothing about the
-mathematics changed, only the granularity of the interfaces, which is a concrete
-demonstration that decomposition changes what is provable at fixed compute.
+\textbf{Floor.} The first version of our security ladder failed at every depth
+above~1, including compositionally with all ancestors supplied. Also zero
+gradient. The repair was to split a 37-line proof into two intermediate lemmas,
+dropping the target to 22 lines, after which the same policy at the same budget
+proved a theorem it had previously failed. Nothing about the mathematics
+changed; only the granularity of the interfaces did. Decomposition changes what
+is provable at fixed compute, which is the compositional-verification claim in
+miniature.
 
-\paragraph{Structural.} Some measurements are impossible in a given graph rather
-than merely underpowered. Withheld sets must be upward closed, so sets of mutually
-independent lemmas can only be drawn from maximal elements; a family with a single
+\textbf{Structural.} Some measurements are impossible in a given graph rather
+than underpowered. Because withheld sets are up-closed, sets of mutually
+independent lemmas can only be drawn from maximal elements; a family with one
 maximal element admits none at any size.
 
-\paragraph{Silent certification failure.} Our dependency-reality check was vacuous
-for multi-lemma tasks: it graded a monolithic task using the single-lemma
-solution, so missing blocks were filled with \texttt{sorry} and the audit rejected
-the attempt for the wrong reason, leaving the failure branch unreachable. It
-reported success for the whole life of one family while four of its fourteen
-lemmas declared dependencies their proofs never cite, inflating depths. Checks
-should be exercised against cases they are meant to reject.
+A task that always succeeds and one that always fails both yield zero gradient,
+which is the sparse-reward failure usually attributed to unit tests. Proof
+assistants make dense feedback possible and do not make it automatic. Scaling RL
+on verification needs a calibration story in addition to a kernel.
 
-We take the general lesson to be that environment quality is an empirical property
-requiring instrumentation, not a consequence of using a kernel.
+\section{Four failures worth documenting}
+\label{sec:neg}
 
-\section{Measuring decay without confounding it}
+\textbf{Closed goals collapse depth.} Lemmas stated at a concrete point produce
+goals that are closed terms, which \texttt{simp} evaluates rather than reasons
+about. A depth-3 rung fell to \texttt{simp\_all} with no lemmas in scope. The
+ladder compiled and measured nothing. Rungs must quantify over the variables the
+definitions recurse on.
 
-A natural use of this environment is to fit how success decays with dependency
-depth. We caution that the obvious sweep does not identify the quantity.
+\textbf{Uniformity destroys essential depth.} A family built so chain and
+independent arms would match exactly failed, because when each rung is the
+previous one composed once more the chain is bypassable by unfolding
+definitions and reusing the base lemma. We verified this by compiling the
+depth-4 lemma with the two beneath it deleted. Exact matching requires
+uniformity; uniformity makes dependencies decorative.
 
-On a general-mathematics ladder since removed from the benchmark (see
-limitations), Haiku~4.5 monolithic pass rates fall $1.00, 0.75, 0.33,
-0.00, 0.00$ over depths 1--5. Regressing $\log(\text{pass})$ on depth over the
-non-zero points gives $1.73\times$ per depth at $R^2=0.930$. Regressing the same
-observations on \emph{lemma count} gives $1.44\times$ per lemma at $R^2=0.930$.
-The fits are indistinguishable, because monolithic length is by construction the
-sum over ancestors and the two regressors correlate at $0.98$ across our families.
-A curve of this shape is equally consistent with dependency chains compounding and
-with there simply being more to write.
+\textbf{An inert safeguard is worse than none.} The dependency-reality check was
+vacuous for multi-lemma tasks: it graded a monolithic task using the
+single-lemma solution, so missing blocks were filled with \texttt{sorry}, the
+audit rejected the attempt for the wrong reason, and the failure branch was
+unreachable. It reported success for the entire life of one family while four of
+its fourteen lemmas declared dependencies their proofs never cite. It was found
+by inspection, not by the check: a one-line proof cannot plausibly need a lemma.
+Every check should be exercised against a case it is meant to reject.
 
-The separating design is a matched contrast: $k$ mutually independent lemmas
-against $k$ chained lemmas, holding both count and total reference length fixed.
-Equal success implicates volume; a gap implicates chaining. Constructing such
-pairs by making all rungs uniform does not work, since a chain of composed
-identical steps is bypassable by unfolding, which we verified by compiling a
-depth-4 lemma with the two beneath it deleted. Pairs must instead be searched for
-among naturally occurring lemmas. We locate exactly length-matched pairs at
-$k=2,3$ and provide the enumeration, but have so far run the contrast only against
-a policy that ceilings on it.
+\textbf{An impossible histogram exposed a counting bug.} Task shapes were
+counted by enumerating up-closed subsets of a rung's cone, but up-closedness was
+checked against every lemma in the family rather than only those rendered.
+Lemmas above the target never appear in the file, so requiring them to be
+satisfiable ruled out every rung with a dependent. The histogram showed zero
+shapes at depths 2 and 3, which is impossible when rungs exist there, and that
+impossibility is what surfaced the error.
 
 \section{Limitations}
 
-Cells contain between 2 and 12 attempts; an API rate limit halted our sweep at 50
-of 140 planned tasks. Only the pooled comparison of Section~4.1 is adequately
-powered, and no constant should be fitted to Table~\ref{tab:vsi}. Results cover
-two model families.
+Sample sizes are small: cells hold between 2 and 12 attempts and an API rate
+limit halted one sweep at 50 of 140 planned tasks. Only the pooled comparison of
+\S\ref{sec:exp} is adequately powered, and no constant should be fitted to
+Table~\ref{tab:vsi}. Results cover two model families.
 
-Episodes are single-step, with one attempt and one binary reward. Per-tactic
-actions with intermediate proof states as observations would require a persistent
-Lean server rather than one-shot compilation, and are the natural next version.
+Episodes are single-step: one attempt, one binary reward. Per-tactic actions
+with intermediate proof states would need a persistent Lean server rather than
+one-shot compilation. The renaming defence is untested; the corpus is built so
+that it \emph{can} be tested, which is the immediate next experiment. The
+machine-checked theorem is termination-insensitive, which is forced by fuel and
+standard for languages with loops.
 
 We do not train. This is the environment half, with a frozen policy and a
-\texttt{reset}/\texttt{step} interface to which no learner has yet been attached.
-We regard the calibration diagnostics above as a precondition for doing so
-usefully rather than as a substitute.
+\texttt{reset}/\texttt{step} interface to which no learner has been attached. We
+regard the calibration diagnostics above as a precondition for attaching one
+rather than a substitute.
+
+\section{Conclusion}
+
+Building a verifiable-reward environment turns out to be mostly a problem of not
+fooling yourself. The kernel is honest, but everything around it, the dependency
+graph, the difficulty knob, the checks that certify them, can be quietly wrong
+in ways that still produce plausible tables. Every substantive error in this
+work was caught by a check or by an impossible number, and one was caught only
+after discovering that a check reporting success for months could never have
+reported anything else.
+
+The environment, the corpus, the extraction procedure and the design log of
+every failure above are released together, on the view that the failures are the
+part hardest to reproduce.
 
 \section*{Reproducibility}
 
-We release the environment, the grader, three ladders, the 784-line
-machine-checked formalisation, and a log of the design failures in
-Section~\ref{sec:cal}. A family is certified before any sweep. Sweeps split into
-prompt export and grading so policies without an HTTP API can be evaluated, and
-the runner emits a safe partition of tasks across policy instances, since a
+Everything reported here is regenerable from the repository with a Lean~4
+toolchain and no other dependency. \texttt{pdd.generate} writes the theory
+specifications; \texttt{pdd.extract} recovers each dependency graph by deletion
+and refuses to load one produced any other way; \texttt{pdd.selftest} certifies
+a family and must report zero failures before a sweep is trusted;
+\texttt{pdd.corpus} prints Table~\ref{tab:corpus}. Sweeps are split into prompt
+export and grading so that policies without an HTTP API can be evaluated, and
+the runner emits a safe partition of tasks across policy instances, because a
 compositional prompt supplies its target's ancestors together with their proofs
-and therefore leaks answers if batched carelessly.
+and therefore leaks answers if batched carelessly. We violated that partition by
+hand three times while collecting the results above, which is why the runner now
+emits it rather than leaving it to judgement.
+
+Wall-clock figures are from a laptop, single machine: 261\,s to extract twelve
+generated theories (660 deletion probes), 48.8\,s to certify 132 compositional
+tasks, 2.85\,s mean per task grade.
 
 \end{document}
