@@ -4,6 +4,7 @@
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{multirow}
+\usepackage{graphicx}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{microtype}
 \usepackage{titlesec}
@@ -118,11 +119,17 @@ deleting a lemma and observing the proof fail. The cost of that guarantee is
 theories, which is what makes machine-established structure practical at this
 scale rather than merely desirable.
 
-Two design commitments follow from the intended use. Adding a theory must be one
-module and no edits elsewhere, so a family is loaded from a specification plus
-an extracted graph rather than from hand-written code; and every check must be
-exercised against a case it is meant to reject before it is trusted, a rule we
-adopted after discovering one that had never been able to fail.
+Two design commitments follow, both aimed at the environment being extended by
+people who did not build it. Adding a theory must be one module and no edits
+elsewhere, so a family is loaded from a specification plus an extracted graph
+rather than from hand-written code, and a contributor cannot introduce a
+dependency graph at all: the only way to add edges is to let the extractor find
+them. And every check must be exercised against a case it is meant to reject
+before it is trusted, a rule we adopted after finding one that had reported
+success throughout its life and could never have reported anything else. Both
+rules exist because the failure modes in \S\ref{sec:neg} are silent, and a
+silent failure inherited by a later user is worse than one we merely suffered
+ourselves.
 
 \section{The environment}
 \label{sec:env}
@@ -290,6 +297,18 @@ identifiers, so they are distinct tasks to a policy but not independent
 evidence. We report both rather than the larger number alone.}
 \label{tab:corpus}
 \end{table}
+
+\begin{figure}[h]\centering
+\includegraphics[width=\textwidth]{fig1.pdf}
+\caption{Left: task shapes by dependency depth. Mass concentrates at depth~4
+because the number of admissible withheld sets grows with the size of a lemma's
+cone, so deep rungs contribute more distinct obligations than shallow ones.
+Right: pass rate by depth under the two conditions, with Wilson intervals. The
+withheld arm has no depth-5 cell because that sweep was halted by an API rate
+limit. Per-cell intervals are wide; the pooled comparison over depth $\ge2$ is
+the powered one.}
+\label{fig:main}
+\end{figure}
 
 \paragraph{Certification and cost.}
 Necessity extraction over the generated theories took 261\,s for 660 probes.

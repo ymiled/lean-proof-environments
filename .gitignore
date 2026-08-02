@@ -7,3 +7,6 @@ results/*.png
 
 # generated docs
 *.pdf
+
+# generated figures
+docs/fig1.pdf
