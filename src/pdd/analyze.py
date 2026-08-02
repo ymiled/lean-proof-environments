@@ -15,6 +15,7 @@ their disagreement across arms is exactly the noise-floor estimate.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 from collections import defaultdict
@@ -59,16 +60,33 @@ def fisher_exact(a: int, b: int, c: int, d: int) -> float:
 
 
 def grade_all() -> list[dict]:
+    """Grade every collected response, keeping one per distinct answer.
+
+    Deduplication is unconditional rather than a flag. Batching that prevents
+    one prompt leaking another's answer can let a single policy instance answer
+    several samples of the same task, and it answers them identically; counting
+    those copies as independent draws moved this sweep's headline from
+    p = 0.026 to p = 0.114. Since that is a property of how a sweep was
+    dispatched rather than of the data, the analysis must not be able to make
+    the mistake even if a future sweep reintroduces the copies.
+    """
     specs = json.loads((RUNS / "_specs.json").read_text())
     fam = FAMILIES[specs[0]["family"]]
-    rows = []
+    rows: list[dict] = []
+    seen: dict[tuple[str, int, str], set[str]] = defaultdict(set)
     for s in specs:
         out = RUNS / f"{s['task_id']}.out"
         if not out.exists():
             continue
+        body = out.read_bytes()
+        key = (s["arm"], s["k"], s["targets"][-1])
+        digest = hashlib.md5(body).hexdigest()
+        if digest in seen[key]:
+            continue
+        seen[key].add(digest)
         inst = Instance.sample(fam, s["seed"])
         task = Task(inst, tuple(s["targets"]), s["arm"])
-        res = grade(task, parse_blocks(out.read_text(), task))
+        res = grade(task, parse_blocks(body.decode(), task))
         rows.append({**s, "ok": res.ok, "verdict": res.verdict.value})
     return rows
 

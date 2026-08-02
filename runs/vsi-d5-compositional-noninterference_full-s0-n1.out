@@ -1,2 +1,0 @@
--- PROOF noninterference_full
-  exact (agree hft k).2 c ty hty s t s' t' hst hs ht

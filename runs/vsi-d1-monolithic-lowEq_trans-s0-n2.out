@@ -1,2 +1,0 @@
--- PROOF lowEq_trans
-  intro x hx; exact (h1 x hx).trans (h2 x hx)

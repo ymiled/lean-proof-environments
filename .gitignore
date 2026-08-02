@@ -10,3 +10,4 @@ results/*.png
 
 # generated figures
 docs/fig1.pdf
+runs/duplicates/

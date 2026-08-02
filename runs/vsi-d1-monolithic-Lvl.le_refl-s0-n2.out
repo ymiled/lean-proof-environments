@@ -1,2 +1,0 @@
--- PROOF Lvl.le_refl
-  cases a <;> rfl

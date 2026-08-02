@@ -1,2 +1,0 @@
--- PROOF lowEq_symm
-  intro x hx; exact (h x hx).symm

@@ -1,2 +1,0 @@
--- PROOF Lvl.le_trans
-  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]

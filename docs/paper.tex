@@ -368,6 +368,9 @@ let one instance answer several samples of the same task, which it did
 identically. Counting those copies as separate observations gives $p=0.114$;
 counting distinct responses gives $p=0.026$. Copies are not independent draws,
 so the second is correct, but a result that flips on this is not a robust one.
+The released dataset now contains one response per distinct answer, with the 18
+archived copies retained separately for audit, and the analysis deduplicates
+unconditionally so that a future sweep cannot reintroduce the error.
 
 \emph{Depth 5.} An earlier partial sweep included a supplied depth-5 cell at
 $5/5$ against an empty withheld cell, and reported $p=8.2\times10^{-4}$. That
@@ -485,9 +488,11 @@ Batching chosen to prevent answer leakage let one policy instance answer several
 samples of a task in the supplied arm, which it did identically; distinct
 responses per supplied cell are 4, 15 and 8 at depths 2 to 4 against nominal 10,
 15 and 10. The withheld arm was dispatched one instance per sample index and is
-unaffected. The fix is one instance per (task, sample) pair, which we did not do
-throughout and which the runner should enforce rather than leave to whoever
-launches the sweep.
+unaffected. Deduplication is now unconditional in the analysis rather than a
+reporting choice, since the defect belongs to how a sweep is dispatched rather
+than to the data, and an analysis that can be run the wrong way eventually is.
+The dispatch fix is one policy instance per (task, sample) pair, which the runner
+should enforce rather than leave to whoever launches the sweep.
 
 Episodes are single-step: one attempt, one binary reward. Per-tactic actions
 with intermediate proof states would need a persistent Lean server rather than
