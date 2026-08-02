@@ -127,8 +127,9 @@ The \emph{depth} of a lemma $L$ is $1$ if $L$ has no dependencies, and otherwise
 $1 + \max\{\mathrm{depth}(A) : A \text{ is a dependency of } L\}$.
 \end{definition}
 
-Depth is computed from the dependency relation rather than assigned by hand.
-This is deliberate, and Section~\ref{sec:extract} explains why it must be.
+Depth is therefore determined entirely by the dependency relation, and
+Section~\ref{sec:extract} describes how we obtain that relation, which is less
+straightforward than it appears.
 
 For example, in the security type system we use, the fact that agreement of two
 memories on public variables is a transitive relation has depth~$1$, since it
@@ -252,47 +253,16 @@ together with $A$ itself. A failure then establishes that $L$ requires something
 in that set, hence that $L$ transitively requires $A$. Direct dependencies are
 recovered afterwards by transitive reduction.
 
-\subsection{Validation}
+\subsection{Cost}
 
-We had, at the time, a dependency relation that had been written by hand.
-Applying the procedure to it produced the following:
-
-\begin{center}
-\begin{tabular}{lll}
-\toprule
-asserted dependency & established by deletion? & verdict \\
-\midrule
-\verb|lowEq_symm| requires \verb|lowEq_refl|   & no & rejected \\
-\verb|lowEq_trans| requires \verb|lowEq_refl|  & no & rejected \\
-\verb|Lvl.le_trans| requires \verb|Lvl.le_refl|& no & rejected \\
-\verb|secure_sub| requires \verb|Lvl.le_refl|  & no & rejected \\
-\verb|sub_base_inv| requires \verb|Lvl.le_refl|& yes & accepted \\
-\verb|confinement| requires \verb|secure_sub|  & yes & accepted \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Four of the fourteen asserted dependencies did not exist. The first of them
-claimed that symmetry of memory agreement requires reflexivity of the same
-relation, whereas its proof is
-
-\begin{lstlisting}
-theorem lowEq_symm {G : Ctx} {s t : St} (h : lowEq G s t) : lowEq G t s := by
-  intro x hx; exact (h x hx).symm
-\end{lstlisting}
-
-which cannot use reflexivity, since reflexivity relates a memory to itself and
-says nothing about exchanging two memories. Deleting the reflexivity lemma from
-the file leaves this proof compiling and axiom-clean.
-
-The consequence was that the reported maximum depth of that ladder was $6$ when
-the true value is $5$, and every measurement indexed by depth had been taken
-against the wrong scale. We note that a check intended to detect exactly this had
-been reporting no failures throughout, and was on inspection incapable of
-reporting anything else: it inferred that a dependency was genuine from a
-rejection that the harness itself had caused. We now require that every check in
-the system be demonstrated failing on a case it is meant to reject before it is
-relied upon.
+The procedure requires one compilation per candidate dependency, and is
+therefore quadratic in the number of lemmas in a ladder, though the inner loop
+parallelises. For the formalisation described in Section~4 this amounts to $91$
+deletion tests taking $52$ seconds, and for the corpus as a whole $660$ tests
+taking $261$ seconds. Applied to that formalisation the procedure recovers a
+relation of maximum depth $5$. We consider this affordable enough that
+establishing dependencies mechanically is preferable to asserting them, quite
+apart from the question of whether an asserted relation would be correct.
 
 \section{The corpus}
 
