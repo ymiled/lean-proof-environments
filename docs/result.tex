@@ -36,9 +36,9 @@ kernel, badly distorts the difficulty curve it appears to reveal. Under binary
 grading the pass rate of one model fell $1.00, 0.75, 0.33, 0.00, 0.00$ across
 depths, implying a collapse and a decay of $1.74\times$ per level. Regrading the
 identical responses by how many of each task's required lemmas individually
-check gives $1.00, 0.92, 0.73, 0.73, 0.62$, a decay of $1.13\times$. In the
-starkest case a response proving seven of eight required lemmas scored exactly
-zero, indistinguishable from proving none. The kernel had the information
+check gives $1.00, 0.92, 0.73, 0.73, 0.62$, a decay of $1.13\times$. In the starkest
+case, a single response at depth $5$ proving seven of eight required lemmas
+scored exactly zero, indistinguishable from proving none. The kernel had the information
 throughout; our reward discarded it. We report what survives the correction, and
 what does not.
 \end{abstract}
@@ -312,7 +312,7 @@ proportion of a task's targets that individually check:
 \begin{center}
 \begin{tabular}{lccccc}
 \toprule
-& \multicolumn{5}{c}{target depth} \\
+& \multicolumn{5}{c}{target depth ($n = 5, 4, 3, 2, 1$)} \\
 \cmidrule(l){2-6}
 & $1$ & $2$ & $3$ & $4$ & $5$ \\
 \midrule
@@ -321,9 +321,17 @@ Sonnet~5, per-target     & $1.00$ & $1.00$ & $1.00$ & $1.00$ & $0.88$ \\
 \midrule
 Haiku~4.5, all-or-nothing & $1.00$ & $0.75$ & $0.33$ & $0.00$ & $0.00$ \\
 Haiku~4.5, per-target     & $1.00$ & $0.92$ & $0.73$ & $0.73$ & $0.62$ \\
+\quad bootstrap $95\%$ & --- & $[.75,1.0]$ & $[.60,1.0]$ & $[.67,.80]$ & n/a \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+Intervals are bootstrap resamples over the per-task fractions within each cell.
+They are wide, and at depth~$5$ a single response admits none at all. Section~5.3
+reports a run-to-run variation of roughly twenty-five percent measured on
+byte-identical prompts, which is of the same order as several of the differences
+in this table; the corrected row should be read as a shape, not as five
+estimates.
 
 The Sonnet depth-$5$ cell, which under the original reward reads $0.00$ and looks
 like the point at which the model fails, is a single response proving seven of
@@ -335,10 +343,16 @@ comparable fit quality ($R^2 = 0.94$).
 Two conclusions, of different strengths. The weaker and safer one is that a
 binary reward measured our reward function rather than the models: most of the
 apparent difficulty gradient in the original table is the all-or-nothing rule
-compounding over tasks that ask for more lemmas as depth increases. The stronger
-one, which we state with less confidence because it rests on the same small
-samples, is that after correction a real but much gentler depth effect remains,
-and that the environment is nowhere near the floor we believed it was at.
+compounding over tasks that ask for more lemmas as depth increases. This
+conclusion is a comparison between two gradings of one set of responses, so it is
+unaffected by how few responses there are. The stronger one, that a real but much
+gentler depth effect remains after correction, rests on the sample sizes above
+and we do not regard it as established.
+
+Every measurement here is a single attempt per task. We report no $\mathrm{pass}@k$,
+and the correct next experiment is to resample each cell at $k=5$ and put
+intervals on the corrected row, which would move the second conclusion from
+hedged to supported or refute it.
 
 We think the general form of this is worth stating. A verifier gives a natural
 accept-or-reject verdict per declaration, and it is tempting to lift that
