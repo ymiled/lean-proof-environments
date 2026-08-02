@@ -145,6 +145,67 @@ def grade(
     return Result(Verdict.PROVED, axioms=axioms)
 
 
+@dataclass
+class PartialResult:
+    """Per-target verdicts and the fraction of targets actually proved."""
+
+    per_target: dict[str, Verdict]
+    #: Fraction of the task's targets whose own block cleared the axiom audit.
+    score: float
+    #: The all-or-nothing verdict, for comparison against `score`.
+    binary: bool
+
+    @property
+    def proved(self) -> list[str]:
+        return [k for k, v in self.per_target.items() if v is Verdict.PROVED]
+
+
+def grade_partial(task: Task, blocks: "dict[str, str] | str",
+                  timeout: float = 120.0) -> PartialResult:
+    """Grade each target on its own, giving credit for the ones that check.
+
+    `grade` conjoins the kernel's per-declaration verdicts into a single bit.
+    That is the obvious way to turn a verifier into a reward, and it throws away
+    ordering information the kernel already computed: a response proving all but
+    one of a task's lemmas scores exactly what a response proving none scores.
+
+    Isolation matters here. Grading the model's whole file once and reading off
+    the individual `#print axioms` lines would not work, because one target's
+    compile error aborts elaboration and denies every other target a verdict --
+    the failure would spread, and the score would collapse back towards the
+    binary one. So each target is checked in a file where every *other* target
+    carries its reference proof. Each target is then judged on its own block,
+    and a target is credited only if it both compiles and passes the axiom
+    audit, which is the same bar `grade` applies to the whole set.
+
+    One Lean invocation per target, so this costs `len(task.targets)` times what
+    `grade` costs. That is the price of the finer signal.
+    """
+    if isinstance(blocks, str):
+        blocks = {task.targets[0]: blocks}
+    reference = task.reference_solution()
+
+    per: dict[str, Verdict] = {}
+    for t in task.targets:
+        candidate = blocks.get(t)
+        if not candidate or not candidate.strip():
+            per[t] = Verdict.COMPILE_ERROR
+            continue
+        lowered = candidate.lower()
+        if any(tok in lowered for tok in BANNED):
+            per[t] = Verdict.BANNED_SYNTAX
+            continue
+        mixed = {**reference, t: candidate}
+        # `grade` is reused rather than reimplemented so the acceptance bar for
+        # one target is the same code path as the bar for a whole task.
+        per[t] = grade(task, mixed, timeout=timeout).verdict
+
+    n = len(task.targets)
+    hits = sum(1 for v in per.values() if v is Verdict.PROVED)
+    return PartialResult(per_target=per, score=hits / n if n else 0.0,
+                         binary=hits == n)
+
+
 def grade_source(source: str, theorem_names: list[str],
                  timeout: float = 120.0) -> Result:
     """Grade a complete Lean file directly, outside the `Task` machinery.
