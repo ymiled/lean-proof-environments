@@ -518,3 +518,48 @@ The surviving pair now has explicit and distinct roles. `vsi` is the evidence
 source and cannot be renamed without breaking its imports. `noninterference` is
 the synthetic control, kept precisely because it *can* be renamed, which makes it
 the only place the contamination defence can be measured.
+
+## 2026-08-02 — kernel-truth extraction is blocked by async elaboration
+
+Attempted to replace the hand-written dependency graph with one read from the
+Lean environment, on the reasoning that a proof can mention a name it does not
+use and use a name it does not mention, so only the kernel knows the truth.
+
+**It does not work in Lean 4.32.** Theorem proof terms are not reachable through
+`ConstantInfo.value?` after the declaration is elaborated. Every route returns
+`none`:
+
+```lean
+theorem foo (n : Nat) : n = n := rfl
+theorem bar (n : Nat) : n = n := foo n
+
+#eval ...
+  env.find? `bar          -- value?.isSome = false
+  env.toKernelEnv.find?   -- value?.isSome = false
+  liftCoreM (getConstInfo `bar)  -- value?.isSome = false
+  liftCoreM (collectAxioms `bar) -- []
+```
+
+Two lines after `bar` is declared, its proof is already unreachable. Loading a
+compiled `.olean` through `withImportModules` gives the same answer, so this is
+not a staleness artifact of the in-memory map. Only `type.getUsedConstants`
+survives, which yields the signature's constants and nothing from the proof.
+Extraction therefore reported every theorem as dependency-free and max depth 1.
+
+Lean 4 elaborates theorem bodies asynchronously and does not retain the term
+once checked. Recovering it would mean hooking declaration-addition rather than
+inspecting the environment afterwards.
+
+**The better replacement was already in the repository.** `selftest` establishes
+a dependency by *necessity* rather than by mention: it compiles the rung with an
+ancestor absent from the file entirely and requires the proof to fail. That is a
+stronger criterion than reading the proof term, because a name can appear in a
+term without being load-bearing, and it is what actually caught the four
+fabricated edges. It costs one compile per edge, which is affordable at this
+corpus size and parallelises.
+
+The type-level half of the extractor does work, and is worth keeping: it
+distinguishes constants belonging to the theory from external ones, which is the
+supplied-versus-withheld split, and it identifies auto-generated declarations
+(`.rec`, `.casesOn`, `match_*`, projections) that must never become tasks. Of
+418 declarations in `Vsi.lean`, 248 are auto-generated and 46 are theorems.
