@@ -24,6 +24,7 @@ precise reason for rejection, which matters when reading transcripts.
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import tempfile
@@ -78,6 +79,41 @@ def _lean_binary() -> str:
     return str(candidate) if candidate.exists() else "lean"
 
 
+#: Toolchain the reference proofs are known to compile under. `elan` normally
+#: reads this from the nearest `lean-toolchain` walking up from the working
+#: directory -- which never works here, because every grading call compiles in a
+#: fresh temporary directory outside the repository. So the pin is read here and
+#: passed explicitly through the environment instead.
+#:
+#: This matters more for training than for a sweep. A rented GPU host installs
+#: whatever `elan` defaults to, and a proof that no longer compiles under a
+#: different toolchain does not announce itself: it is scored as a compile
+#: error, indistinguishable from the policy being wrong, and the reward signal
+#: degrades silently. `ELAN_TOOLCHAIN` also makes elan fetch the pinned version
+#: on first use, so a fresh host needs no setup beyond installing elan itself.
+TOOLCHAIN_FILE = Path(__file__).resolve().parents[2] / "lean-toolchain"
+
+
+def pinned_toolchain() -> "str | None":
+    """The contents of `lean-toolchain`, or None if the repo does not pin one."""
+    if not TOOLCHAIN_FILE.exists():
+        return None
+    pin = TOOLCHAIN_FILE.read_text().strip()
+    return pin or None
+
+
+def _lean_env() -> "dict[str, str] | None":
+    """Environment for a `lean` subprocess. None means inherit unchanged.
+
+    A non-elan `lean` on PATH ignores `ELAN_TOOLCHAIN`, so setting it is safe
+    even where it does nothing.
+    """
+    pin = pinned_toolchain()
+    if pin is None:
+        return None
+    return {**os.environ, "ELAN_TOOLCHAIN": pin}
+
+
 def grade(
     task: Task, blocks: "dict[str, str] | str", timeout: float = 120.0
 ) -> Result:
@@ -106,6 +142,7 @@ def grade(
                 capture_output=True,
                 text=True,
                 timeout=timeout,
+                env=_lean_env(),
             )
         except subprocess.TimeoutExpired:
             return Result(Verdict.TIMEOUT, detail=f"exceeded {timeout}s")
@@ -221,6 +258,7 @@ def grade_source(source: str, theorem_names: list[str],
             proc = subprocess.run(
                 [_lean_binary(), str(path)],
                 capture_output=True, text=True, timeout=timeout,
+                env=_lean_env(),
             )
         except subprocess.TimeoutExpired:
             return Result(Verdict.TIMEOUT, detail=f"exceeded {timeout}s")

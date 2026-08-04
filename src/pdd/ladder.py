@@ -90,12 +90,20 @@ class Family:
 
 # Identifier pools, kept free of any connotation that would hint at the
 # underlying mathematics.
+#
+# Every name here must also be unknown to Lean's prelude. `bind` was in the `fn`
+# pool and is not: it resolves to `Bind.bind`, so a renamed definition shadowed
+# by it turned `simp [bind]` into "Invalid simp theorem: Expected a proposition"
+# and made the *reference* proof fail to compile. The failure only appears on
+# seeds that happen to draw that name, so it hid until the sampler started
+# drawing from a wide seed range. `selftest` now checks the whole pool against
+# the prelude rather than relying on this comment.
 POOLS: dict[str, tuple[str, ...]] = {
     "type": ("Warp", "Quiver", "Strand", "Gleam", "Notch", "Spool", "Trellis",
              "Kern", "Plinth", "Vane"),
     "ctor": ("nil", "base", "root", "seed", "origin", "stem", "wisp", "flint",
              "cusp", "brim", "dart", "glint"),
-    "fn": ("melt", "braid", "fuse", "weave", "bind", "knit", "forge", "spin",
+    "fn": ("melt", "braid", "fuse", "weave", "knit", "forge", "spin",
            "twine", "clasp", "hew", "meld", "sift", "carve", "plait", "graft",
            "tamp", "hone", "quell", "drape"),
 }
