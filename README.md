@@ -1,47 +1,98 @@
 # Lean proof environments
 
-This repository builds a Lean 4 environment for studying how proof-task
-difficulty depends on dependency structure. It combines a machine-checked
-information-flow security development with a kernel-based grader, configurable
-withheld dependencies, and one-shot model evaluation.
+A Lean 4 reinforcement learning environment for program verification. A proof
+assistant supplies a reward that cannot be gamed: a candidate proof either
+type-checks against the kernel or it does not. Task difficulty is set by one
+parameter, how much of a lemma's dependency cone is withheld from the model.
 
-The main result is a reward-design correction. In small model runs, grading a
-task all-or-nothing made performance appear to collapse with depth. Regrading
-the same responses by per-target credit recovered substantial partial progress:
-on the active VSI corpus, a depth-4 cell changed from `0.00` to `0.46`. The
-result suggests that a proof kernel provides finer feedback than a binary task
-reward exposes, while the small sample limits claims about population-level
-scaling.
+## The result
 
-The formal corpus is a 784-line Lean 4 Volpano–Smith–Irvine-style security type
-system with subtyping, loops, and functions. Its soundness theorem is audited
-by Lean to depend only on `propext` and `Quot.sound`. Dependencies are recovered
-semantically by deletion tests rather than declared by hand.
+Grading a task all-or-nothing, the obvious way to turn a kernel into a reward,
+distorts the difficulty curve it appears to reveal. Under binary grading one
+model's pass rate fell `1.00, 0.75, 0.33, 0.00` across depths 1 to 4, a decay of
+1.74x per level. Regrading the identical responses by how many of each task's
+lemmas individually check gives `1.00, 0.92, 0.73, 0.73`, a decay of 1.12x. On
+the security corpus the same correction turns a cell reading `0.00`, previously
+described as a floor, into `0.46` with a bootstrap interval excluding zero.
 
-The project also tests compositional structure: in the monolithic condition,
-the model must reconstruct withheld ancestors; in the compositional condition,
-they are supplied as trusted interfaces. A separate synthetic family supports
-identifier renaming and contamination controls. The earlier Peano-arithmetic
-ladder is archived and is not part of the active benchmark.
+The kernel had that information throughout. Taking the conjunction of its
+per-declaration verdicts discarded an ordering it had already computed, and the
+resulting cell was indistinguishable from a genuine floor.
 
-## Artifacts
+## The formalization
 
-- [Paper](docs/result.pdf)
-- [Design history](docs/design-log.md)
-- [Lean formalization](lean/README.md)
-- [Results](results/)
+A Volpano-Smith-Irvine security type system with subtyping, while loops, and
+functions. 784 lines of Lean 4, no `sorry`, soundness audited to depend on
+`propext` and `Quot.sound` and nothing else. Semantics is fuel-indexed, so the
+theorem is termination-insensitive; expression agreement and command
+non-interference are proved simultaneously by induction on the fuel. The corpus
+is fourteen theories, 158 lemmas, 2,607 distinct tasks.
 
-## Verification
+## Why it is an environment, not a benchmark
+
+- **The reward is the kernel, audited.** Compilation, an allowed axiom set under
+  `#print axioms`, and no compiler-trusting tactics. The axiom check is not
+  redundant with compilation: a lemma once failed, Lean declared the theorem
+  anyway, and everything citing it compiled cleanly. The only trace, three lemmas
+  on, was `sorryAx`.
+- **Dependencies are measured.** An edge enters the graph by deleting a lemma and
+  observing that the proof fails, establishing necessity rather than mention.
+- **The model cannot change the question.** The harness emits the theorem
+  statement; the model supplies only the tactic block. A weaker statement cannot
+  be substituted.
+- **The environment estimates its own noise.** Depth-1 tasks produce
+  byte-identical files under both conditions, dispatched under different labels,
+  so the gap between arms measures run-to-run variance for free.
+
+## Training
 
 ```bash
-uv sync
-uv run python -m pdd.selftest --family vsi
-uv run python -m pdd.selftest --family noninterference
+# Rate of accepted targets at these settings
+uv run python -m pdd.sanity --model <served> --base-url http://localhost:8000/v1 \
+    --depths 1 2 --volume 3 --prompts 32 --group 8 --format-example
+
+uv run python -m pdd.expert_iter --model <served> --tasks 256 --samples 8
+uv run python -m pdd.train_grpo --model <base>          # CUDA
+uv run python -m pdd.evaluate --model <served> --split held-out
 ```
 
-Both self-tests should report zero failures before running a sweep. The grader
-requires successful compilation, an allowed Lean axiom set, and no banned
-compiler-trusting tactics.
+Measure accepted targets before choosing a method. At zero the methods stop
+differing: a group-relative method has no successful rollout to prefer, and
+expert iteration has nothing to filter. Any non-zero rate restores the second.
 
-The active benchmark contains the `vsi` and `noninterference` families. Larger
-model sweeps and within-depth identification experiments remain future work.
+Group variance is a secondary check and misleading alone. A reward with tiers
+below success varies across a group of uniformly failing rollouts, so a run looks
+healthy by that measure while exploring only the tiers below success.
+
+- **Tasks withhold several lemmas at once.** A single-target task scores in
+  `{0, 1}` however graded. `TaskSampler` draws admissible multi-lemma withheld
+  sets: a supplied lemma carries its own reference proof, so nothing it cites may
+  be withheld.
+- **Grading is pooled and content-addressed.** One `lean` call per target,
+  parallel across the whole batch rather than per rollout, cached on
+  `(theory, seed, target set, target, block)`.
+- **Curriculum runs on depth**, ending stages on evidence rather than a step
+  count: advance early once trailing reward clears a threshold, abort if groups
+  stay flat.
+- **Held-out evaluation after every stage**, per depth, split by theory rather
+  than by task since tasks over one theory share definitions and proofs.
+  `pass@k` uses the unbiased estimator.
+- **Expert iteration mines partial credit**: whole tasks solved, plus individual
+  lemmas proved inside failed tasks, each re-expressed as the single-target task
+  it would have been. Training split only, and every completion was generated by
+  the policy and accepted by the kernel, so no reference proof enters the
+  fine-tuning corpus.
+
+`--binary-reward` is the control arm.
+
+## Layout
+
+- [`lean/`](lean/) formalization and the extraction procedure
+- [`src/pdd/`](src/pdd/) environment, grader, reward, training loop
+- [`corpus/`](corpus/) generated theory specifications
+- [`results/`](results/) dependency graphs and recorded runs
+
+Everything except `pdd.train_grpo` runs on CPU; training extras are CUDA-only.
+Episodes are single-step: one tactic per action with intermediate proof states
+needs a persistent Lean server rather than one-shot compilation, which is the
+next version.
