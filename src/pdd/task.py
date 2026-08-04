@@ -170,8 +170,18 @@ class Task:
         """Known-good blocks for every target. Certifies the task is solvable."""
         return {k: self.instance.reference_proof_of(k) for k in self.targets}
 
-    def prompt(self) -> str:
-        """What the policy sees. No hint about any lemma's mathematical role."""
+    def prompt(self, format_example: bool = False) -> str:
+        """What the policy sees. No hint about any lemma's mathematical role.
+
+        `format_example` appends a worked example of the output *shape* -- not
+        of any proof -- and defaults to off so measurement prompts stay exactly
+        what they were. It exists for training. A multi-target response with no
+        `-- PROOF` markers cannot be split, so it scores as unparseable however
+        good its Lean is, and a small model that has not worked out the
+        convention will sit at that floor emitting nothing learnable. Charging
+        it for the convention is fair when measuring a frontier model and
+        useless when bootstrapping a 4B one.
+        """
         avail = ""
         if self.supplied:
             names = ", ".join(self.instance.names[k] for k in self.supplied)
@@ -186,6 +196,16 @@ class Task:
         )
         n = len(self.targets)
         plural = "s" if n > 1 else ""
+        shape = ""
+        if format_example:
+            names = [self.instance.names[k] for k in self.ordered_targets]
+            body = "\n".join(
+                f"{TARGET_MARKER}{name}\n  <tactics for {name}>" for name in names
+            )
+            shape = (
+                "\nYour reply must have exactly this shape, one marker line per "
+                f"goal:\n\n{body}\n"
+            )
         return (
             f"Prove the following {n} Lean 4 theorem{plural}.\n\n"
             "Context already in scope:\n\n"
@@ -202,6 +222,7 @@ class Task:
             "Earlier goals are in scope for later ones. No commentary, no code "
             "fences, no restatement of the theorem. Do not use `sorry`, "
             "`native_decide`, or declare axioms. Mathlib is not available.\n"
+            f"{shape}"
         )
 
 
