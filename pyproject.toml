@@ -5,6 +5,31 @@ description = "Measuring how model proof success decays with dependency depth in
 requires-python = ">=3.11"
 dependencies = ["matplotlib>=3.8", "anthropic>=0.40"]
 
+# Training extras are optional and CUDA-only. Everything else in the package --
+# the grader, the sampler, the reward, the parallel rollout collector and
+# `pdd.sanity` -- runs on CPU with the base dependencies, which is what keeps
+# environment development off the GPU.
+# Two things below are load-bearing rather than cautious.
+#
+# The `trl<=0.24.0` cap is unsloth's, not ours. That trl imports
+# `GuidedDecodingParams` from `vllm.sampling_params`, a name current vllm no
+# longer defines -- it is now `StructuredOutputsParams`. No pair of released
+# versions satisfies both, so `train_grpo._shim_vllm_guided_decoding` restores
+# the name at import time. trl only dereferences it under
+# `guided_decoding_regex`, which this project never sets.
+#
+# The `sys_platform == 'linux'` markers are required, not decorative. uv
+# resolves universally across every platform the project claims to support, so
+# without them it looks for a macOS solution for unsloth -- which has none, and
+# which fails the whole resolve on a machine that will never train.
+[project.optional-dependencies]
+train = [
+    "unsloth>=2026.8 ; sys_platform == 'linux'",
+    "trl>=0.18.2,<=0.24.0 ; sys_platform == 'linux'",
+    "datasets>=3.4.1,<4.4.0 ; sys_platform == 'linux'",
+    "vllm>=0.21 ; sys_platform == 'linux'",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

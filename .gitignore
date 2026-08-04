@@ -8,7 +8,10 @@ results/*.png
 
 *.pdf
 *.tex
+.DS_Store
 
 docs/
 runs/duplicates/
+runs/grpo/
+runs/ei/
 .scratch_lean/
