@@ -20,6 +20,7 @@ without any statement-comparison logic at all.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from enum import Enum
 
@@ -226,30 +227,96 @@ class Task:
         )
 
 
+_FENCE = re.compile(r"```(?:[a-zA-Z0-9_+-]*)\n(.*?)(?:```|\Z)", re.DOTALL)
+#: What a line may start with to count as announcing a section rather than
+#: mentioning a lemma in passing. A markdown bullet (`- `) is deliberately not
+#: here: prose bullets name lemmas constantly.
+_HEADER_LEAD = ("#", "**", "--")
+
+
+def _clean_block(block: str) -> str:
+    """Reduce one section of a response to the tactics it actually contains.
+
+    Two reductions, in order. First, if the section has fenced code, keep only
+    the fenced parts and drop the prose around them: a model that narrates its
+    proof and then states it is not making a formatting error worth punishing.
+    All fences are kept, not just the first, because a section may open a fence
+    per `have`. Second, drop a restated `theorem ... := by` header. Restating is
+    harmless -- the harness writes the real statement itself, so a restatement
+    can never widen or weaken the goal, it can only fail to compile -- but it
+    has to be removed rather than tolerated, since it would otherwise be
+    spliced *under* the header the harness already emitted.
+
+    Both reductions are no-ops on a response that is already a bare tactic
+    block, so this does not change how a well-behaved policy is scored.
+    """
+    fences = [m.group(1) for m in _FENCE.finditer(block)]
+    body = "\n".join(fences) if fences else block
+
+    lines = [ln for ln in body.splitlines() if ln.strip()]
+    if lines and lines[0].lstrip().startswith(("theorem", "lemma", "example")):
+        # A statement may wrap across several lines, so consume through the
+        # line that closes it rather than just the first one.
+        for i, ln in enumerate(lines):
+            if ln.rstrip().endswith(":= by") or ln.strip() == ":= by":
+                lines = lines[i + 1:]
+                break
+        else:
+            lines = lines[1:]
+    while lines and lines[0].strip() == ":= by":
+        lines.pop(0)
+    return "\n".join(lines)
+
+
+def _section_starts(text: str, task: Task) -> "dict[str, int]":
+    """Line index at which each target's section begins, however it is announced.
+
+    `-- PROOF <name>` is the convention the prompt asks for, and a model that
+    follows it is read exactly as before. But a model with its own strong
+    output format will not adopt it: DeepSeek-Prover-V2 announces each lemma as
+    `### Proof for \\`name\\`` and restates the theorem, and under a
+    marker-only parser 98% of its responses were scored unparseable without a
+    single Lean invocation. That measures markdown compliance, not proving.
+
+    So a section also starts at a heading line naming the target, or at the
+    target's own `theorem <name>` line. Only the earliest such line counts, and
+    a name mentioned in running prose does not start anything.
+    """
+    starts: dict[str, int] = {}
+    for key in task.targets:
+        name = task.instance.names[key]
+        for i, line in enumerate(text.splitlines()):
+            stripped = line.strip()
+            if name not in stripped:
+                continue
+            marker = (
+                stripped.startswith(TARGET_MARKER.strip())
+                and stripped[len(TARGET_MARKER.strip()):].strip() == name
+            )
+            heading = stripped.startswith(_HEADER_LEAD)
+            decl = stripped.startswith((f"theorem {name}", f"lemma {name}"))
+            if marker or heading or decl:
+                starts[key] = i
+                break
+    return starts
+
+
 def parse_blocks(text: str, task: Task) -> dict[str, str]:
     """Split a policy response into per-target tactic blocks.
 
     Falls back to treating the whole response as one block for single-target
     tasks, since a model given one goal often omits the marker.
     """
-    name_to_key = {task.instance.names[k]: k for k in task.targets}
+    lines = text.splitlines()
+    starts = _section_starts(text, task)
     out: dict[str, str] = {}
-    current: str | None = None
-    buf: list[str] = []
 
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith(TARGET_MARKER.strip()):
-            if current is not None:
-                out[current] = "\n".join(buf)
-            marker = stripped[len(TARGET_MARKER.strip()):].strip()
-            current = name_to_key.get(marker)
-            buf = []
-        elif current is not None:
-            buf.append(line)
-    if current is not None:
-        out[current] = "\n".join(buf)
+    if starts:
+        ordered = sorted(starts.items(), key=lambda kv: kv[1])
+        bounds = [i for _, i in ordered] + [len(lines)]
+        for (key, begin), end in zip(ordered, bounds[1:]):
+            out[key] = _clean_block("\n".join(lines[begin + 1:end]))
 
     if not out and len(task.targets) == 1:
-        out[task.targets[0]] = text
-    return out
+        out[task.targets[0]] = _clean_block(text)
+    return {k: v for k, v in out.items() if v.strip()}

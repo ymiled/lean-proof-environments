@@ -15,16 +15,12 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from typing import Protocol
 
-from .task import Task, parse_blocks
-
-_FENCE = re.compile(r"```(?:lean)?\s*\n(.*?)```", re.DOTALL)
-
+from .task import Task, _clean_block, parse_blocks
 
 class Policy(Protocol):
     name: str
@@ -40,22 +36,18 @@ def _strip_fences(text: str) -> str:
     Being lenient here is correct: fence-stripping is a formatting concern, and
     charging a model a failure for it would confound presentation with proving
     ability, which is the thing we are trying to measure.
+
+    This used to run over the whole response before it was split across
+    targets, which quietly kept only the *first* fenced block and threw the
+    rest away -- fine for a single goal, destructive for a model that opens one
+    fence per lemma. Splitting now happens first and the cleanup runs per
+    section, so this is only a thin alias over the shared implementation.
     """
-    match = _FENCE.search(text)
-    body = match.group(1) if match else text
-    lines = [ln for ln in body.splitlines() if ln.strip()]
-    # Drop a restated `theorem ... := by` header if one slipped through.
-    while lines and (
-        lines[0].lstrip().startswith(("theorem", "lemma", "example"))
-        or lines[0].strip() == ":= by"
-    ):
-        lines.pop(0)
-    return "\n".join(lines)
+    return _clean_block(text)
 
 
-#: Public name for the same thing. `rollout.py` parses raw completions that
-#: never went through a `Policy`, and needs the identical leniency so a
-#: response is scored the same whoever produced it.
+#: Public name for the same thing, kept because callers outside this module
+#: import it.
 strip_fences = _strip_fences
 
 
@@ -112,7 +104,7 @@ class AnthropicPolicy:
             messages=[{"role": "user", "content": task.prompt()}],
         )
         text = "".join(b.text for b in msg.content if b.type == "text")
-        return parse_blocks(_strip_fences(text), task)
+        return parse_blocks(text, task)
 
 
 class LocalPolicy:
@@ -188,4 +180,4 @@ class LocalPolicy:
             return list(pool.map(one, prompts))
 
     def act(self, task: Task) -> "dict[str, str]":
-        return parse_blocks(_strip_fences(self.complete(task.prompt())), task)
+        return parse_blocks(self.complete(task.prompt()), task)

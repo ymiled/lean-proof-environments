@@ -38,7 +38,6 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 
 from .grader import BANNED, Verdict, grade
-from .policy import strip_fences
 from .reward import DEFAULT, RewardConfig, Shaped, combine, unparseable
 from .task import Task, parse_blocks
 
@@ -179,7 +178,7 @@ class Grader:
             raise ValueError("tasks and responses must be the same length")
 
         start = time.perf_counter()
-        parsed = [parse_blocks(strip_fences(text), task)
+        parsed = [parse_blocks(text, task)
                   for task, text in zip(tasks, responses)]
 
         # Collect every distinct (task, target, block) the batch needs.
