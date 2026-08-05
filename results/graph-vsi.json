@@ -1,0 +1,111 @@
+{
+  "family": "vsi",
+  "method": "necessity",
+  "elapsed_s": 52.0,
+  "closure": {
+    "lowEq_refl": [],
+    "lowEq_symm": [],
+    "lowEq_trans": [],
+    "Lvl.le_refl": [],
+    "Lvl.le_trans": [],
+    "sub_base_inv": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "tyE_var_L": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "tyE_binop_L": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "evalE_agree_nocall": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv",
+      "tyE_binop_L",
+      "tyE_var_L"
+    ],
+    "secure_sub": [],
+    "confinement": [
+      "lowEq_refl",
+      "lowEq_trans",
+      "secure_sub"
+    ],
+    "tyE_call_L": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "sub_base_inv"
+    ],
+    "agree": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "confinement",
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "secure_sub",
+      "sub_base_inv",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "tyE_var_L"
+    ],
+    "noninterference_full": [
+      "Lvl.le_refl",
+      "Lvl.le_trans",
+      "agree",
+      "confinement",
+      "lowEq_refl",
+      "lowEq_symm",
+      "lowEq_trans",
+      "secure_sub",
+      "sub_base_inv",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "tyE_var_L"
+    ]
+  },
+  "direct": {
+    "lowEq_refl": [],
+    "lowEq_symm": [],
+    "lowEq_trans": [],
+    "Lvl.le_refl": [],
+    "Lvl.le_trans": [],
+    "sub_base_inv": [
+      "Lvl.le_refl",
+      "Lvl.le_trans"
+    ],
+    "tyE_var_L": [
+      "sub_base_inv"
+    ],
+    "tyE_binop_L": [
+      "sub_base_inv"
+    ],
+    "evalE_agree_nocall": [
+      "tyE_binop_L",
+      "tyE_var_L"
+    ],
+    "secure_sub": [],
+    "confinement": [
+      "lowEq_refl",
+      "lowEq_trans",
+      "secure_sub"
+    ],
+    "tyE_call_L": [
+      "sub_base_inv"
+    ],
+    "agree": [
+      "confinement",
+      "lowEq_symm",
+      "tyE_binop_L",
+      "tyE_call_L",
+      "tyE_var_L"
+    ],
+    "noninterference_full": [
+      "agree"
+    ]
+  }
+}

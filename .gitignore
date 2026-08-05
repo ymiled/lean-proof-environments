@@ -4,6 +4,10 @@ __pycache__/
 .venv/
 results/*.json
 results/*.png
+
+# Extracted dependency graphs are not results, they are inputs: pdd.families
+# reads them at import time, so a clone without them cannot import the package.
+!results/graph-*.json
 .lake/
 
 *.pdf

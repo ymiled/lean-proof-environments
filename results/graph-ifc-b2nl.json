@@ -1,0 +1,68 @@
+{
+ "family": "ifc-b2nl",
+ "method": "necessity",
+ "elapsed_s": 94.4,
+ "closure": {
+  "lowEq_refl": [],
+  "lowEq_symm": [],
+  "lowEq_trans": [],
+  "upd_pair": [],
+  "evalE_agree": [],
+  "assign_conf": [],
+  "conf_ite": [],
+  "confinement": [
+   "assign_conf",
+   "conf_ite",
+   "lowEq_refl",
+   "lowEq_trans"
+  ],
+  "assign_ni": [
+   "evalE_agree"
+  ],
+  "ite_high_ni": [
+   "assign_conf",
+   "conf_ite",
+   "confinement",
+   "lowEq_refl",
+   "lowEq_symm",
+   "lowEq_trans"
+  ],
+  "noninterference": [
+   "assign_conf",
+   "assign_ni",
+   "conf_ite",
+   "confinement",
+   "evalE_agree",
+   "ite_high_ni",
+   "lowEq_refl",
+   "lowEq_symm",
+   "lowEq_trans"
+  ]
+ },
+ "direct": {
+  "lowEq_refl": [],
+  "lowEq_symm": [],
+  "lowEq_trans": [],
+  "upd_pair": [],
+  "evalE_agree": [],
+  "assign_conf": [],
+  "conf_ite": [],
+  "confinement": [
+   "assign_conf",
+   "conf_ite",
+   "lowEq_refl",
+   "lowEq_trans"
+  ],
+  "assign_ni": [
+   "evalE_agree"
+  ],
+  "ite_high_ni": [
+   "confinement",
+   "lowEq_symm"
+  ],
+  "noninterference": [
+   "assign_ni",
+   "ite_high_ni"
+  ]
+ }
+}
