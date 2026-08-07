@@ -1,89 +1,50 @@
 # Lean proof environments
 
-A Lean 4 reinforcement learning environment for program verification. A proof
-assistant supplies a reward that cannot be gamed: a candidate proof either
-type-checks against the kernel or it does not. Task difficulty is set by one
-parameter, how much of a lemma's dependency cone is withheld from the model.
+A Lean 4 reinforcement learning environment for program verification. A candidate proof is checked by type-checking against tae kernel. Task difficulty is set by how much of a lemma's dependency cone is withheld from the model. We define a lemma's depth as the longest dependency chain ending at it: 1 with no dependencies, otherwise one more than the deepest lemma it needs.
 
 ## The result
 
-Grading a task all-or-nothing, the obvious way to turn a kernel into a reward,
-distorts the difficulty curve it appears to reveal. Under binary grading one
+Grading a task all-or-nothing, distorts the difficulty curve. Under binary grading one
 model's pass rate fell `1.00, 0.75, 0.33, 0.00` across depths 1 to 4, a decay of
 1.74x per level. Regrading the identical responses by how many of each task's
-lemmas individually check gives `1.00, 0.92, 0.73, 0.73`, a decay of 1.12x. On
-the security corpus the same correction turns a cell reading `0.00`, previously
-described as a floor, into `0.46` with a bootstrap interval excluding zero.
-
-The kernel had that information throughout. Taking the conjunction of its
-per-declaration verdicts discarded an ordering it had already computed, and the
-resulting cell was indistinguishable from a genuine floor.
+lemmas individually check gives `1.00, 0.92, 0.73, 0.73`, a decay of 1.12x. 
 
 ## The formalization
 
 A Volpano-Smith-Irvine security type system with subtyping, while loops, and
 functions. 784 lines of Lean 4, no `sorry`, soundness audited to depend on
-`propext` and `Quot.sound` and nothing else. Semantics is fuel-indexed, so the
-theorem is termination-insensitive; expression agreement and command
-non-interference are proved simultaneously by induction on the fuel. The corpus
+`propext` and `Quot.sound`. The corpus
 is fourteen theories, 158 lemmas, 2,607 distinct tasks.
 
-## Why it is an environment, not a benchmark
+## The environment
 
-- **The reward is the kernel, audited.** Compilation, an allowed axiom set under
-  `#print axioms`, and no compiler-trusting tactics. The axiom check is not
-  redundant with compilation: a lemma once failed, Lean declared the theorem
-  anyway, and everything citing it compiled cleanly. The only trace, three lemmas
-  on, was `sorryAx`.
+- **The reward is the kernel.** Compilation, an allowed axiom set under
+  `#print axioms`. The axiom check is not
+  redundant with compilation because a lemma could fail, and Lean could still declare the theorem
+  anyway, and everything citing it could still compiled.
 - **Dependencies are measured.** An edge enters the graph by deleting a lemma and
   observing that the proof fails, establishing necessity rather than mention.
 - **The model cannot change the question.** The harness emits the theorem
   statement; the model supplies only the tactic block. A weaker statement cannot
   be substituted.
-- **The environment estimates its own noise.** Depth-1 tasks produce
-  byte-identical files under both conditions, dispatched under different labels,
-  so the gap between arms measures run-to-run variance for free.
 
 ## Training
 
-```bash
-# Rate of accepted targets at these settings
-uv run python -m pdd.sanity --model <served> --base-url http://localhost:8000/v1 \
-    --depths 1 2 --volume 3 --prompts 32 --group 8 --format-example
+GRPO against the kernel reward, LoRA on a 7B prover, one 24 GB GPU, about four
+hours. Training saw depths 1 and 2. Evaluation is on four theories held out
+by theory, so nothing in the evaluation shares a definition or a proof with
+anything trained on.
 
-uv run python -m pdd.expert_iter --model <served> --tasks 256 --samples 8
-uv run python -m pdd.train_grpo --model <base>          # CUDA
-uv run python -m pdd.evaluate --model <served> --split held-out
-```
+| depth | pass@1 | per-target score |
+| --- | --- | --- |
+| 1 | 0.021 -> 0.083 | 0.056 -> 0.368 |
+| 2 | 0.000 -> 0.000 | 0.049 -> 0.188 |
+| 3 | 0.000 -> 0.000 | 0.076 -> 0.188 |
+| 4 | 0.000 -> 0.000 | 0.028 -> 0.069 |
+| all | 0.005 -> 0.021 | 0.052 -> 0.203 |
 
-Measure accepted targets before choosing a method. At zero the methods stop
-differing: a group-relative method has no successful rollout to prefer, and
-expert iteration has nothing to filter. Any non-zero rate restores the second.
+Depths 3 and 4 improved without being trained on.
 
-Group variance is a secondary check and misleading alone. A reward with tiers
-below success varies across a group of uniformly failing rollouts, so a run looks
-healthy by that measure while exploring only the tiers below success.
-
-- **Tasks withhold several lemmas at once.** A single-target task scores in
-  `{0, 1}` however graded. `TaskSampler` draws admissible multi-lemma withheld
-  sets: a supplied lemma carries its own reference proof, so nothing it cites may
-  be withheld.
-- **Grading is pooled and content-addressed.** One `lean` call per target,
-  parallel across the whole batch rather than per rollout, cached on
-  `(theory, seed, target set, target, block)`.
-- **Curriculum runs on depth**, ending stages on evidence rather than a step
-  count: advance early once trailing reward clears a threshold, abort if groups
-  stay flat.
-- **Held-out evaluation after every stage**, per depth, split by theory rather
-  than by task since tasks over one theory share definitions and proofs.
-  `pass@k` uses the unbiased estimator.
-- **Expert iteration mines partial credit**: whole tasks solved, plus individual
-  lemmas proved inside failed tasks, each re-expressed as the single-target task
-  it would have been. Training split only, and every completion was generated by
-  the policy and accepted by the kernel, so no reference proof enters the
-  fine-tuning corpus.
-
-`--binary-reward` is the control arm.
 
 ## Layout
 
@@ -92,7 +53,4 @@ healthy by that measure while exploring only the tiers below success.
 - [`corpus/`](corpus/) generated theory specifications
 - [`results/`](results/) dependency graphs and recorded runs
 
-Everything except `pdd.train_grpo` runs on CPU; training extras are CUDA-only.
-Episodes are single-step: one tactic per action with intermediate proof states
-needs a persistent Lean server rather than one-shot compilation, which is the
-next version.
+Everything except `pdd.train_grpo` runs on CPU.
