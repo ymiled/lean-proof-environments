@@ -2,13 +2,22 @@
 name = "pdd"
 version = "0.1.0"
 description = "Measuring how model proof success decays with dependency depth in Lean 4"
-# The upper bound is the training stack's, not ours. vllm pulls `xgrammar`,
-# which ships wheels for cp311 and cp312 only and has no source distribution, so
-# a fresh `uv sync` on a GPU host -- where uv picks the newest interpreter it can
-# find -- resolves to a Python that cannot install it. Nothing in this package
-# needs 3.13, and the CPU-only half would happily run on it, but a split bound
-# would mean the environment and the trainer disagreed about the interpreter.
-requires-python = ">=3.11,<3.13"
+# Both bounds are the training stack's, not ours; nothing in this package needs
+# a feature newer than 3.11. They exist because `xgrammar`, which vllm pulls in,
+# publishes wheels for one Python ABI at a time and no source distribution.
+#
+# The upper bound: uv picks the newest interpreter it can find on a fresh GPU
+# host, which resolved to 3.14, for which no xgrammar wheel exists.
+#
+# The lower bound is the less obvious one. A lock spanning 3.11 and 3.12 has to
+# name a single xgrammar version installable under both, and the newest such
+# version is 0.2.4 -- which ships cp311 wheels only, so `uv sync` on a 3.12
+# interpreter then fails on the very package the range was widened to
+# accommodate. Pinning the lock to one minor version lets it resolve a current
+# xgrammar. The CPU-only half of this package would run happily on 3.11, but a
+# split bound would mean the environment and the trainer disagreed about the
+# interpreter, which is worse than requiring one.
+requires-python = ">=3.12,<3.13"
 dependencies = ["matplotlib>=3.8", "anthropic>=0.40"]
 
 # Training extras are optional and CUDA-only. Everything else in the package --
@@ -46,8 +55,16 @@ train = [
 # reported against the training extra and reads as though linux were broken,
 # which it is not -- linux resolves cleanly at both 3.11 and 3.12.
 #
-# Naming the two platforms that exist confines the resolution to them.
-environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
+# Naming the two platforms that exist confines the resolution to them. The
+# architecture is part of that: left unconstrained, the lock is free to satisfy
+# linux with an aarch64-only xgrammar build, which then cannot be installed on
+# the x86_64 host it was resolved for. `required-environments` is what forces
+# uv to find wheels that actually work there rather than any wheel at all.
+environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'darwin'",
+]
+required-environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
 
 [build-system]
 requires = ["hatchling"]
