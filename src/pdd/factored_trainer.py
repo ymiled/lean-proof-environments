@@ -56,7 +56,35 @@ LOGP_METHODS = (
 
 
 def preflight(base_cls) -> str:
-    """Fail now, with instructions, rather than during training."""
+    """Fail now, with instructions, rather than during training.
+
+    The unsloth check is first because it is the one that was missed, at the
+    cost of two and a half hours of rented GPU. Unsloth does not call trl's
+    `GRPOTrainer.compute_loss` at all: on import it generates and compiles its
+    own `UnslothGRPOTrainer` into `unsloth_compiled_cache/`, whose
+    `grpo_compute_loss` does `coef_1 * advantages` with `coef_1` built at a
+    padded width of its own choosing. Subclassing trl's trainer therefore looks
+    correct, passes every attribute check below, and then multiplies a
+    `(B, 768)` advantage against a `(B, 864)` ratio inside a torch.compile
+    graph. The failure surfaces as a fake-tensor shape error from dynamo, at the
+    first optimizer step, which is after expert iteration has already run.
+
+    There is no version of this that works by subclassing, so the check refuses
+    rather than warning.
+    """
+    import sys
+
+    if "unsloth" in sys.modules:
+        raise RuntimeError(
+            "unsloth is loaded, and it replaces trl's GRPO loss with its own "
+            "compiled UnslothGRPOTrainer rather than calling the method "
+            "pdd.factored_trainer overrides. Per-token advantages would be "
+            "multiplied against a ratio of a different width and fail inside a "
+            "torch.compile graph at the first optimizer step. Re-run with "
+            "--factored off; per-target credit is still in the reward, only "
+            "the per-token attribution is lost."
+        )
+
     missing = [m for m in REQUIRED if not hasattr(base_cls, m)]
     logp = next((m for m in LOGP_METHODS if hasattr(base_cls, m)), None)
     if missing or logp is None:

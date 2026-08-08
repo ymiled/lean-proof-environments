@@ -553,6 +553,17 @@ def main() -> None:
                          "earlier runs; 'theory' holds out the hand-written "
                          "formalization and is the one to quote for transfer")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--init-adapter", default=None,
+                    help="start from a LoRA adapter saved by an earlier run "
+                         "instead of a freshly initialised one. What makes a "
+                         "crashed run resumable: expert iteration is the "
+                         "expensive stage and its adapter is written before "
+                         "GRPO begins")
+    ap.add_argument("--resume-buffer", default=None,
+                    help="load a verified.jsonl written by an earlier run into "
+                         "the proof buffer. Those proofs were accepted by the "
+                         "kernel and are still accepted by it, so re-earning "
+                         "them costs GPU time and buys nothing")
 
     ei = ap.add_argument_group(
         "expert iteration",
@@ -650,6 +661,9 @@ def main() -> None:
 
         buffer = ProofBuffer(capacity=args.buffer_capacity)
         print("distillation: banking verified proofs, SFT between stages")
+        if args.resume_buffer:
+            n = buffer.load(Path(args.resume_buffer))
+            print(f"resumed {n} verified proofs from {args.resume_buffer}")
 
     if args.stages:
         defaults = Stage(depths=None, volume=3, steps=0)
@@ -692,6 +706,15 @@ def main() -> None:
         use_gradient_checkpointing="unsloth",
         random_state=args.seed,
     )
+    if args.init_adapter:
+        # `load_adapter` on the live peft model rather than reloading the base:
+        # the vLLM engine is already colocated with these weights.
+        adapter = Path(args.init_adapter)
+        if not (adapter / "adapter_model.safetensors").exists():
+            raise SystemExit(f"no adapter_model.safetensors under {adapter}")
+        model.load_adapter(str(adapter), adapter_name="default",
+                           is_trainable=True)
+        print(f"resumed policy from {adapter}")
 
     families = all_families(include_corpus=args.corpus)
     train_families, eval_families = split_families(families, args.split)

@@ -98,6 +98,36 @@ class ProofBuffer:
 
     # -- persistence -------------------------------------------------------
 
+    def load(self, path: Path) -> int:
+        """Read back a corpus this class wrote. Returns how many were novel.
+
+        Deduplication is what makes this safe to call on top of a live buffer:
+        proofs already present are counted as duplicates rather than repeated.
+        Nothing is re-verified, and nothing needs to be. Every row was accepted
+        by the kernel when it was written, the kernel is deterministic, and the
+        toolchain is pinned, so acceptance does not expire.
+        """
+        path = Path(path)
+        if not path.exists():
+            raise SystemExit(f"no proof corpus at {path}")
+        rows = []
+        for line in path.read_text().splitlines():
+            if not line.strip():
+                continue
+            d = json.loads(line)
+            messages = d["messages"]
+            rows.append(
+                Example(
+                    prompt=messages[0]["content"],
+                    completion=messages[1]["content"],
+                    source=d.get("source", "whole"),
+                    depth=d.get("depth", 0),
+                    family=d.get("family", "?"),
+                    targets=d.get("targets", 1),
+                )
+            )
+        return self.extend(rows)
+
     def save(self, path: Path) -> Path:
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
