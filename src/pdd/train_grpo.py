@@ -559,6 +559,12 @@ def main() -> None:
                          "crashed run resumable: expert iteration is the "
                          "expensive stage and its adapter is written before "
                          "GRPO begins")
+    ap.add_argument("--distil-first", action="store_true",
+                    help="fine-tune on the proof buffer before the first "
+                         "stage, rather than only between stages. What a "
+                         "resumed buffer is for: the proofs are already banked, "
+                         "so the policy should start from them rather than "
+                         "spend a stage rediscovering what it already knows")
     ap.add_argument("--resume-buffer", default=None,
                     help="load a verified.jsonl written by an earlier run into "
                          "the proof buffer. Those proofs were accepted by the "
@@ -792,6 +798,16 @@ def main() -> None:
             stop_score=args.ei_stop_score,
             format_abort=args.format_abort,
         )
+
+    if args.distil_first and buffer is not None and len(buffer) >= 32:
+        print(f"\n=== supervised pass over {len(buffer)} banked proofs ===")
+        record = distil_buffer(
+            model, tokenizer, buffer, steps=args.distil_steps,
+            lr=args.distil_lr, batch=args.batch, max_seq=args.max_seq,
+            out_dir=out / "distil-first",
+        )
+        if record is not None:
+            distils.append({"stage": -1, **record})
 
     bootstrap_record = None
     if args.ei_rounds > 0:

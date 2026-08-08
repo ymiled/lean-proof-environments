@@ -50,6 +50,17 @@ ssh_ "cd $REMOTE/$RUN 2>/dev/null && ls -d stage*/ bootstrap/ 2>/dev/null" | tr 
   for f in verified.jsonl log.json; do
     ssh_ "cat $REMOTE/$RUN/$d$f" > "$OUT/$d$f" 2>/dev/null && echo "  got $d$f" || rm -f "$OUT/$d$f"
   done
+  # The adapter, which is the trained policy. Omitting this once already cost a
+  # run's weights: the proof corpus was saved, the 150 MB of LoRA was not, and
+  # the instance was destroyed before anyone noticed. The corpus can rebuild the
+  # adapter by re-running SFT, but only at the price of another rental.
+  if ssh_ "test -f $REMOTE/$RUN/${d}adapter/adapter_model.safetensors" 2>/dev/null; then
+    mkdir -p "$OUT/${d}adapter"
+    for f in adapter_model.safetensors adapter_config.json; do
+      ssh_ "cat $REMOTE/$RUN/${d}adapter/$f" > "$OUT/${d}adapter/$f" 2>/dev/null \
+        && echo "  got ${d}adapter/$f" || rm -f "$OUT/${d}adapter/$f"
+    done
+  fi
 done
 
 # The readable part of the training log: everything that is not a progress bar.
