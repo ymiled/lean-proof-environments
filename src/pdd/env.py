@@ -34,9 +34,27 @@ from .ladder import Family, Instance
 from .reward import RewardConfig, Shaped, binary_reward, shaped_reward
 from .task import Condition, Task
 
-#: Generated theories reserved for evaluation, by name prefix. Holding out a
-#: whole bucket keeps the split structural rather than cosmetic.
-HELD_OUT_PREFIXES = ("ifc-b3",)
+#: Named held-out splits, by theory-name prefix.
+#:
+#: `binops` holds out the widest generated bucket. It is the *weak* split and
+#: should be described as such: `ifc-b3*` shares all eleven lemma keys, all
+#: eleven statements and ten of eleven reference proofs with the trained
+#: `ifc-b1*`, differing only in how many binary operators the expression
+#: language has. Passing it demonstrates robustness to one more induction case
+#: under fresh renaming, and nothing about transfer to new mathematics.
+#:
+#: `theory` holds out `vsi`, the hand-written 784-line formalization, whose
+#: definitions, lemma set and proof structure are shared with nothing in the
+#: `ifc-*` grid. This is the split to quote when claiming generalization.
+SPLITS: "dict[str, tuple[str, ...]]" = {
+    "binops": ("ifc-b3",),
+    "theory": ("vsi",),
+    "both": ("ifc-b3", "vsi"),
+}
+
+#: Backwards-compatible default. Kept as the weak split so previously recorded
+#: numbers stay comparable; new claims should pass `split="theory"`.
+HELD_OUT_PREFIXES = SPLITS["binops"]
 
 
 def all_families(include_corpus: bool = True) -> dict[str, Family]:
@@ -56,14 +74,24 @@ def all_families(include_corpus: bool = True) -> dict[str, Family]:
 
 
 def split_families(
-    families: dict[str, Family], held_out: tuple[str, ...] = HELD_OUT_PREFIXES
+    families: dict[str, Family],
+    held_out: "tuple[str, ...] | str" = HELD_OUT_PREFIXES,
 ) -> tuple[dict[str, Family], dict[str, Family]]:
     """Partition by name prefix into (train, eval).
 
     Splitting by *theory* rather than by task keeps the two sides structurally
     independent. Splitting by task would leak: two withheld sets over one theory
     share their definitions, their supplied lemmas and most of their proofs.
+
+    Accepts a key of `SPLITS` or an explicit tuple of prefixes. Which one you
+    pick decides what a held-out number is evidence *for*; see `SPLITS`.
     """
+    if isinstance(held_out, str):
+        if held_out not in SPLITS:
+            raise ValueError(
+                f"unknown split {held_out!r}; expected one of {sorted(SPLITS)}"
+            )
+        held_out = SPLITS[held_out]
     train: dict[str, Family] = {}
     evalset: dict[str, Family] = {}
     for name, fam in families.items():

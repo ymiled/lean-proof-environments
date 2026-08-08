@@ -91,6 +91,105 @@ def check_pools(verbose: bool = True) -> int:
     return len(collisions)
 
 
+def check_dynamic(verbose: bool = True) -> int:
+    """Dynamic sampling must actually retire prompts and keep informative ones.
+
+    Needs no Lean and no GPU: the rollouts are fabricated, since what is under
+    test is the bookkeeping, not the kernel. It is here rather than left to a
+    training run because its failure mode is invisible from a training log. A
+    ledger that never influences the dataset produces exactly the curves a
+    working one produces, only worse, and the first version of `pdd.dynamic`
+    failed this way -- it redrew prompts at random each cycle, so by the time a
+    prompt had a verdict it had already been discarded, and the filter applied
+    to nothing. The pool exists to fix that; this asserts that it does.
+    """
+    import random
+
+    from .dynamic import PromptPool, curate, prompt_id
+    from .env import TaskSampler, all_families, split_families
+    from .reward import Shaped
+    from .rollout import Rollout
+
+    def tokenize(text):  # every prompt fits; the limit is not what is under test
+        return {"input_ids": text.split()}
+
+    def fake(task, per):
+        proved = sum(1 for v in per.values() if v == "proved")
+        n = len(task.targets)
+        return Rollout(
+            task=task, text="", blocks={},
+            shaped=Shaped(reward=proved / n, score=proved / n,
+                          binary=proved == n, per_target=per,
+                          n_targets=n, n_proved=proved),
+        )
+
+    train, _ = split_families(all_families(include_corpus=True))
+    sampler = TaskSampler(families=train, depths=(1, 2), volume=3,
+                          rng=random.Random(0))
+    pool = PromptPool()
+    pool.reconfigure(((1, 2), 3))
+    def cycle(count: int, seed: int):
+        return curate(
+            sampler, pool, count=count, tokenizer=tokenize,
+            max_prompt_tokens=10**9, oversample=6, rng=random.Random(seed),
+        )
+
+    first = cycle(32, 0)
+    failures = 0
+
+    def want(condition: bool, message: str) -> int:
+        if condition:
+            return 0
+        if verbose:
+            print(f"[FAIL] dynamic sampling: {message}")
+        return 1
+
+    failures += want(len(first.tasks) == 32, "cold pass returned a short dataset")
+    failures += want(first.pool == 192, f"pool is {first.pool}, expected 192")
+
+    # Four prompts every rollout fails flat; four whose per-target outcomes
+    # differ between rollouts even though their totals match.
+    group = 4
+    rollouts = []
+    for i, task in enumerate(first.tasks[:8]):
+        for j in range(group):
+            if i < 4:
+                per = {k: "compile_error" for k in task.targets}
+            else:
+                per = {k: ("proved" if (j + n) % 2 else "compile_error")
+                       for n, k in enumerate(task.targets)}
+            rollouts.append(fake(task, per))
+    pool.ledger.observe(rollouts, group)
+
+    verdicts = [pool.ledger.verdict(prompt_id(t)) for t in first.tasks[:8]]
+    failures += want(verdicts[:4] == ["hopeless"] * 4,
+                     f"flat-zero prompts judged {verdicts[:4]}")
+    failures += want(verdicts[4:] == ["informative"] * 4,
+                     f"prompts with per-target spread judged {verdicts[4:]}")
+
+    hopeless = {prompt_id(t) for t in first.tasks[:4]}
+    informative = {prompt_id(t) for t in first.tasks[4:8]}
+    second = cycle(32, 1)
+    chosen = {prompt_id(t) for t in second.tasks}
+    failures += want(second.retired == 4, f"retired {second.retired}, expected 4")
+    failures += want(not (chosen & hopeless), "a retired prompt came back")
+    failures += want(chosen >= informative,
+                     "an informative prompt was not selected")
+
+    # A stage change invalidates the prompts but not what was learned of them.
+    pool.reconfigure(((3, 4), 4))
+    failures += want(pool.tasks == {}, "pool survived a difficulty change")
+    failures += want(
+        pool.ledger.verdict(next(iter(informative))) == "informative",
+        "the ledger was cleared along with the pool",
+    )
+
+    if verbose:
+        print(f"dynamic sampling: {8 - failures}/8 properties hold"
+              if failures else "dynamic sampling: retires, reserves, resets")
+    return failures
+
+
 def run(family_name: str = DEFAULT, seed: int = 0, verbose: bool = True) -> int:
     family = FAMILIES[family_name]
     inst = Instance.sample(family, seed)
@@ -151,9 +250,16 @@ def main() -> None:
                     help="check seeds `seed` .. `seed + seeds - 1`. Renaming "
                          "faults are seed-dependent, so one seed proves little")
     ap.add_argument("--skip-pools", action="store_true")
+    ap.add_argument("--only-dynamic", action="store_true",
+                    help="run just the dynamic-sampling check, which needs "
+                         "neither Lean nor a GPU")
     args = ap.parse_args()
 
+    if args.only_dynamic:
+        sys.exit(1 if check_dynamic() else 0)
+
     failures = check_toolchain()
+    failures += check_dynamic()
     if not args.skip_pools:
         failures += check_pools()
     for s in range(args.seed, args.seed + args.seeds):

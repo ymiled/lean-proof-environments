@@ -301,6 +301,39 @@ def _section_starts(text: str, task: Task) -> "dict[str, int]":
     return starts
 
 
+def section_spans(text: str, task: Task) -> "dict[str, tuple[int, int]]":
+    """Character range of each target's section within the raw response.
+
+    Needed to give a target its own advantage during training. A rollout that
+    proves one lemma and fails another currently pushes every token by the same
+    scalar, so the tokens of the *correct* proof are penalised for the failure
+    beside them. Knowing which characters belong to which target is what lets
+    the credit be split.
+
+    Boundaries are the section starts `parse_blocks` already finds, so a target
+    owns its heading line through to the start of the next target. Text before
+    the first heading belongs to nobody and stays unassigned, which is right:
+    a preamble is not evidence about any particular lemma.
+    """
+    lines = text.splitlines(keepends=True)
+    offsets: list[int] = []
+    pos = 0
+    for line in lines:
+        offsets.append(pos)
+        pos += len(line)
+    offsets.append(pos)
+
+    starts = _section_starts(text, task)
+    if not starts:
+        return {}
+    ordered = sorted(starts.items(), key=lambda kv: kv[1])
+    bounds = [i for _, i in ordered] + [len(lines)]
+    return {
+        key: (offsets[begin], offsets[end])
+        for (key, begin), end in zip(ordered, bounds[1:])
+    }
+
+
 def parse_blocks(text: str, task: Task) -> dict[str, str]:
     """Split a policy response into per-target tactic blocks.
 
