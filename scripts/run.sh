@@ -79,13 +79,13 @@ ARGS=(
   # -- cold start ---------------------------------------------------------
   # Without this GRPO begins at a pass rate low enough that every group is flat
   # and every update is zero, which is what the first measured run did.
-  --ei-rounds 3
-  --ei-tasks 192
+  --ei-rounds "${EI_ROUNDS:-3}"
+  --ei-tasks "${EI_TASKS:-192}"
   --ei-samples 8
   --ei-depths 1 2
   --ei-volume 3
   --ei-temperature 1.2
-  --ei-sft-steps 150
+  --ei-sft-steps "${EI_SFT_STEPS:-150}"
   --ei-sft-lr 1e-5
   --ei-stop-score 0.55
 
@@ -102,9 +102,17 @@ ARGS=(
   --distil-lr 1e-5
 
   # -- held-out measurement ----------------------------------------------
-  --eval-tasks 24
-  --eval-group 4
+  # This is what the benchmark reports, and its sample size is what decides
+  # whether the result says anything. 24 tasks at group 4 puts a 95% interval
+  # of [0.000, 0.793] around a zero, which is compatible with almost any claim.
+  # Raise both for a run whose numbers are meant to be quoted; the cost is
+  # generation, and Lean grading of the eval set is minutes on a many-core host.
+  --eval-tasks "${EVAL_TASKS:-24}"
+  --eval-group "${EVAL_GROUP:-4}"
 )
+
+# A longer curriculum than DEFAULT_CURRICULUM, for a run with the budget for it.
+[[ -n "${STAGES:-}" ]] && ARGS+=(--stages "$STAGES")
 
 [[ "$FOURBIT" == "1" ]] && ARGS+=(--load-in-4bit)
 

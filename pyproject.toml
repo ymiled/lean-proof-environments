@@ -2,7 +2,13 @@
 name = "pdd"
 version = "0.1.0"
 description = "Measuring how model proof success decays with dependency depth in Lean 4"
-requires-python = ">=3.11"
+# The upper bound is the training stack's, not ours. vllm pulls `xgrammar`,
+# which ships wheels for cp311 and cp312 only and has no source distribution, so
+# a fresh `uv sync` on a GPU host -- where uv picks the newest interpreter it can
+# find -- resolves to a Python that cannot install it. Nothing in this package
+# needs 3.13, and the CPU-only half would happily run on it, but a split bound
+# would mean the environment and the trainer disagreed about the interpreter.
+requires-python = ">=3.11,<3.13"
 dependencies = ["matplotlib>=3.8", "anthropic>=0.40"]
 
 # Training extras are optional and CUDA-only. Everything else in the package --
