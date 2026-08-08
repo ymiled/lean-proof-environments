@@ -26,8 +26,22 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-export MODEL="${MODEL:-unsloth/Qwen3-8B}"
-export FOURBIT="${FOURBIT:-1}"
+# Not a hybrid reasoning model, and that is the reason for the choice rather
+# than size. `Qwen3-8B` is Qwen3's hybrid: its chat template takes an
+# `enable_thinking` flag which defaults to on, so with `add_generation_prompt`
+# and nothing disabling it the model opens a <think> block. At a 768-token
+# completion budget it never leaves that block, emits no `-- PROOF` marker, and
+# every response grades as unparseable. Measured: 2 proved out of 6144 target
+# attempts, a mean score of 0.000 where the base rate is 0.052.
+#
+# The failure is silent in every number a training log prints, because a policy
+# that cannot format looks exactly like a policy that cannot prove. `-2507`
+# instruct checkpoints have no thinking mode and need no such handling. Before
+# substituting a model here, check `enable_thinking` in its chat template; if it
+# is present, either raise --max-completion-tokens well past the reasoning
+# budget or disable thinking on both the training and sampling paths.
+export MODEL="${MODEL:-unsloth/Qwen3-4B-Instruct-2507}"
+export FOURBIT="${FOURBIT:-0}"
 export SPLIT="${SPLIT:-binops}"
 
 # Deeper cold start. Every extra round is more kernel-verified data for the

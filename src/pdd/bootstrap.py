@@ -43,11 +43,19 @@ split, so the evaluation stays honest across rounds.
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 from .expert_iter import run_round
 from .replay import ProofBuffer
-from .task import Task
+from .task import TARGET_MARKER, Task
+
+
+@dataclass
+class Probe:
+    """Holds one raw completion, so a failed round can show its evidence."""
+
+    text: str = ""
 
 
 def draw_tasks(
@@ -123,6 +131,7 @@ def bootstrap(
 
     for rnd in range(rounds):
         print(f"\n--- expert iteration round {rnd} ---")
+        probe = Probe()
         # vLLM serves an adapter by path, not from memory, so the current
         # weights have to hit disk before they can be sampled from. Round 0
         # writes the freshly initialised adapter, whose B matrices are zero and
@@ -151,6 +160,7 @@ def bootstrap(
             samples=samples,
             format_example=format_example,
             drawn=drawn,
+            keep=probe,
         )
         fresh = buffer.extend(examples)
         summary.update({"round": rnd, "fresh": fresh, "banked": len(buffer),
@@ -162,7 +172,25 @@ def bootstrap(
         print(f"  mined        {summary['examples']} "
               f"({summary['whole']} whole, {summary['target']} per-target), "
               f"{fresh} new")
+        print(f"  verdicts     {summary['verdicts']}")
         print(f"  buffer       {buffer.summary()}")
+
+        # A round that mines nothing has two very different causes and the
+        # summary above cannot tell them apart: the policy writing wrong Lean,
+        # or the policy never emitting a parseable block at all. The second is
+        # not a proving failure and no amount of further training fixes it --
+        # a reasoning model whose completion budget is consumed inside its own
+        # <think> block scores exactly like a model that cannot prove anything.
+        # So print the evidence rather than a number that looks like weakness.
+        if summary["examples"] < max(8, samples) and probe.text:
+            share = summary["verdicts"].get("unparseable", 0)
+            total = max(1, sum(summary["verdicts"].values()))
+            print(f"\n  !! mined almost nothing. {share}/{total} target "
+                  f"verdicts were unparseable. A sample response follows; if it "
+                  f"has no {TARGET_MARKER!r} marker, the problem is the output "
+                  f"format or the completion budget, not proving ability.\n")
+            body = probe.text[:600].replace("\n", "\n  | ")
+            print(f"  | {body}\n  [{len(probe.text)} chars total]\n")
 
         if len(buffer) < 32:
             print("  too few verified proofs to fine-tune on; sampling again")

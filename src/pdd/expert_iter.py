@@ -153,17 +153,26 @@ def run_round(
     samples: int,
     format_example: bool,
     drawn: "list[Task] | None" = None,
+    keep=None,
 ) -> tuple[list[Example], dict]:
     """Sample, grade, mine. Returns the examples and a summary of the round.
 
     `drawn` supplies the tasks instead of drawing them from `sampler`, for a
     caller that must filter them first -- a GPU host has a context limit that
     the sampler knows nothing about.
+
+    `keep`, if given, has one raw completion parked on its `.text`. Verdict
+    counts say how a round failed only when the response was a proof attempt at
+    all; when the policy emitted no parseable block the counts say
+    `unparseable` and nothing about why, so the caller needs the text itself.
     """
     drawn = sampler.batch(tasks) if drawn is None else list(drawn)
     flat = [t for t in drawn for _ in range(samples)]
     prompts = [t.prompt(format_example=format_example) for t in flat]
-    rollouts = grader.grade_batch(flat, complete(prompts))
+    responses = complete(prompts)
+    if keep is not None and responses:
+        keep.text = responses[0]
+    rollouts = grader.grade_batch(flat, responses)
     examples = mine(rollouts, format_example)
 
     verdicts: Counter[str] = Counter()
