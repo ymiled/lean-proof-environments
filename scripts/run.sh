@@ -131,6 +131,14 @@ echo "out     $OUT"
 echo "workers $WORKERS"
 echo "log     $LOG"
 
+# FOREGROUND=1 blocks and propagates the exit status, which is what
+# scripts/supervise.sh needs to tell "this model cannot speak the output
+# format" (status 17) from a crash and move to the next candidate.
+if [[ "${FOREGROUND:-0}" == "1" ]]; then
+  uv run python -m pdd.train_grpo "${ARGS[@]}" 2>&1 | tee -a "$LOG"
+  exit "${PIPESTATUS[0]}"
+fi
+
 nohup uv run python -m pdd.train_grpo "${ARGS[@]}" >"$LOG" 2>&1 &
 echo "pid     $!"
 echo

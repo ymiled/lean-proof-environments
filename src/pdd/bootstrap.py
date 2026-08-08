@@ -58,6 +58,18 @@ class Probe:
     text: str = ""
 
 
+class FormatMismatch(RuntimeError):
+    """The policy is not emitting parseable blocks, so no reward is measurable.
+
+    Raised rather than trained through, because it is not a hard task: it is a
+    task the policy never attempted in a form the grader can read. Every reward
+    is the unparseable constant, every group is flat, and the run would spend
+    its whole budget confirming that. The distinction matters because a
+    reasoning model whose completion budget is consumed inside its own thinking
+    block is indistinguishable, from any metric, from a model that cannot prove.
+    """
+
+
 def draw_tasks(
     sampler,
     count: int,
@@ -106,6 +118,7 @@ def bootstrap(
     sft_steps: int = 120,
     sft_lr: float = 1e-5,
     stop_score: float = 0.55,
+    format_abort: float = 0.5,
 ) -> dict:
     """Run expert iteration until the policy is warm, and report each round.
 
@@ -182,15 +195,27 @@ def bootstrap(
         # a reasoning model whose completion budget is consumed inside its own
         # <think> block scores exactly like a model that cannot prove anything.
         # So print the evidence rather than a number that looks like weakness.
+        bad = summary["verdicts"].get("unparseable", 0)
+        total = max(1, sum(summary["verdicts"].values()))
+        unparseable = bad / total
+
         if summary["examples"] < max(8, samples) and probe.text:
-            share = summary["verdicts"].get("unparseable", 0)
-            total = max(1, sum(summary["verdicts"].values()))
-            print(f"\n  !! mined almost nothing. {share}/{total} target "
+            print(f"\n  !! mined almost nothing. {bad}/{total} target "
                   f"verdicts were unparseable. A sample response follows; if it "
                   f"has no {TARGET_MARKER!r} marker, the problem is the output "
                   f"format or the completion budget, not proving ability.\n")
             body = probe.text[:600].replace("\n", "\n  | ")
             print(f"  | {body}\n  [{len(probe.text)} chars total]\n")
+
+        if unparseable > format_abort:
+            raise FormatMismatch(
+                f"{unparseable:.0%} of target verdicts were unparseable "
+                f"(threshold {format_abort:.0%}). The policy is not emitting "
+                f"{TARGET_MARKER!r} blocks, so nothing it does is measurable "
+                "and no amount of training changes that. Check the model's "
+                "chat template for a thinking mode, or raise "
+                "--max-completion-tokens."
+            )
 
         if len(buffer) < 32:
             print("  too few verified proofs to fine-tune on; sampling again")

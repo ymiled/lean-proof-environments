@@ -98,6 +98,11 @@ DEFAULT_CURRICULUM = (
 )
 
 
+#: Exit status for "the policy never emitted a parseable block". Distinct
+#: from a crash so a supervisor can try the next candidate model.
+FORMAT_MISMATCH_EXIT = 17
+
+
 class Stalled(RuntimeError):
     """Raised when a stage produced no usable signal for long enough to stop."""
 
@@ -575,6 +580,13 @@ def main() -> None:
                          "kernel-checked before it can become training data")
     ei.add_argument("--ei-sft-steps", type=int, default=120)
     ei.add_argument("--ei-sft-lr", type=float, default=1e-5)
+    ei.add_argument("--format-abort", type=float, default=0.5,
+                    help="give up when this share of target verdicts come back "
+                         "unparseable. Not a hard task but an unmeasurable one: "
+                         "every reward is the same constant, so every group is "
+                         "flat and the run would spend its budget confirming "
+                         f"it. Exits {FORMAT_MISMATCH_EXIT} so a supervisor can "
+                         "try the next candidate model")
     ei.add_argument("--ei-stop-score", type=float, default=0.55,
                     help="stop bootstrapping once the mean per-target score "
                          "clears this; past it the groups GRPO draws already "
@@ -725,8 +737,18 @@ def main() -> None:
         )
 
     def run_expert_iteration(rounds, depths, volume, tag) -> dict:
-        from .bootstrap import bootstrap
+        from .bootstrap import FormatMismatch, bootstrap
 
+        try:
+            return _bootstrap(bootstrap, rounds, depths, volume, tag)
+        except FormatMismatch as exc:
+            # Exit 17 rather than a traceback, so a supervising script can tell
+            # "this model cannot speak the format" apart from a crash and move
+            # to the next candidate without a human in the loop.
+            print(f"\nFORMAT MISMATCH: {exc}")
+            raise SystemExit(FORMAT_MISMATCH_EXIT) from exc
+
+    def _bootstrap(bootstrap, rounds, depths, volume, tag) -> dict:
         return bootstrap(
             model, tokenizer, sampler, grader,
             completer_factory=lambda d: completer_factory(
@@ -745,6 +767,7 @@ def main() -> None:
             sft_steps=args.ei_sft_steps,
             sft_lr=args.ei_sft_lr,
             stop_score=args.ei_stop_score,
+            format_abort=args.format_abort,
         )
 
     bootstrap_record = None
