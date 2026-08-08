@@ -36,6 +36,19 @@ train = [
     "vllm>=0.21 ; sys_platform == 'linux'",
 ]
 
+[tool.uv]
+# uv resolves one lock that has to hold on every platform the project could
+# conceivably run on, including ones nobody here uses. The `sys_platform ==
+# 'linux'` markers below say unsloth and vllm are not *required* elsewhere, but
+# a universal resolution still has to find some consistent version of them, and
+# on a third platform there is none: recent unsloth pulls unsloth-zoo, which
+# requires transformers>=5, while vllm requires transformers<5. The failure is
+# reported against the training extra and reads as though linux were broken,
+# which it is not -- linux resolves cleanly at both 3.11 and 3.12.
+#
+# Naming the two platforms that exist confines the resolution to them.
+environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
