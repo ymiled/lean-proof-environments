@@ -28,7 +28,7 @@ ssh_() { ssh -o BatchMode=yes -o ConnectTimeout=25 -p "$PORT" "$USER_AT@$HOST" "
 
 # Strip the carriage return ssh leaves behind and the trailing slash from
 # `ls -d`, but not the separator inside the path.
-RUN="${RUN:-$(ssh_ "cd $REMOTE && ls -td runs/grpo-2026*/ | head -1" | tr -d '\r' | sed 's#/$##')}"
+RUN="${RUN:-$(ssh_ "cd $REMOTE && ls -td runs/*-2026*/ 2>/dev/null | head -1" | tr -d '\r' | sed 's#/$##')}"
 [[ -n "$RUN" ]] || { echo "no run directory found on $HOST" >&2; exit 1; }
 
 OUT="$DEST/$(basename "$RUN")"
@@ -56,10 +56,12 @@ ssh_ "cd $REMOTE/$RUN 2>/dev/null && ls -d stage*/ bootstrap/ 2>/dev/null" | tr 
   # adapter by re-running SFT, but only at the price of another rental.
   if ssh_ "test -f $REMOTE/$RUN/${d}adapter/adapter_model.safetensors" 2>/dev/null; then
     mkdir -p "$OUT/${d}adapter"
-    for f in adapter_model.safetensors adapter_config.json; do
-      ssh_ "cat $REMOTE/$RUN/${d}adapter/$f" > "$OUT/${d}adapter/$f" 2>/dev/null \
-        && echo "  got ${d}adapter/$f" || rm -f "$OUT/${d}adapter/$f"
-    done
+    # scp, not `cat` over ssh. A 150 MB safetensors fetched through `cat`
+    # came back 93 MB and byte-truncated, with a zero exit status and no
+    # warning: a silently corrupt set of weights is worse than none.
+    scp -q -C -o BatchMode=yes -P "$PORT" \
+      "$USER_AT@$HOST:$REMOTE/$RUN/${d}adapter/*" "$OUT/${d}adapter/" 2>/dev/null \
+      && echo "  got ${d}adapter/" || echo "  no ${d}adapter"
   fi
 done
 
