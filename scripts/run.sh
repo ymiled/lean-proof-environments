@@ -74,7 +74,7 @@ ARGS=(
   # effect available: at group 8 and volume 3 it yields 24 contrasts per group
   # instead of 8, and rescues groups whose totals match but whose per-target
   # outcomes differ.
-  --factored on
+  --factored "${FACTORED:-on}"
 
   # -- cold start ---------------------------------------------------------
   # Without this GRPO begins at a pass rate low enough that every group is flat
