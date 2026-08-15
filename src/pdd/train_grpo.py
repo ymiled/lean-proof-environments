@@ -470,6 +470,7 @@ def _vllm_completer(model, tokenizer, args, adapter_dir: Path,
                 [{"role": "user", "content": p}],
                 tokenize=False,
                 add_generation_prompt=True,
+                enable_thinking=False,
             )
             for p in prompts
         ]
