@@ -36,11 +36,12 @@ functions. 784 lines of Lean 4, `sorry`-free, soundness audited to depend on
 ## Training
 
 GRPO against the kernel reward, LoRA on `DeepSeek-Prover-V2-7B`, 4-bit,
-colocated vLLM. Cold-started with expert iteration, then a curriculum of
-depths (1,2) -> (2,3) -> (3,4) -> all, each stage measured by held-out
-evaluation before the next stage begins. `theory` split: `vsi`, the written
-formalization, is held out entirely, so nothing in evaluation shares a
-definition or proof with anything trained on.
+colocated vLLM. Cold-started with expert iteration, then depths (1,2), then ran
+the rest of the curriculum (depths (2,3), then (3,4), then all) as one
+continuous run. Each stage is measured by held-out evaluation before the next
+begins. `theory` split: `vsi`, the written formalization, is held out
+entirely, so nothing in evaluation shares a definition or proof with anything
+trained on.
 
 | depth | pass@1 | per-target score |
 | --- | --- | --- |
