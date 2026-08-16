@@ -55,7 +55,6 @@ We find the same distortion the calibration result predicts: pass@1 is zero
 at every depth past 1. But per-target score has a different trend, decaying
 smoothly through depth 4 rather than collapsing.
 
-
 ## Layout
 
 - [`lean/`](lean/) formalization and the extraction procedure
