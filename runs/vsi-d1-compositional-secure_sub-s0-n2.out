@@ -1,0 +1,28 @@
+-- PROOF secure_sub
+  revert hs
+  induction h with
+  | refl t => intro hs; exact hs
+  | base hab => intro hs; simp [secure] at hs
+  | cmd ha hb =>
+      intro hs
+      simp [secure] at hs ⊢
+      subst hs
+      cases a <;> simp_all [Lvl.le]
+  | ncmd ha =>
+      intro hs
+      simp [secure] at hs ⊢
+      subst hs
+      cases a <;> simp_all [Lvl.le]
+  | ncmdCmd =>
+      intro hs
+      simp [secure] at hs ⊢
+      exact hs
+  | funcNcmd =>
+      intro hs
+      exact trivial
+  | func ha hb =>
+      intro hs
+      exact trivial
+  | trans h1 h2 ih1 ih2 =>
+      intro hs
+      exact ih1 (ih2 hs)

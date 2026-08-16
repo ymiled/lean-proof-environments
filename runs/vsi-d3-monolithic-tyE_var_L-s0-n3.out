@@ -1,0 +1,46 @@
+-- PROOF Lvl.le_refl
+  cases a <;> decide
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> revert h1 h2 <;> decide
+
+-- PROOF sub_base_inv
+  have aux : ∀ {t t' : Ty}, SubTy t t' → ∀ b, t' = Ty.base b → ∃ a, t = Ty.base a ∧ a.le b = true := by
+    intro t t' h
+    induction h with
+    | refl t0 => intro b hb; subst hb; exact ⟨b, rfl, Lvl.le_refl b⟩
+    | base hab => intro b hb; injection hb with hb'; subst hb'; exact ⟨_, rfl, hab⟩
+    | cmd _ _ => intro b hb; cases hb
+    | ncmd _ => intro b hb; cases hb
+    | ncmdCmd => intro b hb; cases hb
+    | funcNcmd => intro b hb; cases hb
+    | func _ _ => intro b hb; cases hb
+    | trans h1 ih1 h2 ih2 =>
+        intro b hb
+        obtain ⟨a2, hy, hab⟩ := ih2 b hb
+        obtain ⟨a1, hx, ha1⟩ := ih1 a2 hy
+        exact ⟨a1, hx, Lvl.le_trans ha1 hab⟩
+  exact aux h b rfl
+
+-- PROOF tyE_var_L
+  have subL : ∀ {a : Lvl}, a.le Lvl.L = true → a = Lvl.L := by
+    intro a ha
+    cases a with
+    | L => rfl
+    | H => exact absurd ha (by decide)
+  have aux : ∀ {G : Ctx} {sg : Sig} {e : Exp} {t : Ty}, TyE G sg e t →
+      ∀ x, e = Exp.evar x → t = Ty.base Lvl.L → G x = .tvar Lvl.L := by
+    intro G sg e t h
+    induction h with
+    | evar hgx => intro x hx ht; injection hx with hx'; subst hx'; injection ht with ht'; subst ht'; exact hgx
+    | int => intro x hx ht; cases hx
+    | binop _ _ _ _ => intro x hx ht; cases hx
+    | call _ _ _ => intro x hx ht; cases hx
+    | sub h1 ih1 h2 =>
+        intro x hx ht
+        subst ht
+        obtain ⟨a, ha, hab⟩ := sub_base_inv h2
+        have haL : a = Lvl.L := subL hab
+        subst haL
+        exact ih1 x hx ha
+  exact aux h x rfl rfl

@@ -1,0 +1,45 @@
+-- PROOF Lvl.le_refl
+  cases a <;> decide
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+
+-- PROOF sub_base_inv
+  have H : ∀ {t t' : Ty}, SubTy t t' → ∀ {b : Lvl}, t' = .base b →
+      ∃ a, t = .base a ∧ a.le b = true := by
+    intro t t' h
+    induction h with
+    | refl t => intro b hb; exact ⟨b, hb, Lvl.le_refl b⟩
+    | base hab => intro b hb; cases hb; exact ⟨_, rfl, hab⟩
+    | cmd h1 h2 => intro b hb; cases hb
+    | ncmd h1 => intro b hb; cases hb
+    | ncmdCmd => intro b hb; cases hb
+    | funcNcmd => intro b hb; cases hb
+    | func h1 h2 => intro b hb; cases hb
+    | trans h1 h2 ih1 ih2 =>
+        intro b hb
+        obtain ⟨a, ha, hab⟩ := ih2 hb
+        obtain ⟨a', ha', hab'⟩ := ih1 ha
+        exact ⟨a', ha', Lvl.le_trans hab' hab⟩
+  exact H h rfl
+
+-- PROOF tyE_binop_L
+  have H : ∀ {G : Ctx} {sg : Sig} {e : Exp} {ty : Ty}, TyE G sg e ty →
+      ∀ {a b : Exp}, e = .binop a b → ∀ {l : Lvl}, ty = .base l →
+      TyE G sg a (.base l) ∧ TyE G sg b (.base l) := by
+    intro G sg e ty h
+    induction h with
+    | evar hx => intro a b he l hl; cases he
+    | int => intro a b he l hl; cases he
+    | binop hA hB =>
+        intro a' b' he l hl
+        cases he
+        cases hl
+        exact ⟨hA, hB⟩
+    | call hsg he0 => intro a b he l hl; cases he
+    | sub hty hsub ih =>
+        intro a' b' he l hl
+        obtain ⟨a0, ht0, hle⟩ := sub_base_inv (hl ▸ hsub)
+        obtain ⟨hA, hB⟩ := ih he ht0
+        exact ⟨TyE.sub hA (SubTy.base hle), TyE.sub hB (SubTy.base hle)⟩
+  exact H h rfl rfl

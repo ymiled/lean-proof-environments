@@ -1,0 +1,49 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+
+-- PROOF Lvl.le_trans
+  revert h1 h2
+  cases a <;> cases b <;> cases c <;> decide
+
+-- PROOF sub_base_inv
+  suffices h' : ∀ {x y : Ty}, SubTy x y → ∀ {c : Lvl}, y = Ty.base c →
+      ∃ a, x = Ty.base a ∧ a.le c = true by
+    exact h' h rfl
+  intro x y hxy
+  induction hxy with
+  | refl t => intro c hc; cases hc; exact ⟨_, rfl, Lvl.le_refl _⟩
+  | base hab => intro c hc; cases hc; exact ⟨_, rfl, hab⟩
+  | cmd _ _ => intro c hc; cases hc
+  | ncmd _ => intro c hc; cases hc
+  | ncmdCmd => intro c hc; cases hc
+  | funcNcmd => intro c hc; cases hc
+  | func _ _ => intro c hc; cases hc
+  | trans ih1 ih2 =>
+      intro c hc
+      obtain ⟨b', hb', hble⟩ := ih2 hc
+      obtain ⟨a', ha', hale⟩ := ih1 hb'
+      exact ⟨a', ha', Lvl.le_trans hale hble⟩
+
+-- PROOF tyE_var_L
+  suffices h' : ∀ {e : Exp} {t : Ty}, TyE G sg e t → ∀ {x' : Nat} {b : Lvl},
+      e = Exp.evar x' → t = Ty.base b → ∃ a, G x' = .tvar a ∧ a.le b = true by
+    obtain ⟨a, hxa, hab⟩ := h' h rfl rfl
+    cases a with
+    | L => exact hxa
+    | H => exact absurd hab (by decide)
+  intro e t hte
+  induction hte with
+  | evar hx =>
+      intro x' b he hb
+      cases he
+      cases hb
+      exact ⟨_, hx, Lvl.le_refl _⟩
+  | sub hte' hsub ih =>
+      intro x' b he hb
+      subst hb
+      obtain ⟨a0, ha0, hab0⟩ := sub_base_inv hsub
+      obtain ⟨a, hxa, hale⟩ := ih he ha0
+      exact ⟨a, hxa, Lvl.le_trans hale hab0⟩
+  | _ =>
+      intro x' b he hb
+      cases he

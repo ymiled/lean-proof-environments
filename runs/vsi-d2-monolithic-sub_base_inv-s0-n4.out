@@ -1,0 +1,23 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+
+-- PROOF sub_base_inv
+  have aux : ∀ t t' : Ty, SubTy t t' → ∀ b : Lvl, t' = Ty.base b → ∃ a, t = Ty.base a ∧ a.le b = true := by
+    intro t t' h
+    induction h with
+    | refl t => intro b hb; exact ⟨b, hb, Lvl.le_refl b⟩
+    | base h_le => intro b hb; cases hb; exact ⟨_, rfl, h_le⟩
+    | cmd h1 h2 => intro b hb; cases hb
+    | ncmd h1 => intro b hb; cases hb
+    | ncmdCmd => intro b hb; cases hb
+    | funcNcmd => intro b hb; cases hb
+    | func h1 h2 => intro b hb; cases hb
+    | trans h1 h2 ih1 ih2 =>
+      intro b hb
+      obtain ⟨a2, hy, hle2⟩ := ih2 b hb
+      obtain ⟨a1, hx, hle1⟩ := ih1 a2 hy
+      exact ⟨a1, hx, Lvl.le_trans hle1 hle2⟩
+  exact aux t (Ty.base b) h b rfl

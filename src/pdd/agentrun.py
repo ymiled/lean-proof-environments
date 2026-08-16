@@ -223,27 +223,42 @@ def cmd_ingest(args) -> None:
 
 
 def cmd_plan(args) -> None:
-    """Print the exact agent assignments implied by the verified grouping.
+    """Print the exact agent assignments: one policy instance per task_id.
 
-    This exists because the grouping rule is easy to state, easy to check, and
-    easy to violate by hand. During an early run the grouping was
-    verified correct and then overridden twice while spawning agents -- batches
-    were merged to save agent count, which silently reintroduced the leak
-    (`mul_assoc` is an ancestor of `pow_add`; `mul_succ_l` is an ancestor of
-    `mul_comm`). Both merges put a lemma's proof in one prompt and the same
-    lemma as a goal in another, inside a single policy context.
+    Two independent dispatch bugs have hit this runner and both are now fixed
+    structurally rather than left to judgment.
 
-    So the runner emits the assignment rather than leaving it to judgment.
+    The first (fixed earlier) was proof leakage: batching two compositional
+    depths in one agent context let the shallower answer leak into the deeper
+    prompt, because a compositional prompt supplies its target's ancestors
+    WITH proofs. `group_of`/`verify_groups` still guard this.
+
+    The second is duplication: even within one *safe* group (same arm, same
+    depth), the group used to be handed to a single agent as a whole. Several
+    `task_id`s in a group differ only by `sample` (`-n0`, `-n1`, ...), which
+    for a fixed seed renders as the byte-identical prompt file repeated. An
+    agent given the same prompt twice in one context tends to paste the same
+    completion twice, which is exactly what happened in the supplied arm:
+    distinct responses per cell came in at 4/10, 15/15, 8/10 instead of
+    nominal 10/15/10. Counting those copies as independent observations moved
+    the pooled p-value from 0.026 to 0.114.
+
+    So the runner now emits one agent per `task_id` -- one policy instance per
+    (task, sample) pair -- full stop. `group_of` is retained as metadata (it
+    still tells you which task_ids *could* safely share a batch if you were
+    doing manual dispatch), but `plan`'s output is never batched: each line is
+    its own agent, so there is no context in which two samples of the same
+    task could collide.
     """
-    groups = json.loads((RUNS / "_groups.json").read_text())
-    for name, ids in sorted(groups.items()):
-        print(f"### agent: {name}  ({len(ids)} tasks)")
-        for i in sorted(ids):
-            print(f"  {i}.txt")
+    specs = json.loads((RUNS / "_specs.json").read_text())
+    for s in sorted(specs, key=lambda s: s["task_id"]):
+        print(f"### agent: {s['task_id']}  (1 task)")
+        print(f"  {s['task_id']}.txt")
         print()
-    print("One agent per block above. Do NOT merge blocks: a compositional "
-          "prompt supplies its target's ancestors WITH proofs, so merging two "
-          "compositional depths leaks the shallower answers.")
+    print(f"{len(specs)} agents, one task each. Never hand one agent more than "
+          "one prompt file: a repeated prompt (same seed, different sample) "
+          "gets pasted as a repeated answer, which is not an independent "
+          "observation.")
 
 
 def main() -> None:

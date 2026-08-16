@@ -1,0 +1,60 @@
+-- PROOF Lvl.le_refl
+  cases a <;> decide
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> revert h1 h2 <;> decide
+
+-- PROOF sub_base_inv
+  have key : ∀ (u v : Ty), SubTy u v → ∀ (b : Lvl), v = Ty.base b →
+      ∃ a, u = Ty.base a ∧ a.le b = true := by
+    intro u v h
+    induction h with
+    | refl t' =>
+        intro b hb
+        exact ⟨b, hb, Lvl.le_refl b⟩
+    | base hab =>
+        intro b hb
+        injection hb with hb'
+        subst hb'
+        exact ⟨_, rfl, hab⟩
+    | cmd _ _ =>
+        intro b hb
+        injection hb
+    | ncmd _ =>
+        intro b hb
+        injection hb
+    | ncmdCmd =>
+        intro b hb
+        injection hb
+    | funcNcmd =>
+        intro b hb
+        injection hb
+    | func _ _ =>
+        intro b hb
+        injection hb
+    | trans h1 ih1 h2 ih2 =>
+        intro b hb
+        obtain ⟨a, ha, hab⟩ := ih2 b hb
+        obtain ⟨a', ha', hab'⟩ := ih1 a ha
+        exact ⟨a', ha', Lvl.le_trans hab' hab⟩
+  exact key t (.base b) h b rfl
+
+-- PROOF tyE_binop_L
+  have key : ∀ (t : Ty), TyE G sg (.binop a b) t → t = .base .L →
+      TyE G sg a (.base .L) ∧ TyE G sg b (.base .L) := by
+    intro t h
+    induction h with
+    | binop ha _ hb _ =>
+        intro heq
+        injection heq with heq'
+        subst heq'
+        exact ⟨ha, hb⟩
+    | sub h' ih hsub =>
+        intro heq
+        subst heq
+        obtain ⟨a0, ha0, hle⟩ := sub_base_inv hsub
+        have hL : a0 = Lvl.L := by cases a0 <;> simp_all [Lvl.le]
+        subst hL
+        subst ha0
+        exact ih rfl
+  exact key _ h rfl

@@ -1,0 +1,75 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+
+-- PROOF sub_base_inv
+  have H : ∀ {t t' : Ty}, SubTy t t' → ∀ bb : Lvl, t' = Ty.base bb →
+      ∃ a, t = Ty.base a ∧ a.le bb = true := by
+    intro t t' h
+    induction h with
+    | refl t =>
+        intro bb hbb
+        exact ⟨bb, hbb, Lvl.le_refl bb⟩
+    | base hab =>
+        intro bb hbb
+        injection hbb with hbb'
+        subst hbb'
+        exact ⟨a, rfl, hab⟩
+    | cmd hab hab' =>
+        intro bb hbb
+        cases hbb
+    | ncmd hab =>
+        intro bb hbb
+        cases hbb
+    | ncmdCmd =>
+        intro bb hbb
+        cases hbb
+    | funcNcmd =>
+        intro bb hbb
+        cases hbb
+    | func hab hab' =>
+        intro bb hbb
+        cases hbb
+    | trans h1 ih1 h2 ih2 =>
+        intro bb hbb
+        obtain ⟨a', ha', hle1⟩ := ih2 bb hbb
+        obtain ⟨a, ha, hle2⟩ := ih1 a' ha'
+        exact ⟨a, ha, Lvl.le_trans hle2 hle1⟩
+  exact H h b rfl
+
+-- PROOF tyE_call_L
+  have H : ∀ {G : Ctx} {sg : Sig} {e : Exp} {ty : Ty}, TyE G sg e ty →
+      ∀ f a, e = Exp.call f a → ∀ b : Lvl, ty = Ty.base b →
+        ∃ t2, sg f = some (.L, t2) ∧ TyE G sg a (Ty.base .L) ∧ t2.le b = true := by
+    intro G sg e ty h
+    induction h with
+    | evar _ =>
+        intro f a he b hb
+        cases he
+    | int =>
+        intro f a he b hb
+        cases he
+    | binop _ _ _ _ =>
+        intro f a he b hb
+        cases he
+    | call hsg he2 ihe2 =>
+        intro f' a' he b hb
+        injection he with hef hea
+        subst hef
+        subst hea
+        injection hb with hb'
+        subst hb'
+        exact ⟨_, hsg, he2, Lvl.le_refl _⟩
+    | sub hty ih hsub =>
+        intro f a he b hb
+        subst hb
+        obtain ⟨a0, ha0, hle⟩ := sub_base_inv hsub
+        obtain ⟨t2, hsgf, hte, hle2⟩ := ih f a he a0 ha0
+        exact ⟨t2, hsgf, hte, Lvl.le_trans hle2 hle⟩
+  obtain ⟨t2, hsgf, hte, hle⟩ := H h f a rfl .L rfl
+  have ht2 : t2 = Lvl.L := by
+    cases t2 <;> first | rfl | exact absurd hle (by decide)
+  subst ht2
+  exact ⟨hsgf, hte⟩

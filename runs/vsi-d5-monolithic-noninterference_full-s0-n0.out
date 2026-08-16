@@ -1,0 +1,326 @@
+-- PROOF lowEq_symm
+  intro x hx
+  exact (h x hx).symm
+
+-- PROOF lowEq_trans
+  intro x hx
+  exact (h1 x hx).trans (h2 x hx)
+
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+
+-- PROOF lowEq_refl
+  intro x hx
+  rfl
+
+-- PROOF secure_sub
+  revert hs
+  induction h with
+  | refl t => intro hs; exact hs
+  | base hab => intro hs; simp [secure] at hs
+  | cmd h1 h2 =>
+      intro hs
+      simp [secure] at hs
+      subst hs
+      simp [secure]
+      cases a with
+      | H => rfl
+      | L => simp [Lvl.le] at h1
+  | ncmd h1 =>
+      intro hs
+      simp [secure] at hs
+      subst hs
+      simp [secure]
+      cases a with
+      | H => rfl
+      | L => simp [Lvl.le] at h1
+  | ncmdCmd => intro hs; simpa [secure] using hs
+  | funcNcmd => intro hs; simp [secure]
+  | func h1 h2 => intro hs; simp [secure]
+  | trans h1 h2 ih1 ih2 => intro hs; exact ih1 (ih2 hs)
+
+-- PROOF sub_base_inv
+  suffices H : ∀ {t t' : Ty}, SubTy t t' → ∀ b, t' = .base b →
+      ∃ a, t = .base a ∧ a.le b = true by
+    exact H h b rfl
+  intro t t' h
+  induction h with
+  | refl t => intro b hb; exact ⟨b, hb, Lvl.le_refl b⟩
+  | base hab => intro b hb; injection hb with hb'; subst hb'; exact ⟨_, rfl, hab⟩
+  | cmd h1 h2 => intro b hb; cases hb
+  | ncmd h1 => intro b hb; cases hb
+  | ncmdCmd => intro b hb; cases hb
+  | funcNcmd => intro b hb; cases hb
+  | func h1 h2 => intro b hb; cases hb
+  | trans h1 h2 ih1 ih2 =>
+      intro b hb
+      obtain ⟨a', hy, hab'⟩ := ih2 b hb
+      obtain ⟨a, hx, haa'⟩ := ih1 a' hy
+      exact ⟨a, hx, Lvl.le_trans haa' hab'⟩
+
+-- PROOF confinement
+  intro k
+  induction k with
+  | zero => intro c ty hty hs s s' he; simp [evalC] at he
+  | succ k ih =>
+    intro c ty hty
+    induction hty with
+    | skip => intro hs s s' he; simp [evalC] at he; subst he; exact lowEq_refl G s
+    | assign hx hte =>
+        intro hs s s' he
+        simp [secure] at hs
+        simp [evalC] at he
+        obtain ⟨v, hv, he⟩ := he
+        subst he
+        intro y hy
+        by_cases hxy : y = x
+        · subst hxy; rw [hx, hs] at hy; cases hy
+        · simp [upd, hxy]
+    | iteHH hteH hcH hdH ihc ihd =>
+        intro hs s s' he
+        simp [evalC] at he
+        obtain ⟨v, hv, he⟩ := he
+        split at he
+        · exact ih d (.cmd .H .H) hdH (by simp [secure]) s s' he
+        · exact ih c (.cmd .H .H) hcH (by simp [secure]) s s' he
+    | iteL hteL hcab hdab ihc ihd =>
+        intro hs s s' he
+        simp [evalC] at he
+        obtain ⟨v, hv, he⟩ := he
+        split at he
+        · exact ih d _ hdab hs s s' he
+        · exact ih c _ hcab hs s s' he
+    | iteN hteT hcn hdn ihc ihd =>
+        intro hs s s' he
+        simp [evalC] at he
+        obtain ⟨v, hv, he⟩ := he
+        simp [secure] at hs
+        split at he
+        · exact ih d _ hdn (by simp [secure]; exact hs) s s' he
+        · exact ih c _ hcn (by simp [secure]; exact hs) s s' he
+    | whHH hteH hcH ihc =>
+        intro hs s s' he
+        simp [evalC] at he
+        obtain ⟨v, hv, he⟩ := he
+        split at he
+        · injection he with he; subst he; exact lowEq_refl G s
+        · obtain ⟨s'', hs'', he'⟩ := he
+          have l1 := ih c (.cmd .H .H) hcH (by simp [secure]) s s'' hs''
+          have l2 := ih (.wh e c) (.cmd .H .H) (TyC.whHH hteH hcH) (by simp [secure]) s'' s' he'
+          exact lowEq_trans l1 l2
+    | whL hteL hcab hle ihc =>
+        intro hs s s' he
+        simp [evalC] at he
+        obtain ⟨v, hv, he⟩ := he
+        split at he
+        · injection he with he; subst he; exact lowEq_refl G s
+        · obtain ⟨s'', hs'', he'⟩ := he
+          have l1 := ih c _ hcab hs s s'' hs''
+          have l2 := ih (.wh e c) _ (TyC.whL hteL hcab hle) hs s'' s' he'
+          exact lowEq_trans l1 l2
+    | seqH hcH hdH ihc ihd =>
+        intro hs s s' he
+        simp [evalC] at he
+        obtain ⟨s'', hs'', he'⟩ := he
+        have l1 := ih c _ hcH hs s s'' hs''
+        have l2 := ih d (.cmd .H .H) hdH (by simp [secure]) s'' s' he'
+        exact lowEq_trans l1 l2
+    | seqL hcaL hdab ihc ihd =>
+        intro hs s s' he
+        simp [evalC] at he
+        obtain ⟨s'', hs'', he'⟩ := he
+        have l1 := ih c (.cmd _ .L) hcaL (by simp [secure] at hs ⊢; exact hs) s s'' hs''
+        have l2 := ih d _ hdab hs s'' s' he'
+        exact lowEq_trans l1 l2
+    | sub hty' hsub ih' =>
+        intro hs s s' he
+        exact ih' (secure_sub hsub hs) s s' he
+
+-- PROOF tyE_var_L
+  suffices H : ∀ {e ty}, TyE G sg e ty → ∀ x, e = .evar x → ty = .base .L → G x = .tvar .L by
+    exact H h x rfl rfl
+  intro e ty h
+  induction h with
+  | evar hgx => intro x hex hty; cases hex; cases hty; exact hgx
+  | int => intro x hex hty; cases hex
+  | binop h1 h2 ih1 ih2 => intro x hex hty; cases hex
+  | call hsgf hte => intro x hex hty; cases hex
+  | sub h' hsub ih =>
+      intro x hex hty
+      subst hty
+      obtain ⟨a, hea, hab⟩ := sub_base_inv hsub
+      have haL : a = Lvl.L := by cases a; · rfl; · simp [Lvl.le] at hab
+      have hea' : _ = Ty.base Lvl.L := haL ▸ hea
+      exact ih x hex hea'
+
+-- PROOF tyE_binop_L
+  suffices H : ∀ {e ty}, TyE G sg e ty → ∀ a b, e = .binop a b → ty = .base .L →
+      TyE G sg a (.base .L) ∧ TyE G sg b (.base .L) by
+    exact H h a b rfl rfl
+  intro e ty h
+  induction h with
+  | evar hgx => intro a b hex hty; cases hex
+  | int => intro a b hex hty; cases hex
+  | binop h1 h2 ih1 ih2 =>
+      intro a b hex hty
+      cases hex; cases hty
+      exact ⟨h1, h2⟩
+  | call hsgf hte => intro a b hex hty; cases hex
+  | sub h' hsub ih =>
+      intro a b hex hty
+      subst hty
+      obtain ⟨lv, hea, hab⟩ := sub_base_inv hsub
+      have hL : lv = Lvl.L := by cases lv; · rfl; · simp [Lvl.le] at hab
+      have hea' : _ = Ty.base Lvl.L := hL ▸ hea
+      exact ih a b hex hea'
+
+-- PROOF tyE_call_L
+  suffices H : ∀ {e ty}, TyE G sg e ty → ∀ f a, e = .call f a → ty = .base .L →
+      sg f = some (.L, .L) ∧ TyE G sg a (.base .L) by
+    exact H h f a rfl rfl
+  intro e ty h
+  induction h with
+  | evar hgx => intro f a hex hty; cases hex
+  | int => intro f a hex hty; cases hex
+  | binop h1 h2 ih1 ih2 => intro f a hex hty; cases hex
+  | call hsgf hte =>
+      intro f a hex hty
+      cases hex; cases hty
+      exact ⟨hsgf, hte⟩
+  | sub h' hsub ih =>
+      intro f a hex hty
+      subst hty
+      obtain ⟨lv, hea, hab⟩ := sub_base_inv hsub
+      have hL : lv = Lvl.L := by cases lv; · rfl; · simp [Lvl.le] at hab
+      have hea' : _ = Ty.base Lvl.L := hL ▸ hea
+      exact ih f a hex hea'
+
+-- PROOF agree
+  intro k
+  induction k with
+  | zero =>
+      constructor
+      · intro e hte s t v w hst hv hw; simp [evalE] at hv
+      · intro c ty htc s t s' t' hst hs ht; simp [evalC] at hs
+  | succ k ih =>
+      obtain ⟨ihE, ihC⟩ := ih
+      constructor
+      · intro e hte
+        induction hte with
+        | evar hgx => intro s t v w hst hv hw; simp [evalE] at hv hw; subst hv; subst hw; exact hst _ hgx
+        | int => intro s t v w hst hv hw; simp [evalE] at hv hw; omega
+        | binop h1 h2 ih1 ih2 =>
+            intro s t v w hst hv hw
+            simp [evalE] at hv hw
+            obtain ⟨va, hva, vb, hvb, hveq⟩ := hv
+            obtain ⟨wa, hwa, wb, hwb, hweq⟩ := hw
+            have e1 := ih1 s t va wa hst hva hwa
+            have e2 := ih2 s t vb wb hst hvb hwb
+            omega
+        | call hsgf hte' ih' =>
+            intro s t v w hst hv hw
+            simp [evalC, evalE] at hv hw
+            obtain ⟨fn1, hfn1, va, hva, s'', hs'', hveq⟩ := hv
+            obtain ⟨fn2, hfn2, wa, hwa, t'', ht'', hweq⟩ := hw
+            obtain ⟨fn, ty, hftf, hgp, hgr, hbody⟩ := hft.sig _ _ _ hsgf
+            rw [hftf] at hfn1 hfn2
+            injection hfn1 with hfn1; subst hfn1
+            injection hfn2 with hfn2; subst hfn2
+            have eav : va = wa := ih' s t va wa hst hva hwa
+            subst eav
+            have hlow : lowEq G (upd s fn.param va) (upd t fn.param va) := by
+              intro y hy
+              by_cases hxy : y = fn.param
+              · subst hxy; simp [upd]
+              · simp [upd, hxy]; exact hst _ hy
+            have hres := ihC fn.body ty hbody (upd s fn.param va) (upd t fn.param va) s'' t'' hlow hs'' ht''
+            rw [← hveq, ← hweq]
+            exact hres _ hgr
+        | sub hte' hsub ih' =>
+            intro s t v w hst hv hw
+            obtain ⟨a, hea, hab⟩ := sub_base_inv hsub
+            subst hea
+            exact ih' s t v w hst hv hw
+      · intro c ty htc
+        induction htc with
+        | skip => intro s t s' t' hst hs ht; simp [evalC] at hs ht; subst hs; subst ht; exact hst
+        | assign hgx hte =>
+            intro s t s' t' hst hs ht
+            simp [evalC] at hs ht
+            obtain ⟨v, hv, hseq⟩ := hs
+            obtain ⟨w, hw, hteq⟩ := ht
+            subst hseq; subst hteq
+            intro y hy
+            by_cases hxy : y = x
+            · subst hxy
+              have hL : _ = Lvl.L := by rw [hgx] at hy; injection hy
+              have hvw : v = w := ihE _ (hL ▸ hte) s t v w hst hv hw
+              simp [upd, hvw]
+            · simp [upd, hxy]; exact hst _ hy
+        | iteHH hteH hcH hdH ihc ihd =>
+            intro s t s' t' hst hs ht
+            have l1 := confinement (k+1) _ _ (TyC.iteHH hteH hcH hdH) (by simp [secure]) s s' hs
+            have l2 := confinement (k+1) _ _ (TyC.iteHH hteH hcH hdH) (by simp [secure]) t t' ht
+            exact lowEq_trans (lowEq_trans (lowEq_symm l1) hst) l2
+        | iteL hteL hcab hdab ihc ihd =>
+            intro s t s' t' hst hs ht
+            simp [evalC] at hs ht
+            obtain ⟨v, hv, hs⟩ := hs
+            obtain ⟨w, hw, ht⟩ := ht
+            have hvw : v = w := ihE _ hteL s t v w hst hv hw
+            subst hvw
+            by_cases h0 : v = 0
+            · simp [h0] at hs ht; exact ihC d _ hdab s t s' t' hst hs ht
+            · simp [h0] at hs ht; exact ihC c _ hcab s t s' t' hst hs ht
+        | iteN hteT hcn hdn ihc ihd =>
+            intro s t s' t' hst hs ht
+            simp [evalC] at hs ht
+            obtain ⟨v, hv, hs⟩ := hs
+            obtain ⟨w, hw, ht⟩ := ht
+            have hvw : v = w := ihE _ hteT s t v w hst hv hw
+            subst hvw
+            by_cases h0 : v = 0
+            · simp [h0] at hs ht; exact ihC d _ hdn s t s' t' hst hs ht
+            · simp [h0] at hs ht; exact ihC c _ hcn s t s' t' hst hs ht
+        | whHH hteH hcH ihc =>
+            intro s t s' t' hst hs ht
+            have l1 := confinement (k+1) _ _ (TyC.whHH hteH hcH) (by simp [secure]) s s' hs
+            have l2 := confinement (k+1) _ _ (TyC.whHH hteH hcH) (by simp [secure]) t t' ht
+            exact lowEq_trans (lowEq_trans (lowEq_symm l1) hst) l2
+        | whL hteL hcab hle ihc =>
+            intro s t s' t' hst hs ht
+            simp [evalC] at hs ht
+            obtain ⟨v, hv, hs⟩ := hs
+            obtain ⟨w, hw, ht⟩ := ht
+            have hvw : v = w := ihE _ hteL s t v w hst hv hw
+            subst hvw
+            by_cases h0 : v = 0
+            · simp [h0] at hs ht; subst hs; subst ht; exact hst
+            · simp [h0] at hs ht
+              obtain ⟨s'', hss'', hse⟩ := hs
+              obtain ⟨t'', htt'', hte⟩ := ht
+              have m1 := ihC c _ hcab s t s'' t'' hst hss'' htt''
+              exact ihC (.wh e c) _ (TyC.whL hteL hcab hle) s'' t'' s' t' m1 hse hte
+        | seqH hcH hdH ihc ihd =>
+            intro s t s' t' hst hs ht
+            simp [evalC] at hs ht
+            obtain ⟨s'', hss'', hse⟩ := hs
+            obtain ⟨t'', htt'', hte⟩ := ht
+            have m1 := ihC c _ hcH s t s'' t'' hst hss'' htt''
+            exact ihC d _ hdH s'' t'' s' t' m1 hse hte
+        | seqL hcaL hdab ihc ihd =>
+            intro s t s' t' hst hs ht
+            simp [evalC] at hs ht
+            obtain ⟨s'', hss'', hse⟩ := hs
+            obtain ⟨t'', htt'', hte⟩ := ht
+            have m1 := ihC c _ hcaL s t s'' t'' hst hss'' htt''
+            exact ihC d _ hdab s'' t'' s' t' m1 hse hte
+        | sub htc' hsub ih' =>
+            intro s t s' t' hst hs ht
+            exact ih' s t s' t' hst hs ht
+
+-- PROOF noninterference_full
+  exact (agree hft k).2 c ty hty s t s' t' hst hs ht

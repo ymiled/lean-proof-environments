@@ -1,0 +1,22 @@
+-- PROOF sub_base_inv
+  have aux : ∀ (t tb : Ty), SubTy t tb → ∀ b : Lvl, tb = .base b →
+      ∃ a, t = .base a ∧ a.le b = true := by
+    intro t tb h
+    induction h with
+    | refl t => intro b hb; exact ⟨b, hb, Lvl.le_refl b⟩
+    | base hab =>
+        intro b hb
+        injection hb with hb'
+        subst hb'
+        exact ⟨_, rfl, hab⟩
+    | cmd h1 h2 => intro b hb; exact Ty.noConfusion hb
+    | ncmd h1 => intro b hb; exact Ty.noConfusion hb
+    | ncmdCmd => intro b hb; exact Ty.noConfusion hb
+    | funcNcmd => intro b hb; exact Ty.noConfusion hb
+    | func h1 h2 => intro b hb; exact Ty.noConfusion hb
+    | trans h1 h2 ih1 ih2 =>
+        intro b hb
+        obtain ⟨a2, hy, ha2b⟩ := ih2 b hb
+        obtain ⟨a1, hx, ha1a2⟩ := ih1 a2 hy
+        exact ⟨a1, hx, Lvl.le_trans ha1a2 ha2b⟩
+  exact aux t (.base b) h b rfl

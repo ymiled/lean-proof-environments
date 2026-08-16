@@ -1,0 +1,41 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+
+-- PROOF sub_base_inv
+  have H : ∀ {t1 t2 : Ty}, SubTy t1 t2 → ∀ b0 : Lvl, t2 = .base b0 →
+      ∃ a, t1 = .base a ∧ a.le b0 = true := by
+    intro t1 t2 hst
+    induction hst
+    case refl =>
+      intro b0 heq
+      exact ⟨b0, heq, Lvl.le_refl b0⟩
+    case base =>
+      rename_i hab
+      intro b0 heq
+      injection heq with heqb
+      exact ⟨_, rfl, heqb ▸ hab⟩
+    case cmd =>
+      intro b0 heq
+      injection heq
+    case ncmd =>
+      intro b0 heq
+      injection heq
+    case ncmdCmd =>
+      intro b0 heq
+      injection heq
+    case funcNcmd =>
+      intro b0 heq
+      injection heq
+    case func =>
+      intro b0 heq
+      injection heq
+    case trans =>
+      rename_i ih1 ih2
+      intro b0 heq
+      obtain ⟨a1, hy, hle1⟩ := ih2 b0 heq
+      obtain ⟨a2, hx, hle2⟩ := ih1 a1 hy
+      exact ⟨a2, hx, Lvl.le_trans hle2 hle1⟩
+  exact H h b rfl

@@ -1,0 +1,37 @@
+-- PROOF secure_sub
+  revert hs
+  induction h with
+  | refl t =>
+      intro hs
+      exact hs
+  | base hab =>
+      intro hs
+      exact (hs : False).elim
+  | cmd hab hbb' =>
+      intro hs
+      have hs' : a' = Lvl.H := hs
+      show a = Lvl.H
+      subst hs'
+      cases a with
+      | H => rfl
+      | L => exact absurd hab (by decide)
+  | ncmd hab =>
+      intro hs
+      have hs' : a' = Lvl.H := hs
+      show a = Lvl.H
+      subst hs'
+      cases a with
+      | H => rfl
+      | L => exact absurd hab (by decide)
+  | ncmdCmd =>
+      intro hs
+      exact hs
+  | funcNcmd =>
+      intro hs
+      trivial
+  | func hab hbb' =>
+      intro hs
+      trivial
+  | trans h1 ih1 h2 ih2 =>
+      intro hs
+      exact ih1 (ih2 hs)

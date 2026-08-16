@@ -1,0 +1,74 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> revert h1 h2 <;> decide
+
+-- PROOF sub_base_inv
+  suffices H : ∀ t t' : Ty, SubTy t t' → ∀ b, t' = .base b → ∃ a, t = .base a ∧ a.le b = true by
+    exact H t (.base b) h b rfl
+  intro t t' h
+  induction h with
+  | refl =>
+      rename_i t0
+      intro b hbeq
+      exact ⟨b, hbeq, Lvl.le_refl b⟩
+  | base =>
+      rename_i hab
+      intro b hbeq
+      cases hbeq
+      exact ⟨_, rfl, hab⟩
+  | cmd =>
+      intro b hbeq
+      cases hbeq
+  | ncmd =>
+      intro b hbeq
+      cases hbeq
+  | ncmdCmd =>
+      intro b hbeq
+      cases hbeq
+  | funcNcmd =>
+      intro b hbeq
+      cases hbeq
+  | func =>
+      intro b hbeq
+      cases hbeq
+  | trans =>
+      rename_i h1 ih1 h2 ih2
+      intro b hbeq
+      obtain ⟨a', ha'eq, hle2⟩ := ih2 b hbeq
+      obtain ⟨a, haeq, hle1⟩ := ih1 a' ha'eq
+      exact ⟨a, haeq, Lvl.le_trans hle1 hle2⟩
+
+-- PROOF tyE_var_L
+  suffices H : ∀ e t, TyE G sg e t → ∀ x, e = .evar x → ∀ b, t = .base b →
+      ∃ a, G x = .tvar a ∧ a.le b = true by
+    obtain ⟨a, hGa, hab⟩ := H (.evar x) (.base .L) h x rfl .L rfl
+    cases a with
+    | L => exact hGa
+    | H => exact absurd hab (by decide)
+  intro e t h
+  induction h with
+  | evar =>
+      rename_i hGx
+      intro x hxeq b hbeq
+      cases hxeq
+      cases hbeq
+      exact ⟨_, hGx, Lvl.le_refl _⟩
+  | int =>
+      intro x hxeq b hbeq
+      cases hxeq
+  | binop =>
+      intro x hxeq b hbeq
+      cases hxeq
+  | call =>
+      intro x hxeq b hbeq
+      cases hxeq
+  | sub =>
+      rename_i ih hsub
+      intro x hxeq b hbeq
+      subst hxeq
+      subst hbeq
+      obtain ⟨a0, ha0eq, hle0⟩ := sub_base_inv hsub
+      obtain ⟨a, hGa, hle1⟩ := ih x rfl a0 ha0eq
+      exact ⟨a, hGa, Lvl.le_trans hle1 hle0⟩

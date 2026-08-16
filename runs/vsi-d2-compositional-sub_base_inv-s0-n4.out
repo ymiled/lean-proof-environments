@@ -1,0 +1,17 @@
+-- PROOF sub_base_inv
+  have key : ∀ {x y : Ty}, SubTy x y → ∀ c, y = .base c → ∃ a, x = .base a ∧ a.le c = true := by
+    intro x y hxy
+    induction hxy with
+    | refl t' => intro c hc; exact ⟨c, hc, Lvl.le_refl c⟩
+    | base hab => intro c hc; cases hc; exact ⟨_, rfl, hab⟩
+    | cmd h1 h2 => intro c hc; cases hc
+    | ncmd h1 => intro c hc; cases hc
+    | ncmdCmd => intro c hc; cases hc
+    | funcNcmd => intro c hc; cases hc
+    | func h1 h2 => intro c hc; cases hc
+    | trans h1 h2 ih1 ih2 =>
+        intro c hc
+        obtain ⟨a, ha, hac⟩ := ih2 c hc
+        obtain ⟨a', ha', hac'⟩ := ih1 a ha
+        exact ⟨a', ha', Lvl.le_trans hac' hac⟩
+  exact key h b rfl

@@ -1,0 +1,55 @@
+-- PROOF Lvl.le_refl
+  cases a <;> rfl
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+
+-- PROOF sub_base_inv
+  have gen : ∀ {x y : Ty}, SubTy x y → ∀ c, y = .base c → ∃ a, x = .base a ∧ a.le c = true := by
+    intro x y hxy
+    induction hxy with
+    | refl t => intro c hc; exact ⟨c, hc, Lvl.le_refl c⟩
+    | base hab =>
+        intro c hc
+        injection hc with hbc
+        subst hbc
+        exact ⟨_, rfl, hab⟩
+    | cmd h1 h2 => intro c hc; injection hc
+    | ncmd h1 => intro c hc; injection hc
+    | ncmdCmd => intro c hc; injection hc
+    | funcNcmd => intro c hc; injection hc
+    | func h1 h2 => intro c hc; injection hc
+    | trans h1 h2 ih1 ih2 =>
+        intro c hc
+        obtain ⟨a', ha', hle2⟩ := ih2 c hc
+        obtain ⟨a, ha, hle1⟩ := ih1 a' ha'
+        exact ⟨a, ha, Lvl.le_trans hle1 hle2⟩
+  exact gen h b rfl
+
+-- PROOF tyE_call_L
+  have gen : ∀ {G : Ctx} {sg : Sig} {e : Exp} {t : Ty}, TyE G sg e t →
+      ∀ f' a', e = .call f' a' → ∀ b, t = .base b →
+      ∃ t2, sg f' = some (.L, t2) ∧ TyE G sg a' (.base .L) ∧ t2.le b = true := by
+    intro G sg e t hty
+    induction hty with
+    | evar _ => intro f' a' he b hb; injection he
+    | int => intro f' a' he b hb; injection he
+    | binop _ _ => intro f' a' he b hb; injection he
+    | call hsig hty2 =>
+        intro f' a' he b hb
+        injection he with hff haa
+        injection hb with htb
+        exact ⟨t2, hff ▸ hsig, haa ▸ hty2, htb ▸ Lvl.le_refl t2⟩
+    | sub hty2 hsub ih =>
+        intro f' a' he b hb
+        subst hb
+        obtain ⟨a0, ha0, hle0⟩ := sub_base_inv hsub
+        obtain ⟨t2, hsig, hty3, hle2⟩ := ih f' a' he a0 ha0
+        exact ⟨t2, hsig, hty3, Lvl.le_trans hle2 hle0⟩
+  obtain ⟨t2, hsig, hty2, hle⟩ := gen h f a rfl .L rfl
+  have ht2 : t2 = Lvl.L := by
+    cases t2 with
+    | H => simp [Lvl.le] at hle
+    | L => rfl
+  subst ht2
+  exact ⟨hsig, hty2⟩

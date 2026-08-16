@@ -1,0 +1,17 @@
+-- PROOF sub_base_inv
+  suffices H : ∀ (t z : Ty), SubTy t z → ∀ b, z = .base b → ∃ a, t = .base a ∧ a.le b = true by
+    exact H t (.base b) h b rfl
+  intro t z h
+  induction h with
+  | refl t => intro b hb; cases hb; exact ⟨b, rfl, Lvl.le_refl b⟩
+  | base hab => intro b hb; cases hb; exact ⟨_, rfl, hab⟩
+  | cmd _ _ => intro b hb; cases hb
+  | ncmd _ => intro b hb; cases hb
+  | ncmdCmd => intro b hb; cases hb
+  | funcNcmd => intro b hb; cases hb
+  | func _ _ => intro b hb; cases hb
+  | trans h1 h2 ih1 ih2 =>
+      intro b hb
+      obtain ⟨a0, hy, hab0⟩ := ih2 b hb
+      obtain ⟨a1, hx, ha1a0⟩ := ih1 a0 hy
+      exact ⟨a1, hx, Lvl.le_trans ha1a0 hab0⟩

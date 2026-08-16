@@ -1,0 +1,99 @@
+-- PROOF Lvl.le_refl
+  cases a <;> decide
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> simp_all [Lvl.le]
+
+-- PROOF sub_base_inv
+  suffices h' : ∀ t t' : Ty, SubTy t t' → ∀ bb : Lvl, t' = .base bb → ∃ a, t = .base a ∧ a.le bb = true by
+    exact h' t (.base b) h b rfl
+  intro t t' hsub
+  induction hsub with
+  | refl x => intro bb hb; exact ⟨bb, hb, Lvl.le_refl bb⟩
+  | base hab => intro bb hb; cases hb; exact ⟨_, rfl, hab⟩
+  | cmd _ _ => intro bb hb; cases hb
+  | ncmd _ => intro bb hb; cases hb
+  | ncmdCmd => intro bb hb; cases hb
+  | funcNcmd => intro bb hb; cases hb
+  | func _ _ => intro bb hb; cases hb
+  | trans _ ih1 _ ih2 =>
+      intro bb hb
+      obtain ⟨a, hy, hab⟩ := ih2 bb hb
+      obtain ⟨a', hx, ha'a⟩ := ih1 a hy
+      exact ⟨a', hx, Lvl.le_trans ha'a hab⟩
+
+-- PROOF tyE_var_L
+  suffices h' : ∀ ty : Ty, TyE G sg (.evar x) ty → ty = .base .L → G x = .tvar .L by
+    exact h' _ h rfl
+  intro ty hty
+  induction hty with
+  | evar hx => intro heq; injection heq with ht; subst ht; exact hx
+  | sub h1 ih1 hsub =>
+      intro heq; subst heq
+      obtain ⟨a, ha, hale⟩ := sub_base_inv hsub
+      have haL : a = Lvl.L := by
+        cases a
+        · rfl
+        · exact absurd hale (by decide)
+      subst haL
+      exact ih1 ha
+
+-- PROOF tyE_binop_L
+  suffices h' : ∀ ty : Ty, TyE G sg (.binop a b) ty → ty = .base .L →
+      TyE G sg a (.base .L) ∧ TyE G sg b (.base .L) by
+    exact h' _ h rfl
+  intro ty hty
+  induction hty with
+  | binop ha hb => intro heq; injection heq with ht; subst ht; exact ⟨ha, hb⟩
+  | sub h1 ih1 hsub =>
+      intro heq; subst heq
+      obtain ⟨a', ha', hale⟩ := sub_base_inv hsub
+      have haL : a' = Lvl.L := by
+        cases a'
+        · rfl
+        · exact absurd hale (by decide)
+      subst haL
+      exact ih1 ha'
+
+-- PROOF evalE_agree_nocall
+  intro e hnc hty k
+  induction k generalizing e with
+  | zero =>
+      intro v w hv hw
+      simp [evalE] at hv
+  | succ k ih =>
+      intro v w hv hw
+      cases e with
+      | int n =>
+          simp [evalE] at hv hw
+          omega
+      | evar x =>
+          simp [evalE] at hv hw
+          have hxL := tyE_var_L hty
+          have heq := hst x hxL
+          rw [← hv, ← hw]
+          exact heq
+      | binop a b =>
+          obtain ⟨htya, htyb⟩ := tyE_binop_L hty
+          have hncab : noCall a = true ∧ noCall b = true := by
+            simp [noCall] at hnc; exact hnc
+          obtain ⟨hnca, hncb⟩ := hncab
+          cases hea : evalE ft k s a with
+          | none => simp [evalE, hea] at hv
+          | some va =>
+            cases heb : evalE ft k s b with
+            | none => simp [evalE, hea, heb] at hv
+            | some vb =>
+              cases hea' : evalE ft k t a with
+              | none => simp [evalE, hea'] at hw
+              | some va' =>
+                cases heb' : evalE ft k t b with
+                | none => simp [evalE, hea', heb'] at hw
+                | some vb' =>
+                  simp [evalE, hea, heb] at hv
+                  simp [evalE, hea', heb'] at hw
+                  have hva : va = va' := ih a hnca htya va va' hea hea'
+                  have hvb : vb = vb' := ih b hncb htyb vb vb' heb heb'
+                  omega
+      | call f a =>
+          simp [noCall] at hnc

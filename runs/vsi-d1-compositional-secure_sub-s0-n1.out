@@ -1,0 +1,17 @@
+-- PROOF secure_sub
+  have key : ∀ a a' : Lvl, Lvl.le a' a = true → a' = Lvl.H → a = Lvl.H := by
+    intro a a' hle heq
+    cases a <;> cases a' <;> simp_all [Lvl.le]
+  induction h with
+  | refl t => exact hs
+  | base a b hab => simp [secure] at hs
+  | cmd a b a' b' ha hb =>
+      simp only [secure] at hs ⊢
+      exact key _ _ ha hs
+  | ncmd a a' n ha =>
+      simp only [secure] at hs ⊢
+      exact key _ _ ha hs
+  | ncmdCmd a n => simpa [secure] using hs
+  | funcNcmd a b c n => simp [secure]
+  | func a b a' b' ha hb => simp [secure]
+  | trans a b c h1 h2 ih1 ih2 => exact ih1 (ih2 hs)

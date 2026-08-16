@@ -1,0 +1,77 @@
+-- PROOF Lvl.le_refl
+  cases a <;> decide
+
+-- PROOF Lvl.le_trans
+  cases a <;> cases b <;> cases c <;> revert h1 h2 <;> decide
+
+-- PROOF sub_base_inv
+  have aux : ∀ {t z : Ty}, SubTy t z → ∀ bb : Lvl, z = .base bb → ∃ a, t = .base a ∧ a.le bb = true := by
+    intro t z h
+    induction h with
+    | refl => intro bb hbb; cases hbb; exact ⟨bb, rfl, Lvl.le_refl bb⟩
+    | base => rename_i hab; intro bb hbb; cases hbb; exact ⟨_, rfl, hab⟩
+    | cmd => intro bb hbb; cases hbb
+    | ncmd => intro bb hbb; cases hbb
+    | ncmdCmd => intro bb hbb; cases hbb
+    | funcNcmd => intro bb hbb; cases hbb
+    | func => intro bb hbb; cases hbb
+    | trans =>
+        rename_i h1 ih1 h2 ih2
+        intro bb hbb
+        cases ih2 bb hbb with
+        | intro a' hp =>
+          cases hp with
+          | intro ha' hab' =>
+            subst ha'
+            cases ih1 a' rfl with
+            | intro a'' hp2 =>
+              cases hp2 with
+              | intro ha'' hab'' =>
+                exact ⟨a'', ha'', Lvl.le_trans hab'' hab'⟩
+  exact aux h b rfl
+
+-- PROOF tyE_call_L
+  have aux : ∀ {G : Ctx} {sg : Sig} {e : Exp} {ty : Ty}, TyE G sg e ty →
+      ∀ (f' : Nat) (a' : Exp) (bb : Lvl), e = .call f' a' → ty = .base bb →
+      ∃ t2, sg f' = some (.L, t2) ∧ t2.le bb = true ∧ TyE G sg a' (.base .L) := by
+    intro G sg e ty h
+    induction h with
+    | evar => intro f' a' bb he ht'; cases he
+    | int => intro f' a' bb he ht'; cases he
+    | binop => intro f' a' bb he ht'; cases he
+    | call =>
+        rename_i hsg he2 ih2
+        intro f' a' bb he ht'
+        cases he
+        cases ht'
+        exact ⟨_, hsg, Lvl.le_refl _, he2⟩
+    | sub =>
+        rename_i hty ih hsub
+        intro f' a' bb he ht'
+        subst ht'
+        have hinv := sub_base_inv hsub
+        cases hinv with
+        | intro a0 hp =>
+          cases hp with
+          | intro ht_eq hle =>
+            have hres := ih f' a' a0 he ht_eq
+            cases hres with
+            | intro t2 hp2 =>
+              cases hp2 with
+              | intro hsg2 hp3 =>
+                cases hp3 with
+                | intro hle2 hty2 =>
+                  exact ⟨t2, hsg2, Lvl.le_trans hle2 hle, hty2⟩
+  have hmain := aux h f a Lvl.L rfl rfl
+  cases hmain with
+  | intro t2 hp =>
+    cases hp with
+    | intro hsg hp2 =>
+      cases hp2 with
+      | intro hle hty =>
+        have ht2 : t2 = Lvl.L := by
+          cases t2 with
+          | L => rfl
+          | H => exact absurd hle (by decide)
+        subst ht2
+        exact ⟨hsg, hty⟩

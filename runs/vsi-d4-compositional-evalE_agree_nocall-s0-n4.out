@@ -1,0 +1,59 @@
+-- PROOF evalE_agree_nocall
+  intro e
+  induction e with
+  | int n =>
+    intro hnc hty k v w hv hw
+    cases k with
+    | zero => simp [evalE] at hv
+    | succ k' =>
+      simp [evalE] at hv hw
+      omega
+  | evar x =>
+    intro hnc hty k v w hv hw
+    have hgx := tyE_var_L hty
+    cases k with
+    | zero => simp [evalE] at hv
+    | succ k' =>
+      simp [evalE] at hv hw
+      have hxy := hst x hgx
+      omega
+  | binop a b iha ihb =>
+    intro hnc hty k v w hv hw
+    have hab : noCall a = true ∧ noCall b = true := by
+      have hnc' := hnc
+      simp only [noCall] at hnc'
+      cases hca : noCall a with
+      | false => rw [hca] at hnc'; simp at hnc'
+      | true =>
+        cases hcb : noCall b with
+        | false => rw [hca, hcb] at hnc'; simp at hnc'
+        | true => exact ⟨hca, hcb⟩
+    obtain ⟨hnca', hncb'⟩ := hab
+    obtain ⟨hta, htb⟩ := tyE_binop_L hty
+    cases k with
+    | zero => simp [evalE] at hv
+    | succ k' =>
+      cases haa : evalE ft k' s a with
+      | none => simp [evalE, haa] at hv
+      | some va =>
+        cases hbb : evalE ft k' s b with
+        | none => simp [evalE, haa, hbb] at hv
+        | some vb =>
+          have hveq : v = va + vb := by
+            simp [evalE, haa, hbb] at hv
+            omega
+          cases hta2 : evalE ft k' t a with
+          | none => simp [evalE, hta2] at hw
+          | some va' =>
+            cases htb2 : evalE ft k' t b with
+            | none => simp [evalE, hta2, htb2] at hw
+            | some vb' =>
+              have hweq : w = va' + vb' := by
+                simp [evalE, hta2, htb2] at hw
+                omega
+              have eva : va = va' := iha hnca' hta k' va va' haa hta2
+              have evb : vb = vb' := ihb hncb' htb k' vb vb' hbb htb2
+              omega
+  | call f a ih =>
+    intro hnc
+    simp [noCall] at hnc
